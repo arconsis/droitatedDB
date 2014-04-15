@@ -15,4 +15,4 @@ With an annotation based approach you are able to get a database up and running 
  * Fall back to Android default API is always possible
 
 
- ## [Documentation](https://github.com/arconsis/datarobot/wiki) ##
+## [Documentation](https://github.com/arconsis/datarobot/wiki) ##
