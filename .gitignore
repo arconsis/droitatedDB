@@ -10,3 +10,4 @@ target
 gen
 generated
 dependency-reduced-pom.xml
+.gitignore
