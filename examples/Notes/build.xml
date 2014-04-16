@@ -1,0 +1,46 @@
+<project
+    name="Update persistence libs"
+    default="run">
+
+    <property
+        name="api.source.file"
+        value="../Datarobot/target/datarobot.api-0.0.1-SNAPSHOT-with-sources.jar"/>
+
+    <property
+        name="api.target.file"
+        value="./libs/datarobot.api-0.0.1-SNAPSHOT-with-sources.jar"/>
+
+    <property
+        name="generator.source.file"
+        value="../DatarobotProcessor/target/datarobot.processor-0.0.1-SNAPSHOT.jar"/>
+
+    <property
+        name="generator.target.file"
+        value="./compile_libs/datarobot.processor-0.0.1-SNAPSHOT.jar"/>
+
+    <property
+        name="main-class"
+        value="oata.HelloWorld"/>
+
+    <target name="run">
+
+        <copy
+            file="${api.source.file}"
+            force="true"
+            overwrite="true"
+            tofile="${api.target.file}"
+            verbose="true"/>
+
+        <copy
+            file="${generator.source.file}"
+            force="true"
+            overwrite="true"
+            tofile="${generator.target.file}"
+            verbose="true"/>
+
+        <echo>
+Updated Persistence Libs
+        </echo>
+    </target>
+
+</project>

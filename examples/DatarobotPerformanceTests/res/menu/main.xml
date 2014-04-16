@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.arconsis.datarobot.performancetests.MainActivity" >
+
+    <item 
+	    android:id="@+id/bulk_creation"
+	    android:title="@string/bulk_creation"
+	    android:icon="@android:drawable/ic_menu_edit"
+	    android:showAsAction="always"/>
+    
+    <item 
+	    android:id="@+id/delete_all"
+	    android:title="@string/delete_all"
+	    android:icon="@android:drawable/ic_menu_delete"
+	    android:showAsAction="ifRoom"/>
+	    
+	<item android:id="@+id/dump_db"
+	    android:title="@string/dump_db"
+	    android:icon="@android:drawable/ic_menu_more"
+	    android:showAsAction="ifRoom"/>
+
+</menu>

@@ -1,0 +1,13 @@
+.settings
+/target
+.classpath
+.eclipse-pmd
+.project
+.factorypath
+.externalToolBuilders
+bin
+target
+db
+gen
+generated
+dependency-reduced-pom.xml

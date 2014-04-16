@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:arconsis="http://arconsis.com"
+    package="com.arconsis.android.datrobot.test.data"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:name=".TestApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.StageTwoContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.stagetwo"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.WithAssociationContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.withassociation"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.SimpleContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.simple"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.CommentContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.comment"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.TextContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.text"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.StageOneContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.stageone"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.BidirectionalOneContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.bidirectionalone"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.BidirectionalTwoContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.bidirectionaltwo"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.AuthorContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.author"
+            android:exported="false"
+            arconsis:generated="true"/>
+        <provider
+            android:name="com.arconsis.android.datrobot.test.data.generated.SingleContentProvider"
+            android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.single"
+            android:exported="false"
+            arconsis:generated="true"/>
+    </application>
+
+</manifest>

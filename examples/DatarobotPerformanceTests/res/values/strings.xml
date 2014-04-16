@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Datarobot Performance</string>
+    <string name="delete_all">Delete operations</string>
+    <string name="dump_db">Dump DB</string>
+    <string name="db_exported">DB exported to SD card root</string>
+    <string name="bulk_creation">Performance test</string>
+    <string name="no_operations">No operations executed</string>
+    <string name="duration">Duration (in s):</string>
+
+</resources>
