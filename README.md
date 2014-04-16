@@ -8,7 +8,7 @@ With an annotation based approach you are able to get a database up and running 
 
 
 ## Features ##
- * [Annotation based implementation](Annotations)
+ * [Annotation based implementation](wiki/Annotations)
  * No hard coded Strings anywhere
  * Code generation for the ceremonial tasks
  * Compile time protection when renaming fields or tables
