@@ -23,6 +23,8 @@ import android.database.CursorWrapper;
 import com.arconsis.android.datarobot.cursor.ObjectCursor;
 
 /**
+ * Provides utility methods for cursors.
+ * 
  * @author Falk Appel
  * @author Alexander Frank
  */

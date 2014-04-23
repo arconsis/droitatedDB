@@ -46,6 +46,8 @@ import com.arconsis.android.datarobot.schema.ToManyAssociation;
 import com.arconsis.android.datarobot.schema.ToOneAssociation;
 
 /**
+ * Resolves entity object graphs from the db.
+ * 
  * @author Falk Appel
  * @author Alexander Frank
  */

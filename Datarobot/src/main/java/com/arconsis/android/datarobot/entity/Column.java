@@ -22,7 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a field as a column of a database table.
+ * Marks a field as a column of a database table.<br>
+ * This annotation can be placed to a field within an @Entity. Every annotated
+ * field will become a column in the database table of the entity. <br>
+ * Field without a @Column annotation within an @Entities are  transient.
  * 
  * @author Alexander Frank
  * @author Falk Appel

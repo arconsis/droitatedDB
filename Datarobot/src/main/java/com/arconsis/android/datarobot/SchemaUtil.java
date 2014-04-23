@@ -31,7 +31,7 @@ import com.arconsis.android.datarobot.schema.EntityInfo;
 import com.arconsis.android.datarobot.schema.ToManyAssociation;
 
 /**
- * Utility for different schema access
+ * Utility for different schema access.
  * 
  * @author Falk Appel
  * @author Alexander Frank

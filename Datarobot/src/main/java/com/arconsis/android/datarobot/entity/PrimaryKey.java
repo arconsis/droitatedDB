@@ -22,7 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a field as primary key within an entity class.
+ * Marks a field as the primary key of an @Entity.<br>
+ * 
+ * The @PrimaryKey annotation is allowed for only one {@link Integer} or {@link Long} field of an @Entity annotated class. <br>
+ * With the @PrimaryKey annotation the @Column annotation is also necessary and the @AutoIncrement annotation is allowed.
  * 
  * @author Alexander Frank
  * @author Falk Appel

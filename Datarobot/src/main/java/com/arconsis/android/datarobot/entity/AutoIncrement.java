@@ -22,7 +22,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks a field within a entity class to be an auto incremented value.
+ * Marks a field within a entity class to be an auto incremented value.<br>
+ * At the moment only a @PrimaryKey annotated field can be marked with @AutoIncrement.<br>
+ * The database to automatically increments the primary key with each new saved entity.<br>
+ * Do not set the value of an @PrimaryKey annotated field within your code.
  * 
  * @author Falk Appel
  * @author Alexander Frank
