@@ -1,4 +1,4 @@
-Datarobot for Android
+![logo](https://github.com/arconsis/datarobot/raw/master/resources/Datarobottitle.png)
 =========
 
 ## At a glance ##
