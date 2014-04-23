@@ -11,3 +11,4 @@ gen
 generated
 dependency-reduced-pom.xml
 .gitignore
+.metadata

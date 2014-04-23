@@ -4,7 +4,7 @@
 ## At a glance ##
 Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you don't want to and let's you access it directly if you have to.
 
-With an annotation based approach you are able to get a database up and running in no time. Simple annotate your data classes and let Datarobot do the work.
+With an annotation based approach you are able to get a database up and running in no time. Simply annotate your data classes and let Datarobot do the work.
 
 
 ## Features ##
