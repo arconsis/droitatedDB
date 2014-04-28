@@ -24,6 +24,8 @@ import java.lang.reflect.Field;
 import com.arconsis.android.datarobot.schema.AbstractAttribute;
 
 /**
+ * Provides utility methods for datarobot.
+ * 
  * @author Falk Appel
  * @author Alexander Frank
  */

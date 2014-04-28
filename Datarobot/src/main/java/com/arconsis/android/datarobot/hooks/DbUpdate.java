@@ -16,6 +16,7 @@
 package com.arconsis.android.datarobot.hooks;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Callback for updating the SQLite database on version change.
@@ -24,5 +25,9 @@ import android.database.sqlite.SQLiteDatabase;
  * @author Falk Appel
  */
 public interface DbUpdate {
+	/**
+	 * Implement the specific db update in this method. <br>
+	 * It will be called within the {@link SQLiteOpenHelper#onUpgrade(SQLiteDatabase, int, int)} method.
+	 */
 	void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion);
 }

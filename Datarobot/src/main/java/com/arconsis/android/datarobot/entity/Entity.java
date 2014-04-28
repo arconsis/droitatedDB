@@ -21,8 +21,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import android.content.ContentProvider;
+
 /**
- * Marks a class as a persistent entity, which can be stored in a database.
+ * Declares a class to be an entity.<br>
+ * Entities can be stored within the database. Default a not exported
+ * {@link ContentProvider} will be generated. <br>
+ * Set <code>contentProvider=false</code> if you don`t need a {@link ContentProvider}.<br>
+ * Set <code>exported=true</code> if the {@link ContentProvider} should be exported.<br>
+ * Use <code>authority="xxx"</code> to define the authority if necessary.<br>
+ * <br>
+ * Each class annotated with Entity need at least:<br>
+ * - a default constructor<br>
+ * - exact one {@link Integer} or {@link Long} field annotated with @PrimaryKey and @Column<br>
  * 
  * @author Alexander Frank
  * @author Falk Appel

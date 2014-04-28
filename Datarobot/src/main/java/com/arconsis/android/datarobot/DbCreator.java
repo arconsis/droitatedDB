@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.arconsis.android.datarobot.hooks.DbUpdate;
 
 /**
+ * Handles db creation and updates.
+ * 
  * @author Falk Appel
  * @author Alexander Frank
  */

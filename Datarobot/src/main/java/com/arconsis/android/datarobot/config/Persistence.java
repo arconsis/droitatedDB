@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Enables the processing of the persistence framework.<br>
  * This annotation has to be declared on one class within the app to be able to use the benefits of the framework.<br>
+ * Without the @Persistence annotation there will be no code generation.
  * 
  * @author Falk Appel
  * @author Alexander Frank

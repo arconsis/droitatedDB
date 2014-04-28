@@ -24,7 +24,10 @@ import java.util.Collection;
 
 /**
  * Indicates an association between to {@link Entity} elements.<br>
- * Can be used on single {@link Entity} associations or on a {@link Collection} of an {@link Entity} type
+ * Can be used on single {@link Entity} associations or on a {@link Collection} of an {@link Entity} type.<br><br>
+ * At the moment the @Relationship annotation defines only an uni-directional relation between @Entities.<br>
+ * For <b>to one</b> relationships there is a foreignkey column generated within the database,<br>
+ * for <b>to many</b> relationships a link table is generated. The column and/or table name can be accessed via the generated DB schema.
  * 
  * @author Alexander Frank
  * @author Falk Appel
