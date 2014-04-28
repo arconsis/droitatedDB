@@ -75,20 +75,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>attach-javadoc</id>
-						<goals>
-							<goal>jar</goal>
-							<goal>javadoc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- Build with-sources.jar jar with classes and sources. This is useful 
 				for Android debugging. -->
 			<plugin>
@@ -119,14 +105,14 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-				    <mavenExecutorId>forked-path</mavenExecutorId>
+					<mavenExecutorId>forked-path</mavenExecutorId>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
 	<profiles>
 		<profile>
-			<id>release-sign-artifacts</id>
+			<id>release</id>
 			<activation>
 				<property>
 					<name>performRelease</name>
@@ -144,6 +130,20 @@
 								<phase>verify</phase>
 								<goals>
 									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.7</version>
+						<executions>
+							<execution>
+								<id>attach-javadoc</id>
+								<goals>
+									<goal>jar</goal>
+									<goal>javadoc</goal>
 								</goals>
 							</execution>
 						</executions>
