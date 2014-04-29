@@ -41,7 +41,7 @@
 	<scm>
 		<connection>scm:git:git@github.com:arconsis/datarobot.git</connection>
 		<developerConnection>scm:git:git@github.com:arconsis/datarobot.git</developerConnection>
-		<url>git@github.com:arconsis/datarobot.git</url>
+		<url>https://github.com/arconsis/datarobot.git</url>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>
