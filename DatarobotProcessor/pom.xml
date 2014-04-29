@@ -55,7 +55,7 @@
 	</distributionManagement>
 	<dependencies>
 		<dependency>
-			<groupId>com.arconsis.android.datarobot</groupId>
+			<groupId>com.arconsis</groupId>
 			<artifactId>datarobot.api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
