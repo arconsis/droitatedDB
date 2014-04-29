@@ -39,8 +39,8 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:github.com/arconsis/datarobot.git</connection>
-		<developerConnection>scm:git:github.com/arconsis/datarobot.git</developerConnection>
+		<connection>scm:git:https://github.com/arconsis/datarobot.git</connection>
+		<developerConnection>scm:git:https://github.com/arconsis/datarobot.git</developerConnection>
 		<url>https://github.com/arconsis/datarobot.git</url>
 	</scm>
 	<distributionManagement>
