@@ -39,10 +39,10 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:https://github.com:arconsis/datarobot.git</connection>
-		<developerConnection>scm:git:https://github.com:arconsis/datarobot.git</developerConnection>
+		<connection>scm:git:https://github.com/arconsis/datarobot.git</connection>
+		<developerConnection>scm:git:https://github.com/arconsis/datarobot.git</developerConnection>
 		<url>https://github.com/arconsis/datarobot.git</url>
-  </scm>
+	</scm>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
