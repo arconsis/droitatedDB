@@ -39,10 +39,10 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git@github.com:arconsis/datarobot.git</connection>
-		<developerConnection>scm:git:git@github.com:arconsis/datarobot.git</developerConnection>
+		<connection>scm:git:https://github.com:arconsis/datarobot.git</connection>
+		<developerConnection>scm:git:https://github.com:arconsis/datarobot.git</developerConnection>
 		<url>https://github.com/arconsis/datarobot.git</url>
-	</scm>
+  </scm>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -163,6 +163,17 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.plugins</groupId>
+						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<version>1.6</version>
+						<extensions>true</extensions>
+						<configuration>
+							<serverId>ossrh</serverId>
+							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.arconsis</groupId>
 	<artifactId>datarobot.api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Datarobot for Android - API</name>
 	<description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you don't want to and let's you access it directly if you have to.</description>
@@ -42,6 +42,7 @@
 		<connection>scm:git:https://github.com/arconsis/datarobot.git</connection>
 		<developerConnection>scm:git:https://github.com/arconsis/datarobot.git</developerConnection>
 		<url>https://github.com/arconsis/datarobot.git</url>
+		<tag>HEAD</tag>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>
@@ -170,6 +171,7 @@
 						<configuration>
 							<serverId>ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 				</plugins>
