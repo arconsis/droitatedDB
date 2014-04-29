@@ -109,6 +109,10 @@
 				<version>2.5</version>
 				<configuration>
 					<mavenExecutorId>forked-path</mavenExecutorId>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<goals>deploy</goals>
 				</configuration>
 			</plugin>
 		</plugins>
