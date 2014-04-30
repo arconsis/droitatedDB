@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Entity;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,33 +30,31 @@ import android.net.Uri;
 import com.arconsis.android.datarobot.cursor.CombinedCursor;
 import com.arconsis.android.datarobot.cursor.CombinedCursorImpl;
 import com.arconsis.android.datarobot.entity.Column;
+import com.arconsis.android.datarobot.entity.Entity;
 import com.arconsis.android.datarobot.entity.PrimaryKey;
 import com.arconsis.android.datarobot.schema.AbstractAttribute;
 import com.arconsis.android.datarobot.schema.EntityInfo;
 
 /**
  * 
- * The {@link BaseContentProvider} is the base class of all generated {@link ContentProvider} for {@link Entity}
- * classes.<br>
+ * The {@link BaseContentProvider} is the base class of all generated {@link ContentProvider} for {@link Entity} classes.<br>
  * <br>
- * For each {@link Entity} which allows {@link ContentProvider} generation a separate {@link ContentProvider} will be
- * generated. The generated {@link ContentProvider} is also referenced in the AndroidManifest.xml to use an own
- * Implementation remove the attribute <code>arconsis:generated="true"</code> in the <code>provider</code> element of
- * the AndroidManifest.xml<br>
+ * For each {@link Entity} which allows {@link ContentProvider} generation a separate {@link ContentProvider} will be generated. The generated
+ * {@link ContentProvider} is also referenced in the AndroidManifest.xml to use an own Implementation remove the attribute
+ * <code>arconsis:generated="true"</code> in the <code>provider</code> element of the AndroidManifest.xml<br>
  * The authority of the {@link ContentProvider} is therefore defined within the {@link Entity} annotation.<br>
  * <br>
- * The base {@link Uri} for calling the {@link ContentProvider} is build following this schema:
- * content://<b>[authority]</b>/<b>[ {@link BaseContentProvider#getEntityURIPart}]</b>. <br>
+ * The base {@link Uri} for calling the {@link ContentProvider} is build following this schema: content://<b>[authority]</b>/<b>[
+ * {@link BaseContentProvider#getEntityURIPart}]</b>. <br>
  * If not overridden {@link BaseContentProvider#getEntityURIPart} returns <b>entity</b><br>
  * <br>
  * For easier use the {@link BaseContentProvider} provides the methods {@link BaseContentProvider#uri(String)} and
- * {@link BaseContentProvider#uriForItem(String, long)}. These methods allow getting the {@link Uri} referencing the
- * Provider with the table name of the {@link Entity} and the primary key. <br>
+ * {@link BaseContentProvider#uriForItem(String, long)}. These methods allow getting the {@link Uri} referencing the Provider with the table name of the
+ * {@link Entity} and the primary key. <br>
  * <br>
  * {@link BaseContentProvider#uri(String)}: Returns a {@link Uri} for accessing multiple {@link Entity} elements.<br>
  * <br>
- * {@link BaseContentProvider#uriForItem(String, long)}: Returns a {@link Uri} for accessing a specific {@link Entity}
- * element<br>
+ * {@link BaseContentProvider#uriForItem(String, long)}: Returns a {@link Uri} for accessing a specific {@link Entity} element<br>
  * 
  * @author Falk Appel
  * @author Alexander Frank
@@ -93,8 +90,8 @@ public abstract class BaseContentProvider extends ContentProvider {
 	}
 
 	/**
-	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The
-	 * {@link Uri} allows CRUD operations on multiple {@link Entity} elements.
+	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The {@link Uri} allows CRUD operations on
+	 * multiple {@link Entity} elements.
 	 *
 	 * @param tableName
 	 *            Name of the Table (simple {@link Entity} name) the data should be retrieved from.
@@ -104,8 +101,8 @@ public abstract class BaseContentProvider extends ContentProvider {
 	}
 
 	/**
-	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The
-	 * {@link Uri} allows CRUD operations on a single {@link Entity} element, qualified by its primary key.
+	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The {@link Uri} allows CRUD operations on a
+	 * single {@link Entity} element, qualified by its primary key.
 	 *
 	 * @param tableName
 	 *            Name of the Table (simple {@link Entity} name) the data should be retrieved from.
