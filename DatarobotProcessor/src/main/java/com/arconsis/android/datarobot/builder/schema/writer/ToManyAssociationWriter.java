@@ -21,12 +21,14 @@ import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_STRING;
 import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_STRING_ARRAY;
 import static com.arconsis.android.datarobot.builder.Constants.TAB;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.FOREIGN_KEY;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.FROM_SUFFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.INDEX_SUFFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.LINK;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.PROJECTION;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_CREATION;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_INDEX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE_NAME;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.TO_SUFFIX;
 import static java.lang.String.format;
 
 import java.util.Locale;
@@ -53,10 +55,10 @@ public class ToManyAssociationWriter implements Writer {
 		this.indent = indent;
 
 		canonicalLeft = link.getFirst();
-		simpleLeft = getSimpleName(link.getFirst());
+		simpleLeft = getSimpleName(canonicalLeft);
 		simpleLeftLower = simpleLeft.toLowerCase(Locale.getDefault());
 		canonicalRight = link.getSecond();
-		simpleRight = getSimpleName(link.getSecond());
+		simpleRight = getSimpleName(canonicalRight);
 		simpleRightLower = simpleRight.toLowerCase(Locale.getDefault());
 
 		tableName = simpleLeft + simpleRight + LINK;
@@ -67,8 +69,8 @@ public class ToManyAssociationWriter implements Writer {
 		StringBuilder builder = new StringBuilder();
 		addDefinition(builder);
 		addTableName(builder);
-		addAttribute(builder, canonicalLeft, simpleLeftLower, 0);
-		addAttribute(builder, canonicalRight, simpleRightLower, 1);
+		addAttribute(builder, canonicalLeft, simpleLeftLower, 0, FROM_SUFFIX);
+		addAttribute(builder, canonicalRight, simpleRightLower, 1, TO_SUFFIX);
 		builder.append("\n");
 		addSqlStatment(builder);
 		addProjection(builder);
@@ -86,47 +88,49 @@ public class ToManyAssociationWriter implements Writer {
 		builder.append("\n");
 	}
 
-	private void addAttribute(final StringBuilder builder, final String canonicalName, final String simpleName, final int idx) {
-		String fkToUpper = (FOREIGN_KEY + simpleName).toUpperCase(Locale.getDefault());
+	private void addAttribute(final StringBuilder builder, final String canonicalName, final String simpleName, final int idx, final String suffix) {
+		String fkToUpper = (FOREIGN_KEY + simpleName + suffix).toUpperCase(Locale.getDefault());
 
 		builder.append(indent).append(TAB).append(CONSTANT_PREFIX).append("IntegerAttribute ").append(fkToUpper).append(" = ") //
-		.append("new IntegerAttribute(") //
-		.append("\"").append("\", \"") //
-		.append(FOREIGN_KEY + simpleName).append("\", ")//
-		.append(canonicalName).append(".class, ") //
-		.append(idx).append(");\n");
+				.append("new IntegerAttribute(") //
+				.append("\"").append("\", \"") //
+				.append(FOREIGN_KEY + simpleName + suffix).append("\", ")//
+				.append(canonicalName).append(".class, ") //
+				.append(idx).append(");\n");
 
 	}
 
 	private void addSqlStatment(final StringBuilder builder) {
+		String fromColumn = simpleLeftLower + FROM_SUFFIX;
+		String toColumn = simpleRightLower + TO_SUFFIX;
+
 		StringBuilder statment = new StringBuilder("CREATE TABLE ");
 		statment.append(tableName).append("(");
-		statment.append(FOREIGN_KEY).append(simpleLeftLower).append(" Integer, ");
-		statment.append(FOREIGN_KEY).append(simpleRightLower).append(" Integer, ");
-		statment.append("UNIQUE(").append(FOREIGN_KEY).append(simpleLeftLower).append(", ").append(FOREIGN_KEY).append(simpleRightLower)
-		.append(") ON CONFLICT IGNORE)");
+		statment.append(FOREIGN_KEY).append(fromColumn).append(" Integer, ");
+		statment.append(FOREIGN_KEY).append(toColumn).append(" Integer, ");
+		statment.append("UNIQUE(").append(FOREIGN_KEY).append(fromColumn).append(", ").append(FOREIGN_KEY).append(toColumn).append(") ON CONFLICT IGNORE)");
 
 		builder.append(indent).append(TAB).append(format(CONSTANT_STRING, SQL_CREATION, statment.toString()));
 
 		StringBuilder index = new StringBuilder("CREATE INDEX ");
 		index.append(simpleLeftLower).append(simpleRightLower).append(INDEX_SUFFIX);
 		index.append(" on ").append(tableName).append(" (");
-		index.append(FOREIGN_KEY).append(simpleLeftLower).append(", ").append(FOREIGN_KEY).append(simpleRightLower);
+		index.append(FOREIGN_KEY).append(fromColumn).append(", ").append(FOREIGN_KEY).append(toColumn);
 		index.append(")");
 		builder.append(indent).append(TAB).append(format(CONSTANT_STRING, SQL_INDEX, index.toString()));
 	}
 
 	private void addProjection(final StringBuilder builder) {
 		StringBuilder projection = new StringBuilder();
-		projection.append("\"").append(FOREIGN_KEY).append(simpleLeftLower).append("\", ") //
-		.append("\"").append(FOREIGN_KEY).append(simpleRightLower).append("\"");
+		projection.append("\"").append(FOREIGN_KEY).append(simpleLeftLower + FROM_SUFFIX).append("\", ") //
+				.append("\"").append(FOREIGN_KEY).append(simpleRightLower + TO_SUFFIX).append("\"");
 		builder.append(indent).append(TAB).append(format(CONSTANT_STRING_ARRAY, PROJECTION, projection.toString()));
 	}
 
 	private void addAttributes(final StringBuilder builder) {
 		StringBuilder concat = new StringBuilder();
-		concat.append((FOREIGN_KEY + simpleLeft).toUpperCase(Locale.getDefault())).append(", ") //
-		.append((FOREIGN_KEY + simpleRight).toUpperCase(Locale.getDefault()));
+		concat.append((FOREIGN_KEY + simpleLeft + FROM_SUFFIX).toUpperCase(Locale.getDefault())).append(", ") //
+				.append((FOREIGN_KEY + simpleRight + TO_SUFFIX).toUpperCase(Locale.getDefault()));
 
 		builder.append(indent).append(TAB).append(format(CONSTANT_ATTRIBUTE_ARRAY, SchemaConstants.ATTRIBUTES, concat.toString()));
 	}

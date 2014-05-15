@@ -42,5 +42,6 @@ public class SchemaConstants {
 	public static final String ASSOCIATIONS_INTERFACE = "Associations";
 	public static final String FOREIGN_KEY = "fk_";
 	public static final String INDEX_SUFFIX = "_idx";
-
+	public static final String FROM_SUFFIX = "_from";
+	public static final String TO_SUFFIX = "_to";
 }

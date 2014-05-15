@@ -44,14 +44,14 @@
 	</scm>
 	<dependencies>
 		<dependency>
-			<groupId>com.arconsis.android.datarobot</groupId>
+			<groupId>com.arconsis</groupId>
 			<artifactId>datarobot.api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.arconsis.android.datarobot</groupId>
+			<groupId>com.arconsis</groupId>
 			<artifactId>datarobot.processor</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>

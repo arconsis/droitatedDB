@@ -26,6 +26,7 @@ import static com.arconsis.android.datarobot.Utilities.getPrimaryKey;
 import static com.arconsis.android.datarobot.Utilities.handle;
 import static com.arconsis.android.datarobot.Utilities.setFieldValue;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.FOREIGN_KEY;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.FROM_SUFFIX;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -97,8 +98,7 @@ class DatabaseResolver {
 		String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
 		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[] { toOneAssociation
-				.getAssociationAttribute().columnName() }, keyName + " = ?", new String[] { Integer.toString(idRequestingObject) }, null, null,
-			null);
+				.getAssociationAttribute().columnName() }, keyName + " = ?", new String[] { Integer.toString(idRequestingObject) }, null, null, null);
 		tryOnCursor(fkCursor, new CursorOperation<Void>() {
 			@Override
 			public Void execute(final Cursor cursor) throws Exception {
@@ -202,9 +202,9 @@ class DatabaseResolver {
 	}
 
 	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute,
-			final ToManyAssociation toMany)  {
+			final ToManyAssociation toMany) {
 		String tableName = getLinkTableName(toMany.getLinkTableSchema());
-		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault());
+		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 
 		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[] { Integer.toString(primaryKeyData) }, null, null, null);
 		return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
@@ -219,7 +219,7 @@ class DatabaseResolver {
 		});
 	}
 
-	private static Object getDeclaration(Class<?> associationsDeclaration, Field associationField) {
+	private static Object getDeclaration(final Class<?> associationsDeclaration, final Field associationField) {
 		try {
 			return associationsDeclaration.getField(associationField.getName().toUpperCase(Locale.getDefault())).get(null);
 		} catch (Exception e) {
