@@ -124,7 +124,7 @@ public class TableReader implements Reader<Table> {
 
 	private boolean hasAmbiguosAssociationDeclaration(final VariableElement variableElement) {
 		if (variableElement.getAnnotation(Relationship.class) != null) {
-			messager.printMessage(Kind.ERROR, "Only @Column or @Association is allowed, but not both", variableElement);
+			messager.printMessage(Kind.ERROR, "Only @Column or @Relationship is allowed, but not both", variableElement);
 			return true;
 		}
 		return false;

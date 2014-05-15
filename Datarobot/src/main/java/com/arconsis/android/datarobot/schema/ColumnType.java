@@ -50,7 +50,7 @@ public enum ColumnType {
 		} else if (matches(byte[].class, type)) {
 			return ColumnType.BLOB;
 		} else {
-			throw new IllegalStateException("The type " + type + " is no supported @Column type. Try @Association if you want to create an association.");
+			throw new IllegalStateException("The type " + type + " is no supported @Column type. Try @Relationship if you want to create an association.");
 		}
 	}
 
