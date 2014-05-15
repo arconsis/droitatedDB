@@ -27,6 +27,7 @@ import static com.arconsis.android.datarobot.Utilities.handle;
 import static com.arconsis.android.datarobot.Utilities.setFieldValue;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.FOREIGN_KEY;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.FROM_SUFFIX;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.TO_SUFFIX;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -194,7 +195,7 @@ class DatabaseResolver {
 
 	private AbstractAttribute getForeignAttribute(final Class<? extends Object> dataType, final ToManyAssociation toMany) {
 		for (AbstractAttribute attribute : getLinkTableColumns(toMany.getLinkTableSchema())) {
-			if (!attribute.type().equals(dataType)) {
+			if (attribute.columnName().endsWith(TO_SUFFIX)) {
 				return attribute;
 			}
 		}
