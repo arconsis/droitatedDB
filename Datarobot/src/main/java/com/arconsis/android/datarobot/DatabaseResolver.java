@@ -78,17 +78,17 @@ class DatabaseResolver {
 		EntityData entityData = EntityData.getEntityData(data);
 		if (entityData.allAssociations.size() > 0) {
 			Class<?> associationsDeclaration = getAssociationsSchema(data.getClass(), context.getPackageName());
-
 			Integer id = getPrimaryKey(data, entityData);
 
-			loadedObjects.put("class " + data.getClass().getCanonicalName() + "#" + id, data);
-
-			for (Field associationField : entityData.allAssociations) {
-				Object declaration = getDeclaration(associationsDeclaration, associationField);
-				if (declaration instanceof ToOneAssociation) {
-					handleToOneAssociation(id, data, associationField, (ToOneAssociation) declaration, currentDepth, maxDepth);
-				} else {
-					handleToManyAssociation(id, data, associationField, (ToManyAssociation) declaration, currentDepth, maxDepth);
+			if (id != null) {
+				loadedObjects.put("class " + data.getClass().getCanonicalName() + "#" + id, data);
+				for (Field associationField : entityData.allAssociations) {
+					Object declaration = getDeclaration(associationsDeclaration, associationField);
+					if (declaration instanceof ToOneAssociation) {
+						handleToOneAssociation(id, data, associationField, (ToOneAssociation) declaration, currentDepth, maxDepth);
+					} else {
+						handleToManyAssociation(id, data, associationField, (ToManyAssociation) declaration, currentDepth, maxDepth);
+					}
 				}
 			}
 		}
