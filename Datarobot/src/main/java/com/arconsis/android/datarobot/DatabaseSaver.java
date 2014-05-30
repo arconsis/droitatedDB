@@ -99,6 +99,9 @@ class DatabaseSaver {
 			// 4. update db
 			update(id, data.getClass(), entityData, contentValuesEntity);
 		} else {
+			if(!entityData.autoIncrement){
+				throw new IllegalStateException("PrimaryKey must not be null since "+entityData.type.getName()+" specifies @AutoIncrement. Object has no PrimaryKey: "+data.toString());
+			}
 			// 1. register new unsaved Object
 			newUnsavedObjects.add(data);
 			newObjects.add(data);
@@ -282,7 +285,11 @@ class DatabaseSaver {
 	}
 
 	private void update(final Integer id, final Class<? extends Object> entityClass, final EntityData entityData, final ContentValues contentValues) {
-		database.update(entityClass.getSimpleName(), contentValues, entityData.primaryKey.getName() + " = ?", new String[] { Integer.toString(id) });
+		if (entityData.autoIncrement) {
+			database.update(entityClass.getSimpleName(), contentValues,entityData.primaryKey.getName() + " = ?", new String[] { Integer.toString(id) });
+		} else {
+			database.insertWithOnConflict(entityClass.getSimpleName(), null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+		}
 	}
 
 	private int insert(final Class<? extends Object> entityClass, final ContentValues contentValues) {

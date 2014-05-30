@@ -74,6 +74,7 @@ public class BasePersistenceTest {
 		database.execSQL(DROP + DB.AuthorTextAssociation.TABLE_NAME);
 		database.execSQL(DROP + DB.AuthorCommentAssociation.TABLE_NAME);
 		database.execSQL(DROP + DB.SingleTable.TABLE_NAME);
+		database.execSQL(DROP + DB.SimpleWithoutAutoIncrementTable.TABLE_NAME);
 		doReturn(database).when(dbCreator).getReadableDatabase();
 		doReturn(database).when(dbCreator).getWritableDatabase();
 		dbCreator.onCreate(database);
@@ -122,6 +123,7 @@ public class BasePersistenceTest {
 	protected void assertInsertsAndUpdatesAmountToDB(int expectedInserts, int expectedUpdates, int expectedDeletions) {
 		verify(database, times(expectedInserts)).insertOrThrow(anyString(), anyString(), any(ContentValues.class));
 		verify(database, times(expectedUpdates)).update(anyString(), any(ContentValues.class), anyString(), any(String[].class));
+		//verify(database, times(expectedUpdates)).insertWithOnConflict(anyString(), anyString(), any(ContentValues.class),anyInt());
 		verify(database, times(expectedDeletions)).delete(anyString(), anyString(), any(String[].class));
 		reset(database);
 	}

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.arconsis.android.datarobot.entity.AutoIncrement;
 import com.arconsis.android.datarobot.entity.Column;
 import com.arconsis.android.datarobot.entity.PrimaryKey;
 
@@ -31,6 +32,7 @@ import com.arconsis.android.datarobot.entity.PrimaryKey;
  */
 final class EntityData {
 	Field primaryKey;
+	boolean autoIncrement;
 	List<Field> columns = new ArrayList<Field>();
 	List<Field> toManyAssociations = new ArrayList<Field>();
 	List<Field> toOneAssociations = new ArrayList<Field>();
@@ -54,6 +56,9 @@ final class EntityData {
 				entityData.columns.add(field);
 				if (field.getAnnotation(PrimaryKey.class) != null) {
 					entityData.primaryKey = field;
+					if (field.getAnnotation(AutoIncrement.class) != null) {
+						entityData.autoIncrement = true;
+					}
 				}
 			} else if (field.getAnnotation(com.arconsis.android.datarobot.entity.Relationship.class) != null) {
 				if (Collection.class.equals(field.getType())) {
