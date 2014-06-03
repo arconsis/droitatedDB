@@ -213,7 +213,7 @@ class DatabaseResolver {
 			public List<Integer> execute(final Cursor cursor) throws Exception {
 				LinkedList<Integer> ids = new LinkedList<Integer>();
 				while (cursor.moveToNext()) {
-					ids.add((Integer) foreignAttribute.getValueFormCursor(cursor));
+					ids.add((Integer) foreignAttribute.getValueFromCursor(cursor));
 				}
 				return ids;
 			}

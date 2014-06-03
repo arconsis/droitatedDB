@@ -107,7 +107,7 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 				Field field = entityClass.getDeclaredField(attribute.fieldName());
 				field.setAccessible(true);
 
-				field.set(instance, attribute.getValueFormCursor(originalCursor));
+				field.set(instance, attribute.getValueFromCursor(originalCursor));
 			}
 			return instance;
 		} catch (Exception e) {

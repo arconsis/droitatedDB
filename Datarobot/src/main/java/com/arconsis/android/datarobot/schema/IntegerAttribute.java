@@ -36,7 +36,7 @@ public class IntegerAttribute extends AbstractAttribute {
 	}
 
 	@Override
-	public Object getValueFormCursor(final Cursor originalCursor) {
+	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
 		if (Date.class.isAssignableFrom(type())) {
 			return new Date(originalCursor.getLong(columnIndex()));
 		} else if (Long.class.isAssignableFrom(type()) || long.class.isAssignableFrom(type())) {

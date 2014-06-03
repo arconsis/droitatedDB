@@ -27,128 +27,138 @@ import com.arconsis.android.datarobot.entity.PrimaryKey;
  * @author Alexander Frank
  */
 @Entity
- public class Simple {
+public class Simple {
 
-	 @Column
-	 @PrimaryKey
-	 @AutoIncrement
-	 private Integer _id;
+	@Column
+	@PrimaryKey
+	@AutoIncrement
+	private Integer _id;
 
-	 @Column
-	 private Double bigDouble;
+	@Column
+	private Double bigDouble;
 
-	 @Column
-	 private Float bigFloat;
+	@Column
+	private Float bigFloat;
 
-	 @Column
-	 private Long bigLong;
+	@Column
+	private Long bigLong;
 
-	 @Column
-	 private Date myDate;
+	@Column
+	private Date myDate;
 
-	 @Column
-	 private double myDouble;
+	@Column
+	private double myDouble;
 
-	 @Column
-	 private float myFloat;
+	@Column
+	private float myFloat;
 
-	 @Column
-	 private int myInt;
+	@Column
+	private int myInt;
 
-	 @Column
-	 private String myString;
+	@Column
+	private String myString;
 
-	 @Column
-	 private long soLong;
+	@Column
+	private long soLong;
 
-	 @Column
-	 private byte[] someBytes;
+	@Column
+	private byte[] someBytes;
 
-	 public Simple() {
-		 // no-args
-	 }
+	public Simple() {
+		// no-args
+	}
 
-	 public Simple(final Integer id, final String myString) {
-		 this._id = id;
-		 this.myString = myString;
-	 }
+	public Simple(final Integer id, final String myString) {
+		this._id = id;
+		this.myString = myString;
+	}
 
+	public Double getBigDouble() {
+		return this.bigDouble;
+	}
 
-	 public Double getBigDouble() {
-		 return this.bigDouble;
-	 }
+	public Float getBigFloat() {
+		return this.bigFloat;
+	}
 
-	 public Float getBigFloat() {
-		 return this.bigFloat;
-	 }
+	public Long getBigLong() {
+		return this.bigLong;
+	}
 
-	 public Long getBigLong() {
-		 return this.bigLong;
-	 }
+	public Integer getId() {
+		return _id;
+	}
 
-	 public Integer getId() {
-		 return _id;
-	 }
+	public Date getMyDate() {
+		return this.myDate;
+	}
 
-	 public Date getMyDate() {
-		 return this.myDate;
-	 }
+	public double getMyDouble() {
+		return this.myDouble;
+	}
 
-	 public double getMyDouble() {
-		 return this.myDouble;
-	 }
+	public float getMyFloat() {
+		return this.myFloat;
+	}
 
-	 public float getMyFloat() {
-		 return this.myFloat;
-	 }
+	public int getMyInt() {
+		return this.myInt;
+	}
 
-	 public int getMyInt() {
-		 return this.myInt;
-	 }
+	public String getMyString() {
+		return myString;
+	}
 
-	 public String getMyString() {
-		 return myString;
-	 }
-	 public long getSoLong() {
-		 return this.soLong;
-	 }
-	 public void setBigDouble(Double bigDouble) {
-		 this.bigDouble = bigDouble;
-	 }
-	 public void setBigFloat(Float bigFloat) {
-		 this.bigFloat = bigFloat;
-	 }
-	 public void setBigLong(Long bigLong) {
-		 this.bigLong = bigLong;
-	 }
-	 public void setId(final Integer _id) {
-		 this._id = _id;
-	 }
-	 public void setMyDate(Date myDate) {
-		 this.myDate = myDate;
-	 }
-	 public void setMyDouble(double myDouble) {
-		 this.myDouble = myDouble;
-	 }
+	public long getSoLong() {
+		return this.soLong;
+	}
 
-	 public void setMyFloat(float myFloat) {
-		 this.myFloat = myFloat;
-	 }
+	public byte[] getSomeBytes() {
+		return someBytes;
+	}
 
-	 public void setMyInt(int myInt) {
-		 this.myInt = myInt;
-	 }
+	public void setBigDouble(final Double bigDouble) {
+		this.bigDouble = bigDouble;
+	}
 
-	 public void setMyString(final String myString) {
-		 this.myString = myString;
-	 }
+	public void setBigFloat(final Float bigFloat) {
+		this.bigFloat = bigFloat;
+	}
 
-	 public void setSoLong(long soLong) {
-		 this.soLong = soLong;
-	 }
+	public void setBigLong(final Long bigLong) {
+		this.bigLong = bigLong;
+	}
 
-	 public void setSomeBytes(byte[] someBytes) {
-		 this.someBytes = someBytes;
-	 }
+	public void setId(final Integer _id) {
+		this._id = _id;
+	}
 
- }
+	public void setMyDate(final Date myDate) {
+		this.myDate = myDate;
+	}
+
+	public void setMyDouble(final double myDouble) {
+		this.myDouble = myDouble;
+	}
+
+	public void setMyFloat(final float myFloat) {
+		this.myFloat = myFloat;
+	}
+
+	public void setMyInt(final int myInt) {
+		this.myInt = myInt;
+	}
+
+	public void setMyString(final String myString) {
+		this.myString = myString;
+	}
+
+	public void setSoLong(final long soLong) {
+		this.soLong = soLong;
+	}
+
+	public void setSomeBytes(final byte[] someBytes) {
+		this.someBytes = someBytes;
+	}
+
+}

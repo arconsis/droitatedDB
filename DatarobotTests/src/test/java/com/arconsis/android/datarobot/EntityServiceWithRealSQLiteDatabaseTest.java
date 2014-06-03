@@ -38,6 +38,7 @@ import com.arconsis.android.datrobot.test.data.StageTwo;
 public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest {
 
 	private static final String ONE_STRING = "asdf";
+
 	@Test
 	public void saveAndRetrieveSimple() {
 		EntityService<Simple> entityService = entityService(Simple.class);
@@ -47,6 +48,15 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		Simple savedSimple = entityService.get(id);
 
 		assertThat(savedSimple).isNotNull();
+		assertThat(savedSimple.getBigDouble()).isNull();
+		assertThat(savedSimple.getBigFloat()).isNull();
+		assertThat(savedSimple.getBigLong()).isNull();
+		assertThat(savedSimple.getSomeBytes()).isNull();
+		assertThat(savedSimple.getMyDate()).isNull();
+		assertThat(savedSimple.getMyDouble()).isEqualTo(0d);
+		assertThat(savedSimple.getMyFloat()).isEqualTo(0f);
+		assertThat(savedSimple.getMyInt()).isEqualTo(0);
+		assertThat(savedSimple.getSoLong()).isEqualTo(0l);
 		assertThat(savedSimple).isNotSameAs(data);
 		assertThat(savedSimple.getId()).isEqualTo(id);
 		assertThat(savedSimple.getMyString()).isEqualTo(ONE_STRING);
@@ -81,7 +91,6 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		entityService.resolveAssociations(savedSimple);
 	}
 
-
 	@Test
 	public void savingAndDeleteSingleNewEntity() {
 		Simple testEntity = new Simple(null, "Test");
@@ -109,6 +118,7 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 	public void entityServiceOnlyForEntities() {
 		entityService(Non.class);
 	}
+
 	@Test
 	public void savingObjectWithDepthOfOne() {
 		Simple simple = new Simple(null, "test");

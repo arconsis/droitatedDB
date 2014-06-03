@@ -34,7 +34,7 @@ public class BlobAttribute extends AbstractAttribute {
 	}
 
 	@Override
-	public Object getValueFormCursor(final Cursor originalCursor) {
+	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
 		return originalCursor.getBlob(columnIndex());
 	}
 }

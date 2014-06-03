@@ -34,7 +34,7 @@ public class RealAttribute extends AbstractAttribute {
 	}
 
 	@Override
-	public Object getValueFormCursor(final Cursor originalCursor) {
+	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
 		if (Double.class.isAssignableFrom(type()) || double.class.isAssignableFrom(type())) {
 			return originalCursor.getDouble(columnIndex());
 		}

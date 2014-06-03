@@ -63,5 +63,23 @@ public abstract class AbstractAttribute {
 		return type;
 	}
 
-	public abstract Object getValueFormCursor(final Cursor originalCursor);
+	public Object getValueFromCursor(final Cursor originalCursor) {
+		if (originalCursor.isNull(columnIdx) && !isPrimitiveField()) {
+			return null;
+		}
+		return getNonNullValueFromCursor(originalCursor);
+	}
+
+	protected abstract Object getNonNullValueFromCursor(final Cursor originalCursor);
+
+	private final boolean isPrimitiveField() {
+		Class<?> paramType = type();
+		return paramType.equals(java.lang.Boolean.TYPE) //
+				|| paramType.equals(java.lang.Integer.TYPE) //
+				|| paramType.equals(java.lang.Character.TYPE) //
+				|| paramType.equals(java.lang.Float.TYPE) //
+				|| paramType.equals(java.lang.Double.TYPE) //
+				|| paramType.equals(java.lang.Long.TYPE) //
+				|| paramType.equals(java.lang.Short.TYPE);
+	}
 }
