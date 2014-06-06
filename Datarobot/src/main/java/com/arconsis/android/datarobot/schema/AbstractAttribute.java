@@ -62,6 +62,13 @@ public abstract class AbstractAttribute {
 	public ColumnType sqliteType() {
 		return type;
 	}
+	/** 
+	 * Returns also the columnName of the attribute
+	 */
+	@Override
+	public String toString() {
+		return columnName();
+	}
 
 	public Object getValueFromCursor(final Cursor originalCursor) {
 		if (originalCursor.isNull(columnIdx) && !isPrimitiveField()) {
