@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -53,7 +52,6 @@ public class BasePersistenceTest {
 
 	private SQLiteDatabase database;
 	protected Context context;
-	private final Collection<EntityService<?>> services = new ArrayList<EntityService<?>>();
 	protected DbCreator dbCreator;
 
 	@Before
@@ -78,20 +76,17 @@ public class BasePersistenceTest {
 		doReturn(database).when(dbCreator).getReadableDatabase();
 		doReturn(database).when(dbCreator).getWritableDatabase();
 		dbCreator.onCreate(database);
+
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		for (EntityService<?> service : services) {
-			service.close();
-		}
 		database.close();
 	}
 
 	protected <T> EntityService<T> entityService(Class<T> entityClass) {
-		EntityService<T> entityService = new EntityService<T>(context, entityClass, database);
-		services.add(entityService);
-		return entityService;
+
+		return new EntityService<T>(context, entityClass, database);
 	}
 
 	static void assertSameFields(Object one, Object other) {
@@ -123,7 +118,6 @@ public class BasePersistenceTest {
 	protected void assertInsertsAndUpdatesAmountToDB(int expectedInserts, int expectedUpdates, int expectedDeletions) {
 		verify(database, times(expectedInserts)).insertOrThrow(anyString(), anyString(), any(ContentValues.class));
 		verify(database, times(expectedUpdates)).update(anyString(), any(ContentValues.class), anyString(), any(String[].class));
-		//verify(database, times(expectedUpdates)).insertWithOnConflict(anyString(), anyString(), any(ContentValues.class),anyInt());
 		verify(database, times(expectedDeletions)).delete(anyString(), anyString(), any(String[].class));
 		reset(database);
 	}

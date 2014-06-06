@@ -76,7 +76,6 @@ public class EntityServiceTest {
 	public void execptionWhenTryingToSaveNonEntity() {
 		EntityService<Non> entityService = new EntityService<Non>(context, Non.class);
 		entityService.save(new Non());
-		entityService.close();
 	}
 
 
@@ -86,7 +85,6 @@ public class EntityServiceTest {
 
 		EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, dbCreator);
 		int id = entityService.save(emptyAssociation);
-		entityService.close();
 
 		assertThat(id).isEqualTo(1);
 		assertThat(emptyAssociation.getId()).isEqualTo(1);
@@ -99,7 +97,6 @@ public class EntityServiceTest {
 
 		EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, dbCreator);
 		int id = entityService.save(withAssociation);
-		entityService.close();
 
 		assertThat(id).isEqualTo(1);
 		assertThat(withAssociation.getId()).isEqualTo(1);
@@ -114,7 +111,6 @@ public class EntityServiceTest {
 
 		EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, dbCreator);
 		int id = entityService.save(withAssociation);
-		entityService.close();
 
 		assertThat(id).isEqualTo(5);
 		assertThat(withAssociation.getId()).isEqualTo(5);
@@ -132,7 +128,7 @@ public class EntityServiceTest {
 
 		EntityService<BidirectionalOne> entityService = new EntityService<BidirectionalOne>(context, BidirectionalOne.class, dbCreator);
 		int id = entityService.save(entityOne);
-		entityService.close();
+
 
 		assertThat(id).isEqualTo(1);
 		assertThat(entityOne.getId()).isEqualTo(1);
@@ -147,7 +143,6 @@ public class EntityServiceTest {
 
 		EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, dbCreator);
 		int id = entityService.save(withAssociation, 0);
-		entityService.close();
 
 		assertThat(id).isEqualTo(1);
 		assertThat(withAssociation.getId()).isEqualTo(1);
@@ -165,7 +160,6 @@ public class EntityServiceTest {
 
 		EntityService<StageOne> entityService = new EntityService<StageOne>(context, StageOne.class, dbCreator);
 		int id = entityService.save(one, 1);
-		entityService.close();
 
 		assertThat(id).isEqualTo(1);
 		assertThat(one.getId()).isEqualTo(1);
