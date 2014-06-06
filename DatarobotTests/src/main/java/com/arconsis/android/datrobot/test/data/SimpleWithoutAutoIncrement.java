@@ -18,6 +18,7 @@ package com.arconsis.android.datrobot.test.data;
 import com.arconsis.android.datarobot.entity.Column;
 import com.arconsis.android.datarobot.entity.Entity;
 import com.arconsis.android.datarobot.entity.PrimaryKey;
+import com.arconsis.android.datarobot.entity.Relationship;
 
 /**
  * @author Falk Appel
@@ -26,22 +27,32 @@ import com.arconsis.android.datarobot.entity.PrimaryKey;
 @Entity
 public class SimpleWithoutAutoIncrement {
 
-	 @Column
-	 @PrimaryKey
-	 private Integer _id;
+	@Column
+	@PrimaryKey
+	private Integer _id;
 
-	 @Column
-	 private String myString;
+	@Column
+	private String myString;
+	@Relationship
+	private Comment comment;
 
-	
-	 public SimpleWithoutAutoIncrement() {
-		 // no-args
-	 }
 
-	 public SimpleWithoutAutoIncrement(final Integer id, final String myString) {
-		 this._id = id;
-		 this.myString = myString;
-	 }
+	public Comment getComment() {
+		return this.comment;
+	}
+
+	public void setComment(Comment comment) {
+		this.comment = comment;
+	}
+
+	public SimpleWithoutAutoIncrement() {
+		// no-args
+	}
+
+	public SimpleWithoutAutoIncrement(final Integer id, final String myString) {
+		this._id = id;
+		this.myString = myString;
+	}
 
 	public Integer getId() {
 		return _id;
@@ -61,4 +72,4 @@ public class SimpleWithoutAutoIncrement {
 
 
 
- }
+}

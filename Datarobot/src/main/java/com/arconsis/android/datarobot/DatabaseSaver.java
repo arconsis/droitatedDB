@@ -150,7 +150,12 @@ class DatabaseSaver {
 	private ContentValues collectToOneAssociatedValuesAndSaveAssociatedObjects(final Object data, EntityData entityData, final int currentDepth) {
 		ContentValues contentValuesForeignKeys = new ContentValues(0);
 		if (currentDepth >= maxDepth) {
-			return contentValuesForeignKeys;
+			if (entityData.autoIncrement) {
+				return contentValuesForeignKeys;
+			}
+			else {
+				return resolveExistingForeignKeyValues(data, entityData);
+			}
 		}
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
 			toOneAssociatedField.setAccessible(true);
@@ -172,6 +177,36 @@ class DatabaseSaver {
 			}
 		}
 		return contentValuesForeignKeys;
+	}
+
+	private ContentValues resolveExistingForeignKeyValues(Object data, EntityData entityData) {
+		if (entityData.toOneAssociations.isEmpty()) {
+			return new ContentValues();
+		}
+		String tableName = SchemaUtil.getTableName(entityData.type, context.getPackageName());
+		final String[] projection = new String[entityData.toOneAssociations.size()];
+		int i = 0;
+		for (Field toOneAssociatedField : entityData.toOneAssociations) {
+			projection[i++]=SchemaConstants.FOREIGN_KEY+ toOneAssociatedField.getName();
+		}
+
+		Cursor cursor = database.query(tableName, projection, entityData.primaryKey.getName() + " = ?",
+				new
+				String[] { Integer.toString(getPrimaryKey(data, entityData)) },
+				null, null, null);
+		return CursorOperation.tryOnCursor(cursor, new CursorOperation<ContentValues>() {
+			@Override
+			public ContentValues execute(final Cursor cursor) {
+				ContentValues values = new ContentValues();
+				if (cursor.moveToFirst()) {
+					for (int i = 0; i < cursor.getColumnCount(); i++) {
+						values.put(projection[i], cursor.getInt(i));
+					}
+				}
+				return values;
+			}
+		});
+
 	}
 
 	private void saveToManyAssociatedObjects(final Object data, final int currentDepth, EntityData entityData, Integer id) {

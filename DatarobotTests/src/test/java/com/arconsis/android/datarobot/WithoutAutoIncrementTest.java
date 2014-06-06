@@ -15,11 +15,13 @@
  */
 package com.arconsis.android.datarobot;
 
+import org.fest.assertions.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import com.arconsis.android.datrobot.test.data.Comment;
 import com.arconsis.android.datrobot.test.data.SimpleWithoutAutoIncrement;
 
 /**
@@ -46,5 +48,28 @@ public class WithoutAutoIncrementTest extends BasePersistenceTest {
 		SimpleWithoutAutoIncrement newObject = new SimpleWithoutAutoIncrement();
 		newObject.setMyString("failing");
 		entityService.save(newObject);
+	}
+
+	@Test
+	public void saveWithDefinedDepthDoesntWipetoOneRelation() {
+		EntityService<SimpleWithoutAutoIncrement> entityService = entityService(SimpleWithoutAutoIncrement.class);
+
+		SimpleWithoutAutoIncrement newObject = new SimpleWithoutAutoIncrement();
+		newObject.setId(1234);
+		newObject.setMyString("woohoo");
+		Comment c = new Comment("come");
+		newObject.setComment(c);
+		entityService.save(newObject);
+		SimpleWithoutAutoIncrement resolvedObject = entityService.get(1234);
+		assertSameFields(newObject, resolvedObject);
+		Assertions.assertThat(resolvedObject.getComment()).isNull();
+		entityService.resolveAssociations(resolvedObject);
+		Assertions.assertThat(resolvedObject.getComment()).isNotNull();
+
+		entityService.save(resolvedObject, 0);
+		resolvedObject = entityService.get(1234);
+		Assertions.assertThat(resolvedObject.getComment()).isNull();
+		entityService.resolveAssociations(resolvedObject);
+		Assertions.assertThat(resolvedObject.getComment()).isNotNull();
 	}
 }

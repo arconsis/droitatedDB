@@ -93,6 +93,7 @@ public class EntityService<E> {
 	/*
 	 * Provides test access to constructor
 	 */
+	// TODO: remove this test constructor if possible
 	EntityService(final Context context, final Class<E> entityClass, SQLiteDatabase database) {
 		if (entityClass.getAnnotation(Entity.class) == null) {
 			throw new IllegalArgumentException("The EntityService can only be used for @Entity annotated classes");

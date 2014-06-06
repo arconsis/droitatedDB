@@ -43,6 +43,7 @@ public class NTOneAssoTest extends BasePersistenceTest {
 
 		entityService.save(newArrayList(c1));
 		assertInsertsAndUpdatesAmountToDB(1, 0);
+
 		Comment comment = entityService.get(c1.getId());
 		assertThat(comment.getAuthor()).isNull();
 
@@ -59,7 +60,12 @@ public class NTOneAssoTest extends BasePersistenceTest {
 		assertInsertsAndUpdatesAmountToDB(1, 1);
 		assertThat(entityService.get()).hasSize(1);
 
-		Comment savedComment = entityService.get(c1.getId());
+		Integer id = c1.getId();
+		Comment savedComment = entityService.get(id);
+		assertThat(savedComment.getAuthor()).isNull();
+		// check that save with depth 0 dosnt wipe the foreign key
+		entityService.save(savedComment, 0);
+		savedComment = entityService.get(id);
 		assertThat(savedComment.getAuthor()).isNull();
 		entityService.resolveAssociations(savedComment, 1);
 		Author savedAuthor = savedComment.getAuthor();
