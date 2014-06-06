@@ -41,8 +41,8 @@ import com.arconsis.android.datarobot.schema.EntityInfo;
  * Provides support for executing CRUD operations on {@link Entity} classes, such getting them from the database or
  * saving them to the database.<br>
  * <br>
- * Whit instantiation the {@link EntityService} opens a connection to the {@link SQLiteDatabase}. Make sure to close the
- * connection with {@link EntityService#close()} when you finished using the service.
+ * Each operation opens a connection to the {@link SQLiteDatabase}. If you want only one db connection use
+ * {@link ConnectedEntityService}
  * 
  * @author Falk Appel
  * @author Alexander Frank
@@ -57,8 +57,7 @@ public class EntityService<E> {
 	private final EntityInfo entityInfo;
 	private LinkedList<Field> columns;
 	private Field primaryKey;
-	private DbCreator dbCreator;
-	private SQLiteDatabase testDatabase;
+	protected DbCreator dbCreator;
 
 	/**
 	 * Creates a {@link EntityService} for the given {@link Entity}
@@ -87,22 +86,6 @@ public class EntityService<E> {
 		this.entityInfo = getEntityInfo(entityClass, context.getPackageName());
 		this.tableName = getTableName(entityClass, context.getPackageName());
 		this.dbCreator = dbCreator;
-		initColumns();
-	}
-
-	/*
-	 * Provides test access to constructor
-	 */
-	// TODO: remove this test constructor if possible
-	EntityService(final Context context, final Class<E> entityClass, SQLiteDatabase database) {
-		if (entityClass.getAnnotation(Entity.class) == null) {
-			throw new IllegalArgumentException("The EntityService can only be used for @Entity annotated classes");
-		}
-		this.context = context;
-		this.entityClass = entityClass;
-		this.entityInfo = getEntityInfo(entityClass, context.getPackageName());
-		this.tableName = getTableName(entityClass, context.getPackageName());
-		this.testDatabase = database;
 		initColumns();
 	}
 
@@ -151,17 +134,11 @@ public class EntityService<E> {
 		}
 	}
 
-	private void closeDB(SQLiteDatabase database) {
-		if (testDatabase == null) {
-			database.close();
-		}
+	protected void closeDB(SQLiteDatabase database) {
+		database.close();
 	}
 
-	private SQLiteDatabase openDB() {
-		if (testDatabase != null) {
-			return testDatabase;
-		}
-
+	protected SQLiteDatabase openDB() {
 		return dbCreator.getWritableDatabase();
 	}
 
@@ -298,16 +275,17 @@ public class EntityService<E> {
 	public void save(final Collection<E> data, final int maxDepth) {
 
 		SQLiteDatabase database = openDB();
-		try {final DatabaseSaver databaseSaver = new DatabaseSaver(context, database, maxDepth);
-		transactional(database, new DatabaseOperation<Void>() {
-			@Override
-			public Void execute() {
-				for (E object : data) {
-					databaseSaver.save(object);
+		try {
+			final DatabaseSaver databaseSaver = new DatabaseSaver(context, database, maxDepth);
+			transactional(database, new DatabaseOperation<Void>() {
+				@Override
+				public Void execute() {
+					for (E object : data) {
+						databaseSaver.save(object);
+					}
+					return null;
 				}
-				return null;
-			}
-		});
+			});
 		} finally {
 			closeDB(database);
 		}
@@ -366,4 +344,15 @@ public class EntityService<E> {
 	private static interface DatabaseOperation<E> {
 		public E execute();
 	}
+
+	/**
+	 * Will be removed with Version 0.2.0 <br>
+	 * Use {@link ConnectedEntityService} if you need only one db connection.
+	 */
+	// TODO:remove with Version 0.2.0
+	@Deprecated
+	public void close() {
+
+	}
+
 }

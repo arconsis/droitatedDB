@@ -17,7 +17,7 @@ public class CustomSQLiteShadow extends ShadowSQLiteDatabase {
 
 	@Implementation
 	public Cursor rawQueryWithFactory(final SQLiteDatabase.CursorFactory cursorFactory, final String sql, final String[] selectionArgs, final String editTable,
-			final CancellationSignal cancellationSignal) {
+			@SuppressWarnings("unused") final CancellationSignal cancellationSignal) {
 		return rawQueryWithFactory(cursorFactory, sql, selectionArgs, editTable);
 	}
 }

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -52,6 +53,7 @@ public class BasePersistenceTest {
 
 	private SQLiteDatabase database;
 	protected Context context;
+	private final Collection<ConnectedEntityService<?>> services = new ArrayList<ConnectedEntityService<?>>();
 	protected DbCreator dbCreator;
 
 	@Before
@@ -81,12 +83,16 @@ public class BasePersistenceTest {
 
 	@After
 	public void tearDown() throws Exception {
+		for (ConnectedEntityService<?> service : services) {
+			service.close();
+		}
 		database.close();
 	}
 
 	protected <T> EntityService<T> entityService(Class<T> entityClass) {
-
-		return new EntityService<T>(context, entityClass, database);
+		ConnectedEntityService<T> entityService = new ConnectedEntityService<T>(context, entityClass, database);
+		services.add(entityService);
+		return entityService;
 	}
 
 	static void assertSameFields(Object one, Object other) {
