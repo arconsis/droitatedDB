@@ -99,8 +99,9 @@ class DatabaseSaver {
 			// 4. update db
 			update(id, data.getClass(), entityData, contentValuesEntity);
 		} else {
-			if(!entityData.autoIncrement){
-				throw new IllegalStateException("PrimaryKey must not be null since "+entityData.type.getName()+" specifies @AutoIncrement. Object has no PrimaryKey: "+data.toString());
+			if (!entityData.autoIncrement) {
+				throw new IllegalStateException("PrimaryKey must not be null since " + entityData.type.getName()
+						+ " specifies @AutoIncrement. Object has no PrimaryKey: " + data.toString());
 			}
 			// 1. register new unsaved Object
 			newUnsavedObjects.add(data);
@@ -147,13 +148,12 @@ class DatabaseSaver {
 		toManyUpdates.clear();
 	}
 
-	private ContentValues collectToOneAssociatedValuesAndSaveAssociatedObjects(final Object data, EntityData entityData, final int currentDepth) {
+	private ContentValues collectToOneAssociatedValuesAndSaveAssociatedObjects(final Object data, final EntityData entityData, final int currentDepth) {
 		ContentValues contentValuesForeignKeys = new ContentValues(0);
 		if (currentDepth >= maxDepth) {
 			if (entityData.autoIncrement) {
 				return contentValuesForeignKeys;
-			}
-			else {
+			} else {
 				return resolveExistingForeignKeyValues(data, entityData);
 			}
 		}
@@ -179,7 +179,7 @@ class DatabaseSaver {
 		return contentValuesForeignKeys;
 	}
 
-	private ContentValues resolveExistingForeignKeyValues(Object data, EntityData entityData) {
+	private ContentValues resolveExistingForeignKeyValues(final Object data, final EntityData entityData) {
 		if (entityData.toOneAssociations.isEmpty()) {
 			return new ContentValues();
 		}
@@ -187,20 +187,20 @@ class DatabaseSaver {
 		final String[] projection = new String[entityData.toOneAssociations.size()];
 		int i = 0;
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
-			projection[i++]=SchemaConstants.FOREIGN_KEY+ toOneAssociatedField.getName();
+			projection[i++] = SchemaConstants.FOREIGN_KEY + toOneAssociatedField.getName();
 		}
 
 		Cursor cursor = database.query(tableName, projection, entityData.primaryKey.getName() + " = ?",
-				new
-				String[] { Integer.toString(getPrimaryKey(data, entityData)) },
-				null, null, null);
+				new String[] { Integer.toString(getPrimaryKey(data, entityData)) }, null, null, null);
 		return CursorOperation.tryOnCursor(cursor, new CursorOperation<ContentValues>() {
 			@Override
 			public ContentValues execute(final Cursor cursor) {
 				ContentValues values = new ContentValues();
 				if (cursor.moveToFirst()) {
 					for (int i = 0; i < cursor.getColumnCount(); i++) {
-						values.put(projection[i], cursor.getInt(i));
+						if (!cursor.isNull(i)) {
+							values.put(projection[i], cursor.getInt(i));
+						}
 					}
 				}
 				return values;
@@ -209,7 +209,7 @@ class DatabaseSaver {
 
 	}
 
-	private void saveToManyAssociatedObjects(final Object data, final int currentDepth, EntityData entityData, Integer id) {
+	private void saveToManyAssociatedObjects(final Object data, final int currentDepth, final EntityData entityData, final Integer id) {
 		if (currentDepth >= maxDepth) {
 			return;
 		}
@@ -250,7 +250,7 @@ class DatabaseSaver {
 		}
 	}
 
-	private Collection<?> getAssociatedData(Object data, Field associationField) {
+	private Collection<?> getAssociatedData(final Object data, final Field associationField) {
 		associationField.setAccessible(true);
 		Object association = getFieldValue(data, associationField);
 		if (association != null) {
@@ -260,7 +260,7 @@ class DatabaseSaver {
 		}
 	}
 
-	private ContentValues getFieldContent(final Object data, EntityData entityData) {
+	private ContentValues getFieldContent(final Object data, final EntityData entityData) {
 		ContentValues contentValuesEntity = new ContentValues(entityData.columns.size());
 		for (Field column : entityData.columns) {
 			put(contentValuesEntity, column, data);
@@ -268,11 +268,11 @@ class DatabaseSaver {
 		return contentValuesEntity;
 	}
 
-	private Set<Integer> loadIdsFromLinkTable(final int primaryKeyData, Class<?> linkTableSchema) {
+	private Set<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> linkTableSchema) {
 		String tableName = getLinkTableName(linkTableSchema);
 		String[] projection = getLinkTableProjection(linkTableSchema);
-		Cursor cursor = database.query(tableName, new String[] { projection[1] }, projection[0] + " = ?",
-				new String[] { Integer.toString(primaryKeyData) }, null, null, null);
+		Cursor cursor = database.query(tableName, new String[] { projection[1] }, projection[0] + " = ?", new String[] { Integer.toString(primaryKeyData) },
+				null, null, null);
 		return CursorOperation.tryOnCursor(cursor, new CursorOperation<Set<Integer>>() {
 			@Override
 			public Set<Integer> execute(final Cursor cursor) {
@@ -310,7 +310,7 @@ class DatabaseSaver {
 		}
 	}
 
-	private void updateToOneAssos(Object key, Collection<ToOneUpdate> updates) {
+	private void updateToOneAssos(final Object key, final Collection<ToOneUpdate> updates) {
 		ContentValues values = new ContentValues();
 		for (ToOneUpdate toOneUpdate : updates) {
 			values.putAll(toOneUpdate.getContentValues());
@@ -321,7 +321,7 @@ class DatabaseSaver {
 
 	private void update(final Integer id, final Class<? extends Object> entityClass, final EntityData entityData, final ContentValues contentValues) {
 		if (entityData.autoIncrement) {
-			database.update(entityClass.getSimpleName(), contentValues,entityData.primaryKey.getName() + " = ?", new String[] { Integer.toString(id) });
+			database.update(entityClass.getSimpleName(), contentValues, entityData.primaryKey.getName() + " = ?", new String[] { Integer.toString(id) });
 		} else {
 			database.insertWithOnConflict(entityClass.getSimpleName(), null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
 		}
@@ -336,7 +336,7 @@ class DatabaseSaver {
 		private final Object associatedObject;
 		private final String foreignkey;
 
-		ToOneUpdate(String foreignkey, Object associatedObject) {
+		ToOneUpdate(final String foreignkey, final Object associatedObject) {
 			this.foreignkey = foreignkey;
 			this.associatedObject = associatedObject;
 		}
@@ -362,7 +362,7 @@ class DatabaseSaver {
 		private final String secondColumn;
 		private Integer secondId;
 
-		public ToManyUpdate(SQLiteDatabase database, Integer id, Integer associatedId, Class<?> linkTableSchema, Mode mode) {
+		public ToManyUpdate(final SQLiteDatabase database, final Integer id, final Integer associatedId, final Class<?> linkTableSchema, final Mode mode) {
 			this.database = database;
 			this.mode = mode;
 			linkTableName = getLinkTableName(linkTableSchema);
@@ -373,13 +373,13 @@ class DatabaseSaver {
 			secondId = associatedId;
 		}
 
-		public ToManyUpdate(SQLiteDatabase database, Integer id, Object associated, Class<?> linkTableSchema, Mode mode) {
+		public ToManyUpdate(final SQLiteDatabase database, final Integer id, final Object associated, final Class<?> linkTableSchema, final Mode mode) {
 			this(database, id, null, linkTableSchema, mode);
 			this.associated = associated;
 		}
 
 		@Override
-		public boolean equals(Object o) {
+		public boolean equals(final Object o) {
 			if (o == null || !(o instanceof ToManyUpdate)) {
 				return false;
 			}
