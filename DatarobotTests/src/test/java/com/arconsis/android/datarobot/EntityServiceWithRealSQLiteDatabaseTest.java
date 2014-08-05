@@ -70,6 +70,8 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		data.setBigDouble(00d);
 		data.setBigFloat(2.3f);
 		data.setBigLong(4l);
+		data.setBigBoolean(true);
+		data.setMyBoolean(true);
 		data.setMyDate(new Date());
 		data.setMyDouble(4d);
 		data.setMyFloat(5.4f);

@@ -41,6 +41,8 @@ public class IntegerAttribute extends AbstractAttribute {
 			return new Date(originalCursor.getLong(columnIndex()));
 		} else if (Long.class.isAssignableFrom(type()) || long.class.isAssignableFrom(type())) {
 			return originalCursor.getLong(columnIndex());
+		} else if (Boolean.class.isAssignableFrom(type()) || boolean.class.isAssignableFrom(type())) {
+			return originalCursor.getInt(columnIndex()) == 1;
 		}
 		return originalCursor.getInt(columnIndex());
 	}

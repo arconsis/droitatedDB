@@ -33,6 +33,8 @@ public class Simple {
 	@PrimaryKey
 	@AutoIncrement
 	private Integer _id;
+	@Column
+	private Boolean bigBoolean;
 
 	@Column
 	private Double bigDouble;
@@ -45,6 +47,8 @@ public class Simple {
 
 	@Column
 	private Date myDate;
+	@Column
+	private boolean myBoolean;
 
 	@Column
 	private double myDouble;
@@ -159,6 +163,22 @@ public class Simple {
 
 	public void setSomeBytes(final byte[] someBytes) {
 		this.someBytes = someBytes;
+	}
+
+	public Boolean getBigBoolean() {
+		return this.bigBoolean;
+	}
+
+	public void setBigBoolean(Boolean bigBoolean) {
+		this.bigBoolean = bigBoolean;
+	}
+
+	public boolean isMyBoolean() {
+		return this.myBoolean;
+	}
+
+	public void setMyBoolean(boolean myBoolean) {
+		this.myBoolean = myBoolean;
 	}
 
 }

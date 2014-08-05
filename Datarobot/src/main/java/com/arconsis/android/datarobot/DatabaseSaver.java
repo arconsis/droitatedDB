@@ -303,6 +303,8 @@ class DatabaseSaver {
 			contentValues.put(columnName, Double.class.cast(columnValue));
 		} else if (Long.class.equals(columnType) || long.class.equals(columnType)) {
 			contentValues.put(columnName, Long.class.cast(columnValue));
+		} else if (Boolean.class.equals(columnType) || boolean.class.equals(columnType)) {
+			contentValues.put(columnName, Boolean.class.cast(columnValue) ? 1 : 0);
 		} else if (byte[].class.equals(columnType)) {
 			contentValues.put(columnName, byte[].class.cast(columnValue));
 		} else if (Date.class.equals(columnType)) {

@@ -42,7 +42,8 @@ public enum ColumnType {
 	public static ColumnType resolveColumnType(final String type) {
 		if (matches(String.class, type)) {
 			return ColumnType.TEXT;
-		} else if (matches(Integer.class, type) || matches(int.class, type) || matches(Date.class, type) || matches(Long.class, type)
+		} else if (matches(Integer.class, type) || matches(int.class, type) || matches(Boolean.class, type) || matches(boolean.class, type)
+				|| matches(Date.class, type) || matches(Long.class, type)
 				|| matches(long.class, type)) {
 			return ColumnType.INTEGER;
 		} else if (matches(Double.class, type) || matches(Float.class, type) || matches(double.class, type) || matches(float.class, type)) {
