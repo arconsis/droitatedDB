@@ -143,7 +143,7 @@ class DatabaseResolver {
 	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany,
 			final int currentDepth, final int maxDepth) {
 
-		final AbstractAttribute foreignAttribute = getForeignAttribute(data.getClass(), toMany);
+		final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
 		if (foreignAttribute != null) {
 			EntityData entityData = EntityData.getEntityData(foreignAttribute.type());
 
@@ -193,7 +193,7 @@ class DatabaseResolver {
 		return (Collection<Object>) getFieldValue(data, associationField);
 	}
 
-	private AbstractAttribute getForeignAttribute(final Class<? extends Object> dataType, final ToManyAssociation toMany) {
+	private AbstractAttribute getForeignAttribute(final ToManyAssociation toMany) {
 		for (AbstractAttribute attribute : getLinkTableColumns(toMany.getLinkTableSchema())) {
 			if (attribute.columnName().endsWith(TO_SUFFIX)) {
 				return attribute;
