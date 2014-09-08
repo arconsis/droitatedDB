@@ -15,18 +15,6 @@
  */
 package com.arconsis.android.datarobot;
 
-import static com.arconsis.android.datarobot.CursorOperation.tryOnCursor;
-import static com.arconsis.android.datarobot.SchemaUtil.getEntityInfo;
-import static com.arconsis.android.datarobot.SchemaUtil.getTableName;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -37,38 +25,44 @@ import com.arconsis.android.datarobot.entity.Entity;
 import com.arconsis.android.datarobot.entity.PrimaryKey;
 import com.arconsis.android.datarobot.schema.EntityInfo;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static com.arconsis.android.datarobot.CursorOperation.tryOnCursor;
+import static com.arconsis.android.datarobot.SchemaUtil.getEntityInfo;
+import static com.arconsis.android.datarobot.SchemaUtil.getTableName;
+
 /**
  * Provides support for executing CRUD operations on {@link Entity} classes, such getting them from the database or
  * saving them to the database.<br>
  * <br>
  * Each operation opens a connection to the {@link SQLiteDatabase}. If you want only one db connection use
  * {@link ConnectedEntityService}
- * 
+ *
+ * @param <E> Entity, for which this service will be used
  * @author Falk Appel
  * @author Alexander Frank
- * 
- * @param <E>
- *            Entity, for which this service will be used
  */
 public class EntityService<E> {
-	private final Context context;
-	private final Class<E> entityClass;
-	private String tableName;
-	private final EntityInfo entityInfo;
-	private LinkedList<Field> columns;
-	private Field primaryKey;
-	protected DbCreator dbCreator;
+	private final Context           context;
+	private final Class<E>          entityClass;
+	private       String            tableName;
+	private final EntityInfo        entityInfo;
+	private       LinkedList<Field> columns;
+	private       Field             primaryKey;
+	protected     DbCreator         dbCreator;
 
 	/**
 	 * Creates a {@link EntityService} for the given {@link Entity}
-	 * 
-	 * @param context
-	 *            Android context
-	 * @param entityClass
-	 *            Class of the {@link Entity}, the service should be used for
-	 * 
-	 * @throws IllegalArgumentException
-	 *             When the given {@link #entityClass} is no {@link Entity}
+	 *
+	 * @param context     Android context
+	 * @param entityClass Class of the {@link Entity}, the service should be used for
+	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
 	 */
 	public EntityService(final Context context, final Class<E> entityClass) {
 		this(context, entityClass, new DbCreator(context, PersistenceDefinition.create(context)));
@@ -105,7 +99,7 @@ public class EntityService<E> {
 
 	/**
 	 * Reads all {@link Entity}s of the service specific type from the database
-	 * 
+	 *
 	 * @return All {@link Entity}s stored in the database, if non are found a empty list is returned
 	 */
 	public List<E> get() {
@@ -114,15 +108,14 @@ public class EntityService<E> {
 
 	/**
 	 * Gets a specific {@link Entity} according to the given id
-	 * 
-	 * @param id
-	 *            primary key of the {@link Entity}
+	 *
+	 * @param id primary key of the {@link Entity}
 	 * @return The {@link Entity} to the given id, or null if non was found
 	 */
 	public E get(final int id) {
 		SQLiteDatabase database = openDB();
 		try {
-			Cursor cursor = database.query(tableName, null, primaryKey.getName() + " = ?", new String[] { Integer.toString(id) }, null, null, null);
+			Cursor cursor = database.query(tableName, null, primaryKey.getName() + " = ?", new String[]{Integer.toString(id)}, null, null, null);
 			return tryOnCursor(cursor, new CursorOperation<E>() {
 				@Override
 				public E execute(final Cursor cursor) {
@@ -144,13 +137,10 @@ public class EntityService<E> {
 
 	/**
 	 * Search for {@link Entity}s in the database with basic SQL WHERE statements.
-	 * 
-	 * @param selection
-	 *            SQL WHERE statement
-	 * @param selectionArgs
-	 *            Arguments for the WHERE statement
-	 * @param order
-	 *            Sort order of the result
+	 *
+	 * @param selection     SQL WHERE statement
+	 * @param selectionArgs Arguments for the WHERE statement
+	 * @param order         Sort order of the result
 	 * @return All found {@link Entity}s or an empty list of non are found
 	 */
 	public List<E> find(final String selection, final String[] selectionArgs, final String order) {
@@ -171,9 +161,8 @@ public class EntityService<E> {
 	/**
 	 * Resolves the associations to a given {@link Entity} object and all underlying associations within the object
 	 * graph.
-	 * 
-	 * @param data
-	 *            {@link Entity} on which the associations should be resolved
+	 *
+	 * @param data {@link Entity} on which the associations should be resolved
 	 */
 	public void resolveAssociations(final E data) {
 		SQLiteDatabase database = openDB();
@@ -186,14 +175,10 @@ public class EntityService<E> {
 
 	/**
 	 * Resolves the associations to a given {@link Entity} object. The associations will only be resolved to the given
-	 * depth within the object . graph.
-	 * 
-	 * @param data
-	 *            {@link Entity} on which the associations should be resolved
-	 * 
-	 * @param maxDepth
-	 *            The maximum depth to which the associations should be resolved
-	 * 
+	 * depth within the object graph.
+	 *
+	 * @param data     {@link Entity} on which the associations should be resolved
+	 * @param maxDepth The maximum depth to which the associations should be resolved
 	 */
 	public void resolveAssociations(final E data, final int maxDepth) {
 		SQLiteDatabase database = openDB();
@@ -206,13 +191,10 @@ public class EntityService<E> {
 
 	/**
 	 * Stores the given {@link Entity} to the database. All attached associations will be stored as well.
-	 * 
-	 * @param data
-	 *            {@link Entity} which should be stored
+	 *
+	 * @param data {@link Entity} which should be stored
 	 * @return The primary key of the given data.
-	 * 
-	 * @throws IllegalStateException
-	 *             When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
+	 * @throws IllegalStateException When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
 	 */
 	public int save(final E data) {
 		return save(data, Integer.MAX_VALUE);
@@ -221,15 +203,11 @@ public class EntityService<E> {
 	/**
 	 * Stores the given {@link Entity} to the database. Associated objects will be saved to the given maxDepth.<br>
 	 * maxDepth of 0 means that only the given {@link Entity} itself will be saved without associations.
-	 * 
-	 * @param data
-	 *            {@link Entity} which should be stored
-	 * @param maxDepth
-	 *            The maximum depth of the associated objects which should also be saved.
+	 *
+	 * @param data     {@link Entity} which should be stored
+	 * @param maxDepth The maximum depth of the associated objects which should also be saved.
 	 * @return The primary key of the given data.
-	 * 
-	 * @throws IllegalStateException
-	 *             When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
+	 * @throws IllegalStateException When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
 	 */
 	public int save(final E data, final int maxDepth) {
 		final SQLiteDatabase database = openDB();
@@ -248,12 +226,9 @@ public class EntityService<E> {
 	/**
 	 * Stores all given {@link Entity}s in the {@link Collection} to the database. All attached associations will be
 	 * stored as well.
-	 * 
-	 * @param data
-	 *            {@link Entity}s which should be stored
-	 * 
-	 * @throws IllegalStateException
-	 *             When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
+	 *
+	 * @param data {@link Entity}s which should be stored
+	 * @throws IllegalStateException When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
 	 */
 	public void save(final Collection<E> data) {
 		save(data, Integer.MAX_VALUE);
@@ -263,14 +238,10 @@ public class EntityService<E> {
 	 * Stores all given {@link Entity}s in the {@link Collection} to the database. Associated objects will be saved to
 	 * the given maxDepth.<br>
 	 * maxDepth of 0 means that only the given {@link Entity} itself will be saved without associations.
-	 * 
-	 * @param data
-	 *            {@link Entity} which should be stored
-	 * @param maxDepth
-	 *            The maximum depth of the associated objects which should also be saved.
-	 * 
-	 * @throws IllegalStateException
-	 *             When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
+	 *
+	 * @param data     {@link Entity} which should be stored
+	 * @param maxDepth The maximum depth of the associated objects which should also be saved.
+	 * @throws IllegalStateException When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
 	 */
 	public void save(final Collection<E> data, final int maxDepth) {
 
@@ -293,16 +264,11 @@ public class EntityService<E> {
 
 	/**
 	 * Deletes the given {@link Entity} from the database
-	 * 
-	 * @param data
-	 *            {@link Entity} that should be deleted
+	 *
+	 * @param data {@link Entity} that should be deleted
 	 * @return <code>true</code> if the {@link Entity} could be deleted, <code>false</code> otherwise
-	 * 
-	 * @throws IllegalStateException
-	 *             When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
-	 * 
-	 * @throws IllegalArgumentException
-	 *             When the value of the {@link PrimaryKey} field is null
+	 * @throws IllegalStateException    When the {@link PrimaryKey} field and its value of the {@link Entity} could not be determined
+	 * @throws IllegalArgumentException When the value of the {@link PrimaryKey} field is null
 	 */
 	public boolean delete(final E data) {
 		Integer id = (Integer) Utilities.getFieldValue(data, primaryKey);
@@ -314,16 +280,15 @@ public class EntityService<E> {
 
 	/**
 	 * Deletes the data of the {@link Entity} for the given id
-	 * 
-	 * @param id
-	 *            primary key of the {@link Entity} to be deleted
+	 *
+	 * @param id primary key of the {@link Entity} to be deleted
 	 * @return <code>true</code> if the {@link Entity} could be deleted, <code>false</code> otherwise
 	 */
 	public boolean delete(final int id) {
 		SQLiteDatabase database = openDB();
 		try {
 
-			int delete = database.delete(tableName, EntityData.getEntityData(entityClass).primaryKey.getName() + "= ?", new String[] { Integer.toString(id) });
+			int delete = database.delete(tableName, EntityData.getEntityData(entityClass).primaryKey.getName() + "= ?", new String[]{Integer.toString(id)});
 			return delete == 1;
 		} finally {
 			closeDB(database);

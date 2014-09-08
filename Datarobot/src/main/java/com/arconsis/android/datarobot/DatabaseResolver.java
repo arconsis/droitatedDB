@@ -15,6 +15,24 @@
  */
 package com.arconsis.android.datarobot;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.arconsis.android.datarobot.cursor.CombinedCursorImpl;
+import com.arconsis.android.datarobot.schema.AbstractAttribute;
+import com.arconsis.android.datarobot.schema.ToManyAssociation;
+import com.arconsis.android.datarobot.schema.ToOneAssociation;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import static com.arconsis.android.datarobot.CursorOperation.tryOnCursor;
 import static com.arconsis.android.datarobot.SchemaUtil.getAssociationsSchema;
 import static com.arconsis.android.datarobot.SchemaUtil.getEntityInfo;
@@ -29,35 +47,17 @@ import static com.arconsis.android.datarobot.schema.SchemaConstants.FOREIGN_KEY;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.FROM_SUFFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TO_SUFFIX;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
-import com.arconsis.android.datarobot.cursor.CombinedCursorImpl;
-import com.arconsis.android.datarobot.schema.AbstractAttribute;
-import com.arconsis.android.datarobot.schema.ToManyAssociation;
-import com.arconsis.android.datarobot.schema.ToOneAssociation;
-
 /**
  * Resolves entity object graphs from the db.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 class DatabaseResolver {
 
 	private final Map<String, Object> loadedObjects;
-	private final Context context;
-	private final SQLiteDatabase database;
+	private final Context             context;
+	private final SQLiteDatabase      database;
 
 	public DatabaseResolver(final Context context, final SQLiteDatabase database) {
 		this.context = context;
@@ -95,11 +95,12 @@ class DatabaseResolver {
 	}
 
 	private void handleToOneAssociation(final Integer idRequestingObject, final Object requestingObject, final Field associationField,
-			final ToOneAssociation toOneAssociation, final int currentDepth, final int maxDepth) {
+										final ToOneAssociation toOneAssociation, final int currentDepth, final int maxDepth) {
 		String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
-		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[] { toOneAssociation
-				.getAssociationAttribute().columnName() }, keyName + " = ?", new String[] { Integer.toString(idRequestingObject) }, null, null, null);
+		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
+				toOneAssociation.getAssociationAttribute().columnName()},
+				keyName + " = ?", new String[]{Integer.toString(idRequestingObject)}, null, null, null);
 		tryOnCursor(fkCursor, new CursorOperation<Void>() {
 			@Override
 			public Void execute(final Cursor cursor) throws Exception {
@@ -112,7 +113,7 @@ class DatabaseResolver {
 	}
 
 	private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration,
-			final int currentDepth, final int maxDepth) {
+								   final int currentDepth, final int maxDepth) {
 		String mixedId = "class " + declaration.getAssociatedType().getCanonicalName() + "#" + id;
 		if (loadedObjects.containsKey(mixedId)) {
 			setFieldValue(associationField, requestingObject, loadedObjects.get(mixedId));
@@ -122,15 +123,16 @@ class DatabaseResolver {
 	}
 
 	private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration,
-			final int currentDepth, final int maxDepth) {
+								  final int currentDepth, final int maxDepth) {
 		Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
-				EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[] { Integer.toString(id) }, null, null, null);
+				EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Integer.toString(id)}, null, null, null);
 		tryOnCursor(associationCursor, new CursorOperation<Void>() {
 			@Override
 			public Void execute(final Cursor cursor) {
 				if (cursor.moveToFirst()) {
 					Object association = CombinedCursorImpl.create(cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
-							declaration.getAssociatedType()).getCurrent();
+							declaration
+							.getAssociatedType()).getCurrent();
 					setFieldValue(associationField, requestingObject, association);
 					loadedObjects.put(declaration.getAssociatedType().getCanonicalName() + "#" + id, association);
 					resolve(association, currentDepth + 1, maxDepth);
@@ -141,7 +143,7 @@ class DatabaseResolver {
 	}
 
 	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany,
-			final int currentDepth, final int maxDepth) {
+										 final int currentDepth, final int maxDepth) {
 
 		final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
 		if (foreignAttribute != null) {
@@ -164,14 +166,15 @@ class DatabaseResolver {
 				} else {
 					String primaryKeyName = entityData.primaryKey.getName();
 
-					Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null, primaryKeyName + "= ?",
-							new String[] { Integer.toString(id) }, null, null, null);
+					Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null,
+							primaryKeyName + "= ?", new String[]{Integer.toString(id)}, null, null, null);
 					Object linkedObject = tryOnCursor(cursor, new CursorOperation<Object>() {
 						@Override
 						public Object execute(final Cursor cursor) {
 							if (cursor.getCount() > 0) {
 								Object loaded = CombinedCursorImpl.create(cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
-										foreignAttribute.type()).getOne();
+										foreignAttribute
+										.type()).getOne();
 								loadedObjects.put(mixedId, loaded);
 								resolve(loaded, currentDepth + 1, maxDepth);
 								return loaded;
@@ -190,7 +193,7 @@ class DatabaseResolver {
 
 	@SuppressWarnings("unchecked")
 	private Collection<Object> getCollection(final Object data, final Field associationField) {
-		return (Collection<Object>) getFieldValue(data, associationField);
+		return new ArrayList<Object>((Collection<Object>) getFieldValue(data, associationField));
 	}
 
 	private AbstractAttribute getForeignAttribute(final ToManyAssociation toMany) {
@@ -203,11 +206,11 @@ class DatabaseResolver {
 	}
 
 	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute,
-			final ToManyAssociation toMany) {
+											   final ToManyAssociation toMany) {
 		String tableName = getLinkTableName(toMany.getLinkTableSchema());
 		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 
-		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[] { Integer.toString(primaryKeyData) }, null, null, null);
+		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{Integer.toString(primaryKeyData)}, null, null, null);
 		return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
 			@Override
 			public List<Integer> execute(final Cursor cursor) throws Exception {
