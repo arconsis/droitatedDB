@@ -1,15 +1,19 @@
 package com.arconsis.notes.db;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.arconsis.android.datarobot.config.Persistence;
+import com.arconsis.android.datarobot.hooks.Create;
+import com.arconsis.android.datarobot.hooks.DbCreate;
 import com.arconsis.android.datarobot.hooks.DbUpdate;
 import com.arconsis.android.datarobot.hooks.Update;
 import com.arconsis.notes.generated.DB;
 
+@Create
 @Update
 @Persistence(dbName = "notes.db", dbVersion = 1)
-public class UpdateHook implements DbUpdate {
+public class UpdateHook implements DbUpdate, DbCreate {
 
 	@Override
 	public void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
@@ -24,5 +28,10 @@ public class UpdateHook implements DbUpdate {
 		db.execSQL("CREATE INDEX note_idx on Note (_id, fk_user)");
 		db.execSQL("CREATE INDEX user_idx on User (_id)");
 		db.execSQL("CREATE INDEX note_user_link_idx on NoteUserLink (fk_note, fk_user)");
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		Log.i("DB Hook", "Running create hook");
 	}
 }
