@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "com.arconsis.android.datarobot.performance"
+        minSdkVersion 14
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    apt {
+        arguments {
+            manifest '/Users/alexfrank/workspace/DatarobotPerformanceTests/app/src/main/AndroidManifest.xml'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:20.0.0'
+    apt 'com.arconsis:datarobot.processor:0.1.2-SNAPSHOT'
+    compile 'com.arconsis:datarobot.api:0.1.2-SNAPSHOT'
+}

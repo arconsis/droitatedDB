@@ -17,3 +17,6 @@ dependency-reduced-pom.xml
 examples/Notes/app/build
 examples/Notes/build
 examples/Notes/.gradle
+examples/DatarobotPerformanceTests/.gradle
+examples/DatarobotPerformanceTests/app/build
+examples/DatarobotPerformanceTests/build
