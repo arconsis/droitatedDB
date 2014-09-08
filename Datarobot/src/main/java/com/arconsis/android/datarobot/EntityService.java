@@ -71,7 +71,7 @@ public class EntityService<E> {
 	 *             When the given {@link #entityClass} is no {@link Entity}
 	 */
 	public EntityService(final Context context, final Class<E> entityClass) {
-		this(context, entityClass, new DbCreator(context, PersitenceDefinition.create(context)));
+		this(context, entityClass, new DbCreator(context, PersistenceDefinition.create(context)));
 	}
 
 	/*

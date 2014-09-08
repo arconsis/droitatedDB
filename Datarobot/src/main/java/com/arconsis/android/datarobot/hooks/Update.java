@@ -26,6 +26,7 @@ import java.lang.annotation.Target;
  * The class also has to implement the {@link DbUpdate} interface.
  * 
  * @author Alexander Frank
+ * @author Falk Appel
  */
 @Retention(RUNTIME)
 @Target(TYPE)

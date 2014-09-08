@@ -15,13 +15,13 @@
  */
 package com.arconsis.android.datarobot.builder.schema.writer;
 
-import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_PREFIX;
-import static com.arconsis.android.datarobot.builder.Constants.TAB;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.ATRIBUTE_SUFFIX;
+import com.arconsis.android.datarobot.builder.schema.data.Column;
 
 import java.util.Locale;
 
-import com.arconsis.android.datarobot.builder.schema.data.Column;
+import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_PREFIX;
+import static com.arconsis.android.datarobot.builder.Constants.TAB;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTE_SUFFIX;
 
 /**
  * @author Alexander Frank
@@ -31,7 +31,7 @@ public class ColumnWriter implements Writer {
 
 	private final String indent;
 	private final Column column;
-	private final int columnIdx;
+	private final int    columnIdx;
 
 	public ColumnWriter(final String indent, final Column column, final int columnIdx) {
 		this.indent = indent;
@@ -45,9 +45,23 @@ public class ColumnWriter implements Writer {
 		StringBuilder builder = new StringBuilder();
 		String nameToUpper = column.getNameInEntity().toUpperCase(Locale.getDefault());
 
-		builder.append(indent).append(TAB).append(CONSTANT_PREFIX).append(columnType).append(ATRIBUTE_SUFFIX).append(" ").append(nameToUpper).append(" = new ")
-		.append(columnType).append(ATRIBUTE_SUFFIX).append("(\"").append(column.getNameInEntity()).append("\", ").append(column.getTypeInEntity())
-		.append(".class, ").append(columnIdx).append(");\n");
+		builder.append(indent)
+				.append(TAB)
+				.append(CONSTANT_PREFIX)
+				.append(columnType)
+				.append(ATTRIBUTE_SUFFIX)
+				.append(" ")
+				.append(nameToUpper)
+				.append(" = new ")
+				.append(columnType)
+				.append(ATTRIBUTE_SUFFIX)
+				.append("(\"")
+				.append(column.getNameInEntity())
+				.append("\", ")
+				.append(column.getTypeInEntity())
+				.append(".class, ")
+				.append(columnIdx)
+				.append(");\n");
 		return builder.toString();
 	}
 

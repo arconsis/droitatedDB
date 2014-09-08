@@ -15,23 +15,24 @@
  */
 package com.arconsis.android.datarobot.builder.schema.writer;
 
-import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_INT;
-import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_STRING;
-import static com.arconsis.android.datarobot.builder.Constants.GENERATED_COMMENT;
-import static com.arconsis.android.datarobot.builder.Constants.TAB;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_NAME;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_VERSION;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.UPDATE_HOOK;
-import static java.lang.String.format;
-
-import java.util.Collection;
-import java.util.HashSet;
-
 import com.arconsis.android.datarobot.builder.schema.data.Association;
 import com.arconsis.android.datarobot.builder.schema.data.Schema;
 import com.arconsis.android.datarobot.builder.schema.data.Table;
 import com.arconsis.android.datarobot.schema.AssociationType;
 import com.arconsis.android.datarobot.util.Pair;
+
+import java.util.Collection;
+import java.util.HashSet;
+
+import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_INT;
+import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_STRING;
+import static com.arconsis.android.datarobot.builder.Constants.GENERATED_COMMENT;
+import static com.arconsis.android.datarobot.builder.Constants.TAB;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.CREATE_HOOK;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_NAME;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_VERSION;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.UPDATE_HOOK;
+import static java.lang.String.format;
 
 /**
  * @author Alexander Frank
@@ -72,12 +73,17 @@ public class SchemaWriter implements Writer {
 
 	private void addSchemaData(final StringBuilder builder) {
 		builder.append(TAB).append(format(CONSTANT_STRING, DB_NAME, schema.getDbName()));
-		String updateHookClassName = schema.getUpdateHookClassName();
-		if (updateHookClassName != null && updateHookClassName.length() > 0) {
-			builder.append(TAB).append(format(CONSTANT_STRING, UPDATE_HOOK, updateHookClassName));
-		}
+		addHook(builder, CREATE_HOOK, schema.getCreateHookClassName());
+		addHook(builder, UPDATE_HOOK, schema.getUpdateHookClassName());
+
 		builder.append(TAB).append(format(CONSTANT_INT, DB_VERSION, schema.getDbVersion()));
 		builder.append("\n");
+	}
+
+	private void addHook(StringBuilder builder, String hookName, String hookClassName) {
+		if (hookClassName != null && hookClassName.length() > 0) {
+			builder.append(TAB).append(format(CONSTANT_STRING, hookName, hookClassName));
+		}
 	}
 
 	private void addTables(final StringBuilder builder, final Collection<Pair<String, String>> toNAssociations) {

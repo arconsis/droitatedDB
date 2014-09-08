@@ -17,31 +17,32 @@ package com.arconsis.android.datarobot.schema;
 
 /**
  * Constant values used for code generation and database access.
- * 
+ *
  * @author Alexander Frank
  * @author Falk Appel
  */
 public class SchemaConstants {
-	public static final String DB = "DB";
+	public static final String DB    = "DB";
 	public static final String TABLE = "Table";
-	public static final String LINK = "Association";
+	public static final String LINK  = "Association";
 
-	public static final String DB_NAME = "DB_NAME";
-	public static final String DB_VERSION = "DB_VERSION";
-	public static final String UPDATE_HOOK = "DB_UPDATE_HOOK";
-	public static final String CLASS_NAME = "CLASS_NAME";
-	public static final String TABLE_NAME = "TABLE_NAME";
-	public static final String PROJECTION = "PROJECTION";
-	public static final String ATTRIBUTES = "ATTRIBUTES";
+	public static final String DB_NAME      = "DB_NAME";
+	public static final String DB_VERSION   = "DB_VERSION";
+	public static final String UPDATE_HOOK  = "DB_UPDATE_HOOK";
+	public static final String CREATE_HOOK  = "DB_CREATE_HOOK";
+	public static final String CLASS_NAME   = "CLASS_NAME";
+	public static final String TABLE_NAME   = "TABLE_NAME";
+	public static final String PROJECTION   = "PROJECTION";
+	public static final String ATTRIBUTES   = "ATTRIBUTES";
 	public static final String SQL_CREATION = "SQL_CREATION";
-	public static final String SQL_INDEX = "SQL_INDEX";
+	public static final String SQL_INDEX    = "SQL_INDEX";
 
-	public static final String ATRIBUTE_SUFFIX = "Attribute";
-	public static final String INFO_SUFFIX = "Info";
-	public static final String GENERATED_SUFFIX = "generated";
+	public static final String ATTRIBUTE_SUFFIX       = "Attribute";
+	public static final String INFO_SUFFIX            = "Info";
+	public static final String GENERATED_SUFFIX       = "generated";
 	public static final String ASSOCIATIONS_INTERFACE = "Associations";
-	public static final String FOREIGN_KEY = "fk_";
-	public static final String INDEX_SUFFIX = "_idx";
-	public static final String FROM_SUFFIX = "_from";
-	public static final String TO_SUFFIX = "_to";
+	public static final String FOREIGN_KEY            = "fk_";
+	public static final String INDEX_SUFFIX           = "_idx";
+	public static final String FROM_SUFFIX            = "_from";
+	public static final String TO_SUFFIX              = "_to";
 }

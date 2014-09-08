@@ -18,6 +18,8 @@ package com.arconsis.android.datrobot.test.data;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.arconsis.android.datarobot.config.Persistence;
+import com.arconsis.android.datarobot.hooks.Create;
+import com.arconsis.android.datarobot.hooks.DbCreate;
 import com.arconsis.android.datarobot.hooks.DbUpdate;
 import com.arconsis.android.datarobot.hooks.Update;
 
@@ -25,11 +27,16 @@ import com.arconsis.android.datarobot.hooks.Update;
  * @author Falk Appel
  * @author Alexander Frank
  */
+@Create
 @Update
- @Persistence(dbName = "test.db", dbVersion = 1)
- public class UpdateHook implements DbUpdate {
+@Persistence(dbName = "test.db", dbVersion = 1)
+public class UpdateHook implements DbUpdate, DbCreate {
 
-	 @Override
-	 public void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-	 }
- }
+	@Override
+	public void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+	}
+}

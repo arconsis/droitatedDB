@@ -15,6 +15,16 @@
  */
 package com.arconsis.android.datarobot;
 
+import android.content.Context;
+
+import com.arconsis.android.datarobot.schema.SchemaConstants;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static com.arconsis.android.datarobot.schema.SchemaConstants.CREATE_HOOK;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.DB;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_NAME;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_VERSION;
@@ -24,32 +34,25 @@ import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_CREATION
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.UPDATE_HOOK;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import android.content.Context;
-
-import com.arconsis.android.datarobot.schema.SchemaConstants;
-
 /**
  * @author Falk Appel
  * @author Alexander Frank
  */
-final class PersitenceDefinition {
+final class PersistenceDefinition {
 
 	private final String name;
-	private final int version;
+	private final int    version;
 	private final ArrayList<String> sqlCreationStatements = new ArrayList<String>();
-	private final ArrayList<String> indexStatements = new ArrayList<String>();
+	private final ArrayList<String> indexStatements       = new ArrayList<String>();
 	private final Class<?> updateHook;
+	private final Class<?> createHook;
 
-	public PersitenceDefinition(final String name, final int version, final Class<?> updateHook, final List<String> sqlCreationStatements,
-			final List<String> indexStatements) {
+	public PersistenceDefinition(final String name, final int version, final Class<?> updateHook, final Class<?> createHook,
+								 final List<String> sqlCreationStatements, final List<String> indexStatements) {
 		this.name = name;
 		this.version = version;
 		this.updateHook = updateHook;
+		this.createHook = createHook;
 		this.sqlCreationStatements.addAll(sqlCreationStatements);
 		this.indexStatements.addAll(indexStatements);
 	}
@@ -66,6 +69,10 @@ final class PersitenceDefinition {
 		return updateHook;
 	}
 
+	public Class<?> getCreateHook() {
+		return createHook;
+	}
+
 	public List<String> getSqlCreationStatements() {
 		return Collections.unmodifiableList(sqlCreationStatements);
 	}
@@ -74,25 +81,18 @@ final class PersitenceDefinition {
 		return Collections.unmodifiableList(indexStatements);
 	}
 
-	public static final PersitenceDefinition create(final Context context) {
+	public static final PersistenceDefinition create(final Context context) {
 		return loadPersistenceData(context);
 	}
 
-	private static PersitenceDefinition loadPersistenceData(final Context context) {
+	private static PersistenceDefinition loadPersistenceData(final Context context) {
 		try {
 			Class<?> schemaClass = Class.forName(context.getPackageName() + "." + GENERATED_SUFFIX + "." + DB);
 			String dbName = (String) schemaClass.getDeclaredField(DB_NAME).get(null);
 			int dbVersion = (Integer) schemaClass.getDeclaredField(DB_VERSION).get(null);
 
-			Class<?> updateHook = null;
-			try {
-				Field updateHookField = schemaClass.getDeclaredField(UPDATE_HOOK);
-				if (updateHookField != null) {
-					updateHook = Class.forName((String) updateHookField.get(null));
-				}
-			} catch (NoSuchFieldException e) {
-				// ignore
-			}
+			Class<?> updateHook = getHook(schemaClass, UPDATE_HOOK);
+			Class<?> createHook = getHook(schemaClass, CREATE_HOOK);
 
 			Class<?>[] tableDefinitions = schemaClass.getDeclaredClasses();
 			List<String> creationStatements = new ArrayList<String>(tableDefinitions.length);
@@ -108,10 +108,23 @@ final class PersitenceDefinition {
 				}
 			}
 
-			return new PersitenceDefinition(dbName, dbVersion, updateHook, creationStatements, indexStatements);
+			return new PersistenceDefinition(dbName, dbVersion, updateHook, createHook, creationStatements, indexStatements);
 		} catch (Exception e) {
 			throw new IllegalStateException("Couldn't parse persistence data from DB class", e);
 		}
+	}
+
+	private static Class<?> getHook(Class<?> schemaClass, String hookName) {
+		Class<?> hook = null;
+		try {
+			Field hookField = schemaClass.getDeclaredField(hookName);
+			if (hookField != null) {
+				hook = Class.forName((String) hookField.get(null));
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		return hook;
 	}
 
 }

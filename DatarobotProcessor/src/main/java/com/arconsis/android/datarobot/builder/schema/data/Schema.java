@@ -26,35 +26,41 @@ import java.util.List;
  */
 public class Schema {
 
-	 private final String dbName;
-	 private final int dbVersion;
-	 private final String updateHookClassName;
-	 private final List<Table> tables = new LinkedList<Table>();
+	private final String dbName;
+	private final int    dbVersion;
+	private final String updateHookClassName;
+	private final String createHookClassName;
+	private final List<Table> tables = new LinkedList<Table>();
 
-	 public Schema(final String dbName, final int dbVersion, final String updateHookClassName) {
-		 this.dbName = dbName;
-		 this.dbVersion = dbVersion;
-		 this.updateHookClassName = updateHookClassName;
-	 }
+	public Schema(final String dbName, final int dbVersion, final String updateHookClassName, final String createHookClassName) {
+		this.dbName = dbName;
+		this.dbVersion = dbVersion;
+		this.updateHookClassName = updateHookClassName;
+		this.createHookClassName = createHookClassName;
+	}
 
-	 public String getDbName() {
-		 return dbName;
-	 }
+	public String getDbName() {
+		return dbName;
+	}
 
-	 public int getDbVersion() {
-		 return dbVersion;
-	 }
+	public int getDbVersion() {
+		return dbVersion;
+	}
 
-	 public String getUpdateHookClassName() {
-		 return updateHookClassName;
-	 }
+	public String getUpdateHookClassName() {
+		return updateHookClassName;
+	}
 
-	 public void addTable(final Table table) {
-		 tables.add(table);
-	 }
+	public String getCreateHookClassName() {
+		return createHookClassName;
+	}
 
-	 public List<Table> getTables() {
-		 return Collections.unmodifiableList(tables);
-	 }
+	public void addTable(final Table table) {
+		tables.add(table);
+	}
 
- }
+	public List<Table> getTables() {
+		return Collections.unmodifiableList(tables);
+	}
+
+}

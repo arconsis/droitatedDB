@@ -19,20 +19,21 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.arconsis.android.datarobot.hooks.DbCreate;
 import com.arconsis.android.datarobot.hooks.DbUpdate;
 
 /**
  * Handles db creation and updates.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class DbCreator extends SQLiteOpenHelper {
 
-	private static DbCreator INSTANCE;
-	private final PersitenceDefinition persistence;
+	private static DbCreator             INSTANCE;
+	private final  PersistenceDefinition persistence;
 
-	DbCreator(final Context context, final PersitenceDefinition persistence) {
+	DbCreator(final Context context, final PersistenceDefinition persistence) {
 		super(context, persistence.getName(), null, persistence.getVersion());
 		this.persistence = persistence;
 	}
@@ -42,7 +43,7 @@ public class DbCreator extends SQLiteOpenHelper {
 			return INSTANCE;
 		}
 
-		INSTANCE = new DbCreator(context, PersitenceDefinition.create(context));
+		INSTANCE = new DbCreator(context, PersistenceDefinition.create(context));
 		return INSTANCE;
 	}
 
@@ -54,6 +55,16 @@ public class DbCreator extends SQLiteOpenHelper {
 
 		for (String index : persistence.getIndexStatements()) {
 			db.execSQL(index);
+		}
+
+		Class<?> createHook = persistence.getCreateHook();
+		if (createHook != null) {
+			try {
+				DbCreate createHookInstance = (DbCreate) createHook.newInstance();
+				createHookInstance.onCreate(db);
+			} catch (Exception e) {
+				throw new IllegalStateException("Couldn't invoke the create hook", e);
+			}
 		}
 	}
 
