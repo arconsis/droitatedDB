@@ -15,5 +15,5 @@ With an annotation based approach you are able to get a database up and running 
  * Fall back to Android default API is always possible
 
 
-## [Documentation](https://github.com/arconsis/datarobot/wiki) ##
-## [JavaDocs](http://arconsis.github.io/datarobot/) ##
+Check out the ## [Documentation](https://github.com/arconsis/datarobot/wiki) ##
+Get into the API details reading the ## [JavaDocs](http://arconsis.github.io/datarobot/) ##
