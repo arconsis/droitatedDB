@@ -17,8 +17,6 @@ package com.arconsis.android.datarobot;
 
 import android.content.Context;
 
-import com.arconsis.android.datarobot.schema.SchemaConstants;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +29,7 @@ import static com.arconsis.android.datarobot.schema.SchemaConstants.DB_VERSION;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.GENERATED_SUFFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.LINK;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_CREATION;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_INDEX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.UPDATE_HOOK;
 
@@ -103,8 +102,12 @@ final class PersistenceDefinition {
 					String statement = (String) def.getDeclaredField(SQL_CREATION).get(null);
 					creationStatements.add(statement);
 
-					String indexing = (String) def.getDeclaredField(SchemaConstants.SQL_INDEX).get(null);
-					indexStatements.add(indexing);
+					Field[] allFields = def.getDeclaredFields();
+					for (Field field : allFields) {
+						if (field.getName().startsWith(SQL_INDEX)) {
+							indexStatements.add((String) field.get(null));
+						}
+					}
 				}
 			}
 

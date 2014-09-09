@@ -15,6 +15,11 @@
  */
 package com.arconsis.android.datarobot.builder.schema.writer;
 
+import com.arconsis.android.datarobot.schema.SchemaConstants;
+import com.arconsis.android.datarobot.util.Pair;
+
+import java.util.Locale;
+
 import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_ATTRIBUTE_ARRAY;
 import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_PREFIX;
 import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_STRING;
@@ -30,11 +35,6 @@ import static com.arconsis.android.datarobot.schema.SchemaConstants.SQL_INDEX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE_NAME;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TO_SUFFIX;
 import static java.lang.String.format;
-
-import java.util.Locale;
-
-import com.arconsis.android.datarobot.schema.SchemaConstants;
-import com.arconsis.android.datarobot.util.Pair;
 
 /**
  * @author Alexander Frank
@@ -72,7 +72,7 @@ public class ToManyAssociationWriter implements Writer {
 		addAttribute(builder, canonicalLeft, simpleLeftLower, 0, FROM_SUFFIX);
 		addAttribute(builder, canonicalRight, simpleRightLower, 1, TO_SUFFIX);
 		builder.append("\n");
-		addSqlStatment(builder);
+		addSqlStatement(builder);
 		addProjection(builder);
 		addAttributes(builder);
 		addEnd(builder);
@@ -100,24 +100,31 @@ public class ToManyAssociationWriter implements Writer {
 
 	}
 
-	private void addSqlStatment(final StringBuilder builder) {
-		String fromColumn = simpleLeftLower + FROM_SUFFIX;
-		String toColumn = simpleRightLower + TO_SUFFIX;
+	private void addSqlStatement(final StringBuilder builder) {
+		String fromColumn = FOREIGN_KEY + simpleLeftLower + FROM_SUFFIX;
+		String toColumn = FOREIGN_KEY + simpleRightLower + TO_SUFFIX;
 
-		StringBuilder statment = new StringBuilder("CREATE TABLE ");
-		statment.append(tableName).append("(");
-		statment.append(FOREIGN_KEY).append(fromColumn).append(" Integer, ");
-		statment.append(FOREIGN_KEY).append(toColumn).append(" Integer, ");
-		statment.append("UNIQUE(").append(FOREIGN_KEY).append(fromColumn).append(", ").append(FOREIGN_KEY).append(toColumn).append(") ON CONFLICT IGNORE)");
+		StringBuilder statement = new StringBuilder("CREATE TABLE ");
+		statement.append(tableName).append("(");
+		statement.append(fromColumn).append(" Integer, ");
+		statement.append(toColumn).append(" Integer, ");
+		statement.append("UNIQUE(").append(fromColumn).append(", ").append(toColumn).append(") ON CONFLICT IGNORE)");
 
-		builder.append(indent).append(TAB).append(format(CONSTANT_STRING, SQL_CREATION, statment.toString()));
+		builder.append(indent).append(TAB).append(format(CONSTANT_STRING, SQL_CREATION, statement.toString()));
+
+		builder.append(indent).append(TAB).append(createIndexStatement(tableName, fromColumn));
+		builder.append(indent).append(TAB).append(createIndexStatement(tableName, toColumn));
+	}
+
+	private String createIndexStatement(String tableName, String columnName) {
+		String lowerColumnName = columnName.toLowerCase();
 
 		StringBuilder index = new StringBuilder("CREATE INDEX ");
-		index.append(simpleLeftLower).append(simpleRightLower).append(INDEX_SUFFIX);
+		index.append(tableName.toLowerCase()).append("_").append(lowerColumnName).append(INDEX_SUFFIX);
 		index.append(" on ").append(tableName).append(" (");
-		index.append(FOREIGN_KEY).append(fromColumn).append(", ").append(FOREIGN_KEY).append(toColumn);
+		index.append(columnName);
 		index.append(")");
-		builder.append(indent).append(TAB).append(format(CONSTANT_STRING, SQL_INDEX, index.toString()));
+		return format(CONSTANT_STRING, SQL_INDEX + "_" + lowerColumnName, index.toString());
 	}
 
 	private void addProjection(final StringBuilder builder) {
