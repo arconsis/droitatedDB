@@ -16,7 +16,7 @@ With an annotation based approach you are able to get a database up and running 
 
 
 ## [Documentation](https://github.com/arconsis/datarobot/wiki) ##
-Check out the documentation and introduction[here](https://github.com/arconsis/datarobot/wiki)
+Check out the documentation and introduction [here](https://github.com/arconsis/datarobot/wiki)
 
 
 ## [JavaDocs](http://arconsis.github.io/datarobot/) ##
