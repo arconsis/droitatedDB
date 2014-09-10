@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.arconsis</groupId>
     <artifactId>datarobot.processor</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Datarobot for Android - Annotation Processor</name>
     <description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you
@@ -60,7 +59,7 @@
         <dependency>
             <groupId>com.arconsis</groupId>
             <artifactId>datarobot.api</artifactId>
-            <version>0.1.2-SNAPSHOT</version>
+            <version>0.1.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
