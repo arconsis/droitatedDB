@@ -21,3 +21,6 @@ Check out the documentation and introduction [here](https://github.com/arconsis/
 
 ## [JavaDocs](http://arconsis.github.io/datarobot/) ##
 Get into the API details reading the [technical API](http://arconsis.github.io/datarobot/)
+
+## [Release notes](https://github.com/arconsis/datarobot/releases) ##
+Check out the release notes, to see what's new in Datarobot
