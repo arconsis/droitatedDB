@@ -15,6 +15,14 @@
  */
 package com.arconsis.android.datarobot.manifest;
 
+import com.arconsis.android.datarobot.processor.ContentProviderData;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,17 +42,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.arconsis.android.datarobot.processor.ContentProviderData;
-
 /**
  * Allows parsing and changing data of the AndroidManifest.xml
- * 
+ *
  * @author Alexander Frank
  * @author Falk Appel
  */
@@ -101,8 +101,8 @@ public class AndroidManifestProcessor {
 	private static Node getApplicationNodeFromRoot(final Element root) {
 		NodeList applicationTag = root.getElementsByTagName("application");
 		if (applicationTag.getLength() != 1) {
-			throw new IllegalStateException("Wrong number of application tags found within AndroidManifest.xml. There are " + applicationTag.getLength()
-					+ " tags");
+			throw new IllegalStateException(
+					"Wrong number of application tags found within AndroidManifest.xml. There are " + applicationTag.getLength() + " tags");
 		}
 		return applicationTag.item(0);
 	}
@@ -113,9 +113,9 @@ public class AndroidManifestProcessor {
 
 	public static final class ManifestBuilder {
 
-		private final File manifestFile;
+		private final File                            manifestFile;
 		private final LinkedList<ContentProviderData> addedProviders;
-		private final AndroidManifest androidManifest;
+		private final AndroidManifest                 androidManifest;
 
 		private ManifestBuilder(final File manifestFile, final AndroidManifest androidManifest) {
 			this.manifestFile = manifestFile;
@@ -185,7 +185,8 @@ public class AndroidManifestProcessor {
 
 		private boolean notContainedInProviderList(final ContentProviderData added, final List<ContentProviderData> providers) {
 			for (ContentProviderData inManifest : providers) {
-				if (inManifest.getAuthority().equals(added.getAuthority()) && namesAreEqual(inManifest.getCanonicalName(), added.getCanonicalName())) {
+				if (inManifest.getAuthority().equals(added.getAuthority()) && namesAreEqual(inManifest.getCanonicalName(), added.getCanonicalName()) &&
+						inManifest.isExported() == added.isExported()) {
 					return false;
 				}
 			}
@@ -218,7 +219,7 @@ public class AndroidManifestProcessor {
 		}
 
 		private void saveToAndroidManifest(final Document document, final boolean changedSomething) throws TransformerFactoryConfigurationError,
-		TransformerConfigurationException, FileNotFoundException, TransformerException {
+				TransformerConfigurationException, FileNotFoundException, TransformerException {
 			if (changedSomething) {
 
 				DOMSource source = new DOMSource(document);
