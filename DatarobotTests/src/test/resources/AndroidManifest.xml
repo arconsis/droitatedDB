@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:arconsis="http://arconsis.com" android:versionCode="1" android:versionName="1.0" package="com.arconsis.android.datrobot.test.data">
 
-    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="21"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
@@ -15,6 +15,8 @@
         <provider android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.bidirectionaltwo" android:exported="false" android:name="com.arconsis.android.datrobot.test.data.generated.BidirectionalTwoContentProvider" arconsis:generated="true"/>
         <provider android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.author" android:exported="false" android:name="com.arconsis.android.datrobot.test.data.generated.AuthorContentProvider" arconsis:generated="true"/>
         <provider android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.single" android:exported="false" android:name="com.arconsis.android.datrobot.test.data.generated.SingleContentProvider" arconsis:generated="true"/>
-    <provider android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.simplewithoutautoincrement" android:exported="false" android:name="com.arconsis.android.datrobot.test.data.generated.SimpleWithoutAutoIncrementContentProvider" arconsis:generated="true"/></application>
+        <provider android:authorities="com.arconsis.android.datrobot.test.data.generated.provider.simplewithoutautoincrement" android:exported="false" android:name="com.arconsis.android.datrobot.test.data.generated.SimpleWithoutAutoIncrementContentProvider" arconsis:generated="true"/>
+        
+    </application>
 
 </manifest>

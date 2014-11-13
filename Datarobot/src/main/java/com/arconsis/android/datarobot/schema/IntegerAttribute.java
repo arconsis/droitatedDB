@@ -15,35 +15,35 @@
  */
 package com.arconsis.android.datarobot.schema;
 
-import java.util.Date;
-
 import android.database.Cursor;
+
+import java.util.Date;
 
 /**
  * Definition of a INTEGER Attribute.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class IntegerAttribute extends AbstractAttribute {
 
-	public IntegerAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.INTEGER, fieldName, fieldType, columnIdx);
-	}
+    public IntegerAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.INTEGER, fieldName, fieldType, columnIdx, columnValidators);
+    }
 
-	public IntegerAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.INTEGER, fieldName, columnName, fieldType, columnIdx);
-	}
+    public IntegerAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.INTEGER, fieldName, columnName, fieldType, columnIdx, columnValidators);
+    }
 
-	@Override
-	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
-		if (Date.class.isAssignableFrom(type())) {
-			return new Date(originalCursor.getLong(columnIndex()));
-		} else if (Long.class.isAssignableFrom(type()) || long.class.isAssignableFrom(type())) {
-			return originalCursor.getLong(columnIndex());
-		} else if (Boolean.class.isAssignableFrom(type()) || boolean.class.isAssignableFrom(type())) {
-			return originalCursor.getInt(columnIndex()) == 1;
-		}
-		return originalCursor.getInt(columnIndex());
-	}
+    @Override
+    public Object getNonNullValueFromCursor(final Cursor originalCursor) {
+        if (Date.class.isAssignableFrom(type())) {
+            return new Date(originalCursor.getLong(columnIndex()));
+        } else if (Long.class.isAssignableFrom(type()) || long.class.isAssignableFrom(type())) {
+            return originalCursor.getLong(columnIndex());
+        } else if (Boolean.class.isAssignableFrom(type()) || boolean.class.isAssignableFrom(type())) {
+            return originalCursor.getInt(columnIndex()) == 1;
+        }
+        return originalCursor.getInt(columnIndex());
+    }
 }

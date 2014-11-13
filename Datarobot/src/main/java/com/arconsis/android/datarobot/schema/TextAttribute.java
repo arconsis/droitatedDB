@@ -19,23 +19,23 @@ import android.database.Cursor;
 
 /**
  * Definition of a TEXT Attribute.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class TextAttribute extends AbstractAttribute {
 
-	public TextAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.TEXT, fieldName, fieldType, columnIdx);
-	}
+    public TextAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.TEXT, fieldName, fieldType, columnIdx, columnValidators);
+    }
 
-	public TextAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.TEXT, fieldName, columnName, fieldType, columnIdx);
-	}
+    public TextAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.TEXT, fieldName, columnName, fieldType, columnIdx, columnValidators);
+    }
 
-	@Override
-	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
-		return originalCursor.getString(columnIndex());
-	}
+    @Override
+    public Object getNonNullValueFromCursor(final Cursor originalCursor) {
+        return originalCursor.getString(columnIndex());
+    }
 
 }

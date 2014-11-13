@@ -15,11 +15,14 @@
  */
 package com.arconsis.android.datarobot.builder.schema.writer;
 
+import com.arconsis.android.datarobot.builder.schema.data.Column;
+import com.arconsis.android.datarobot.builder.schema.data.Table;
+
+import java.util.Set;
+
 import static com.arconsis.android.datarobot.builder.Constants.CONSTANT_PREFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.INFO_SUFFIX;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE;
-
-import com.arconsis.android.datarobot.builder.schema.data.Table;
 
 /**
  * @author Alexander Frank
@@ -27,22 +30,34 @@ import com.arconsis.android.datarobot.builder.schema.data.Table;
  */
 public class EntityInfoWriter implements Writer {
 
-	private final String indent;
-	private final Table table;
+    private final String indent;
+    private final Table table;
 
-	public EntityInfoWriter(final String indent, final Table table) {
-		this.indent = indent;
-		this.table = table;
-	}
+    public EntityInfoWriter(final String indent, final Table table) {
+        this.indent = indent;
+        this.table = table;
+    }
 
-	@Override
-	public String write() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(indent).append(CONSTANT_PREFIX).append("EntityInfo ").append(table.getName()).append(INFO_SUFFIX) //
-		.append(" = new EntityInfo(\"").append(table.getEntityClassName()).append("\", ") //
-		.append("\"").append(table.getName()).append("\", ") //
-		.append(table.getName()).append(TABLE).append(".class);\n");
-		return builder.toString();
-	}
+    @Override
+    public String write() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(indent).append(CONSTANT_PREFIX).append("EntityInfo ").append(table.getName()).append(INFO_SUFFIX) //
+                .append(" = new EntityInfo(\"").append(table.getEntityClassName()).append("\", ") //
+                .append("\"").append(table.getName()).append("\", ") //
+                .append(table.getName()).append(TABLE).append(".class, ")
+                .append(hasValidation()).append(");")
+                .append("\n");
+        return builder.toString();
+    }
+
+    private boolean hasValidation() {
+        Set<Column> columns = table.getColumns();
+        for (Column column : columns) {
+            if (column.getColumnValidation().size() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

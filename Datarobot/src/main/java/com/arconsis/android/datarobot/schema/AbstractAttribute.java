@@ -19,74 +19,85 @@ import android.database.Cursor;
 
 /**
  * Abstract definition of an attribute.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public abstract class AbstractAttribute {
 
-	private final String fieldName;
-	private final String columnName;
-	private final Class<?> fieldType;
-	private final ColumnType type;
-	private final int columnIdx;
+    private final String fieldName;
+    private final String columnName;
+    private final Class<?> fieldType;
+    private final ColumnType type;
+    private final int columnIdx;
+    private final ColumnValidator[] columnValidators;
 
-	public AbstractAttribute(final ColumnType type, final String fieldName, final Class<?> fieldType, final int columnIdx) {
-		this(type, fieldName, fieldName, fieldType, columnIdx);
-	}
+    public AbstractAttribute(final ColumnType type, final String fieldName, final Class<?> fieldType, final int columnIdx, final ColumnValidator... columnValidators) {
+        this(type, fieldName, fieldName, fieldType, columnIdx, columnValidators);
+    }
 
-	public AbstractAttribute(final ColumnType type, final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx) {
-		this.type = type;
-		this.fieldName = fieldName;
-		this.columnName = columnName;
-		this.fieldType = fieldType;
-		this.columnIdx = columnIdx;
-	}
+    public AbstractAttribute(final ColumnType type, final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx, final ColumnValidator... columnValidators) {
+        this.type = type;
+        this.fieldName = fieldName;
+        this.columnName = columnName;
+        this.fieldType = fieldType;
+        this.columnIdx = columnIdx;
+        if (columnValidators == null) {
+            this.columnValidators = new ColumnValidator[0];
+        } else {
+            this.columnValidators = columnValidators;
+        }
+    }
 
-	public String fieldName() {
-		return fieldName;
-	}
+    public String fieldName() {
+        return fieldName;
+    }
 
-	public String columnName() {
-		return columnName;
-	}
+    public String columnName() {
+        return columnName;
+    }
 
-	public int columnIndex() {
-		return columnIdx;
-	}
+    public int columnIndex() {
+        return columnIdx;
+    }
 
-	public Class<?> type() {
-		return fieldType;
-	}
+    public Class<?> type() {
+        return fieldType;
+    }
 
-	public ColumnType sqliteType() {
-		return type;
-	}
-	/** 
-	 * Returns also the columnName of the attribute
-	 */
-	@Override
-	public String toString() {
-		return columnName();
-	}
+    public ColumnType sqliteType() {
+        return type;
+    }
 
-	public Object getValueFromCursor(final Cursor originalCursor) {
-		if (originalCursor.isNull(columnIdx) && !isPrimitiveField()) {
-			return null;
-		}
-		return getNonNullValueFromCursor(originalCursor);
-	}
+    public ColumnValidator[] getColumnValidators() {
+        return columnValidators;
+    }
 
-	protected abstract Object getNonNullValueFromCursor(final Cursor originalCursor);
+    /**
+     * Returns also the columnName of the attribute
+     */
+    @Override
+    public String toString() {
+        return columnName();
+    }
 
-	private final boolean isPrimitiveField() {
-		Class<?> paramType = type();
-		return paramType.equals(java.lang.Boolean.TYPE) //
-				|| paramType.equals(java.lang.Integer.TYPE) //
-				|| paramType.equals(java.lang.Character.TYPE) //
-				|| paramType.equals(java.lang.Float.TYPE) //
-				|| paramType.equals(java.lang.Double.TYPE) //
-				|| paramType.equals(java.lang.Long.TYPE) //
-				|| paramType.equals(java.lang.Short.TYPE);
-	}
+    public Object getValueFromCursor(final Cursor originalCursor) {
+        if (originalCursor.isNull(columnIdx) && !isPrimitiveField()) {
+            return null;
+        }
+        return getNonNullValueFromCursor(originalCursor);
+    }
+
+    protected abstract Object getNonNullValueFromCursor(final Cursor originalCursor);
+
+    private final boolean isPrimitiveField() {
+        Class<?> paramType = type();
+        return paramType.equals(java.lang.Boolean.TYPE) //
+                || paramType.equals(java.lang.Integer.TYPE) //
+                || paramType.equals(java.lang.Character.TYPE) //
+                || paramType.equals(java.lang.Float.TYPE) //
+                || paramType.equals(java.lang.Double.TYPE) //
+                || paramType.equals(java.lang.Long.TYPE) //
+                || paramType.equals(java.lang.Short.TYPE);
+    }
 }

@@ -17,30 +17,43 @@ package com.arconsis.android.datarobot.schema;
 
 /**
  * Description of an Entity.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class EntityInfo {
-	private final String tableName;
-	private final String className;
-	private final Class<?> definition;
+    private final String tableName;
+    private final String className;
+    private final Class<?> definition;
+    private final boolean validation;
 
-	public EntityInfo(final String className, final String tableName, final Class<?> definition) {
-		this.className = className;
-		this.tableName = tableName;
-		this.definition = definition;
-	}
+    public EntityInfo(final String className, final String tableName, final Class<?> definition) {
+        this.className = className;
+        this.tableName = tableName;
+        this.definition = definition;
+        this.validation = false;
+    }
 
-	public String className() {
-		return className;
-	}
+    public EntityInfo(final String className, final String tableName, final Class<?> definition, final boolean validation) {
+        this.className = className;
+        this.tableName = tableName;
+        this.definition = definition;
+        this.validation = validation;
+    }
 
-	public String table() {
-		return tableName;
-	}
+    public String className() {
+        return className;
+    }
 
-	public Class<?> definition() {
-		return definition;
-	}
+    public String table() {
+        return tableName;
+    }
+
+    public Class<?> definition() {
+        return definition;
+    }
+
+    public boolean hasValidation() {
+        return validation;
+    }
 }

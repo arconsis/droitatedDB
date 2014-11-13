@@ -6,7 +6,8 @@
     <version>0.1.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Datarobot for Android - Tests</name>
-    <description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you
+    <description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with
+        Androids SQLite database directly if you
         don't want to and let's you access it directly if you have to.
     </description>
     <url>https://github.com/arconsis/datarobot</url>
@@ -101,7 +102,8 @@
                     <target>1.6</target>
                     <!-- configuration for the annotation processor -->
                     <annotationProcessors>
-                        <annotationProcessor>com.arconsis.android.datarobot.processor.EntityAnnotationProcessor</annotationProcessor>
+                        <annotationProcessor>com.arconsis.android.datarobot.processor.EntityAnnotationProcessor
+                        </annotationProcessor>
                     </annotationProcessors>
                     <generatedSourcesDirectory>src/generated/java</generatedSourcesDirectory>
                     <compilerArgs>

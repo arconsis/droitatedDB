@@ -20,48 +20,50 @@ import com.arconsis.android.datarobot.builder.schema.data.Table;
 import com.arconsis.android.datarobot.builder.schema.visitor.TypeResolvingVisitor;
 import com.arconsis.android.datarobot.config.Persistence;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Alexander Frank
  * @author Falk Appel
  */
 public class SchemaReader implements Reader<Schema> {
-	private final Persistence            persistence;
-	private final String                 updateHookClassName;
-	private final String                 createHookClassName;
-	private final Set<? extends Element> entities;
-	private final Set<String> entityNames = new TreeSet<String>();
-	private final Messager messager;
+    private final Persistence persistence;
+    private final String updateHookClassName;
+    private final String createHookClassName;
+    private final Set<? extends Element> entities;
+    private final Elements elements;
+    private final Set<String> entityNames = new TreeSet<String>();
+    private final Messager messager;
 
-	public SchemaReader(final Persistence persistence, final String updateHookClassName, final String createHookClassName,
-						final Set<? extends Element> entities, final Messager messager) {
-		this.persistence = persistence;
-		this.updateHookClassName = updateHookClassName;
-		this.createHookClassName = createHookClassName;
-		this.entities = entities;
-		for (Element entity : entities) {
-			entityNames.add(entity.toString());
-		}
-		this.messager = messager;
-	}
+    public SchemaReader(final Persistence persistence, final String updateHookClassName, final String createHookClassName,
+                        final Set<? extends Element> entities, final Elements elements, final Messager messager) {
+        this.persistence = persistence;
+        this.updateHookClassName = updateHookClassName;
+        this.createHookClassName = createHookClassName;
+        this.entities = entities;
+        this.elements = elements;
+        for (Element entity : entities) {
+            entityNames.add(entity.toString());
+        }
+        this.messager = messager;
+    }
 
-	@Override
-	public Schema read() {
-		Schema schema = new Schema(persistence.dbName(), persistence.dbVersion(), updateHookClassName, createHookClassName);
-		for (Element element : entities) {
-			TypeElement entity = element.accept(new TypeResolvingVisitor(), null);
-			TableReader tableReader = new TableReader(entity, entityNames, messager);
-			Table read = tableReader.read();
-			if (read != null) {
-				schema.addTable(read);
-			}
-		}
-		return schema;
-	}
+    @Override
+    public Schema read() {
+        Schema schema = new Schema(persistence.dbName(), persistence.dbVersion(), updateHookClassName, createHookClassName);
+        for (Element element : entities) {
+            TypeElement entity = element.accept(new TypeResolvingVisitor(), null);
+            TableReader tableReader = new TableReader(entity, entityNames, elements, messager);
+            Table read = tableReader.read();
+            if (read != null) {
+                schema.addTable(read);
+            }
+        }
+        return schema;
+    }
 }

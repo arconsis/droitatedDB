@@ -19,22 +19,22 @@ import android.database.Cursor;
 
 /**
  * Definition of a BLOB Attribute.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class BlobAttribute extends AbstractAttribute {
 
-	public BlobAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.BLOB, fieldName, fieldType, columnIdx);
-	}
+    public BlobAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.BLOB, fieldName, fieldType, columnIdx, columnValidators);
+    }
 
-	public BlobAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.BLOB, fieldName, columnName, fieldType, columnIdx);
-	}
+    public BlobAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.BLOB, fieldName, columnName, fieldType, columnIdx, columnValidators);
+    }
 
-	@Override
-	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
-		return originalCursor.getBlob(columnIndex());
-	}
+    @Override
+    public Object getNonNullValueFromCursor(final Cursor originalCursor) {
+        return originalCursor.getBlob(columnIndex());
+    }
 }

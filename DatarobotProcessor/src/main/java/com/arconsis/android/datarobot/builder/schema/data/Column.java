@@ -23,38 +23,43 @@ import com.arconsis.android.datarobot.schema.ColumnType;
  */
 public class Column {
 
-	private final String nameInEntity;
-	private final String typeInEntity;
-	private final ColumnType typeInDb;
-	private final boolean isPrimary;
-	private final boolean isAutoincrementing;
+    private final String nameInEntity;
+    private final String typeInEntity;
+    private final ColumnType typeInDb;
+    private final boolean isPrimary;
+    private final boolean isAutoincrementing;
+    private final ColumnValidation columnValidation;
 
-	public Column(final String nameInEntity, final String typeInEntity, final ColumnType typeInDb, final boolean isPrimary, final boolean isAutoincrementing) {
-		this.nameInEntity = nameInEntity;
-		this.typeInEntity = typeInEntity;
-		this.typeInDb = typeInDb;
-		this.isPrimary = isPrimary;
-		this.isAutoincrementing = isAutoincrementing;
-	}
+    public Column(final String nameInEntity, final String typeInEntity, final ColumnType typeInDb, final boolean isPrimary, final boolean isAutoincrementing, ColumnValidation columnValidation) {
+        this.nameInEntity = nameInEntity;
+        this.typeInEntity = typeInEntity;
+        this.typeInDb = typeInDb;
+        this.isPrimary = isPrimary;
+        this.isAutoincrementing = isAutoincrementing;
+        this.columnValidation = columnValidation;
+    }
 
-	public String getNameInEntity() {
-		return nameInEntity;
-	}
+    public String getNameInEntity() {
+        return nameInEntity;
+    }
 
-	public String getTypeInEntity() {
-		return typeInEntity;
-	}
+    public String getTypeInEntity() {
+        return typeInEntity;
+    }
 
-	public ColumnType getTypeInDb() {
-		return typeInDb;
-	}
+    public ColumnType getTypeInDb() {
+        return typeInDb;
+    }
 
-	public boolean isPrimary() {
-		return isPrimary;
-	}
+    public boolean isPrimary() {
+        return isPrimary;
+    }
 
-	public boolean isAutoincrementing() {
-		return isAutoincrementing;
-	}
+    public boolean isAutoincrementing() {
+        return isAutoincrementing;
+    }
 
+    public ColumnValidation getColumnValidation() {
+        return columnValidation;
+    }
 }

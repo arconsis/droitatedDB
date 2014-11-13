@@ -19,25 +19,25 @@ import android.database.Cursor;
 
 /**
  * Definition of a REAL Attribute.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class RealAttribute extends AbstractAttribute {
 
-	public RealAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.REAL, fieldName, fieldType, columnIdx);
-	}
+    public RealAttribute(final String fieldName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.REAL, fieldName, fieldType, columnIdx, columnValidators);
+    }
 
-	public RealAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx) {
-		super(ColumnType.REAL, fieldName, columnName, fieldType, columnIdx);
-	}
+    public RealAttribute(final String fieldName, final String columnName, final Class<?> fieldType, final int columnIdx, ColumnValidator... columnValidators) {
+        super(ColumnType.REAL, fieldName, columnName, fieldType, columnIdx, columnValidators);
+    }
 
-	@Override
-	public Object getNonNullValueFromCursor(final Cursor originalCursor) {
-		if (Double.class.isAssignableFrom(type()) || double.class.isAssignableFrom(type())) {
-			return originalCursor.getDouble(columnIndex());
-		}
-		return originalCursor.getFloat(columnIndex());
-	}
+    @Override
+    public Object getNonNullValueFromCursor(final Cursor originalCursor) {
+        if (Double.class.isAssignableFrom(type()) || double.class.isAssignableFrom(type())) {
+            return originalCursor.getDouble(columnIndex());
+        }
+        return originalCursor.getFloat(columnIndex());
+    }
 }
