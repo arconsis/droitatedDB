@@ -24,7 +24,7 @@ import java.util.Set;
  * @author Falk Appel
  * @author Alexander Frank
  */
-class DatabaseValidator<T> {
+public class DatabaseValidator<T> {
 
     private Context context;
 
