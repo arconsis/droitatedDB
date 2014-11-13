@@ -76,7 +76,8 @@ public class ColumnValidationReader implements Reader<ColumnValidation> {
                 || paramType.equals(java.lang.Float.class) //
                 || paramType.equals(java.lang.Double.class) //
                 || paramType.equals(java.lang.Long.class) //
-                || paramType.equals(java.lang.Short.class);
+                || paramType.equals(java.lang.Short.class) //
+                || paramType.equals(java.lang.Byte.class);
     }
 
     private boolean isValidatorAnnotation(AnnotationMirror mirror) {
