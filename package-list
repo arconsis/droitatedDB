@@ -4,3 +4,4 @@ com.arconsis.android.datarobot.cursor
 com.arconsis.android.datarobot.entity
 com.arconsis.android.datarobot.hooks
 com.arconsis.android.datarobot.schema
+com.arconsis.android.datarobot.validation
