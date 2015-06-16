@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.arconsis</groupId>
 	<artifactId>datarobot.api</artifactId>
-	<version>0.1.4-SNAPSHOT</version>
+	<version>0.1.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Datarobot for Android - API</name>
 	<description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you don't want to and let's you access it directly if you have to.</description>
