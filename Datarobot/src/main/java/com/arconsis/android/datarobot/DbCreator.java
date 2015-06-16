@@ -30,7 +30,7 @@ import com.arconsis.android.datarobot.hooks.DbUpdate;
  */
 public class DbCreator extends SQLiteOpenHelper {
 
-	private static DbCreator             INSTANCE;
+	private static PersistenceDefinition PERSISTENCE_DEFINITION;
 	private final  PersistenceDefinition persistence;
 
 	DbCreator(final Context context, final PersistenceDefinition persistence) {
@@ -39,12 +39,10 @@ public class DbCreator extends SQLiteOpenHelper {
 	}
 
 	public static DbCreator getInstance(final Context context) {
-		if (INSTANCE != null) {
-			return INSTANCE;
+		if (PERSISTENCE_DEFINITION == null) {
+			PERSISTENCE_DEFINITION = PersistenceDefinition.create(context.getApplicationContext());
 		}
-
-		INSTANCE = new DbCreator(context, PersistenceDefinition.create(context));
-		return INSTANCE;
+		return new DbCreator(context, PERSISTENCE_DEFINITION);
 	}
 
 	@Override
