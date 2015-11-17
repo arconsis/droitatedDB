@@ -35,16 +35,15 @@ public class DbCreator extends SQLiteOpenHelper {
 
 	private static final Object        LOCK             = new Object();
 	private static final AtomicInteger OPEN_CONNECTIONS = new AtomicInteger(0);
-	private static PersistenceDefinition PERSISTENCE_DEFINITION;
-	private static DbCreator             DB_CREATOR_INSTANCE;
-	private static SQLiteDatabase        dbConnection;
 
-	private final Context               context;
+	private static          PersistenceDefinition PERSISTENCE_DEFINITION;
+	private static          DbCreator             DB_CREATOR_INSTANCE;
+	private static volatile SQLiteDatabase        dbConnection;
+
 	private final PersistenceDefinition persistence;
 
 	private DbCreator(final Context context, final PersistenceDefinition persistence) {
 		super(context, persistence.getName(), null, persistence.getVersion());
-		this.context = context;
 		this.persistence = persistence;
 	}
 
@@ -60,6 +59,12 @@ public class DbCreator extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Gives you a database connection you can access the database with.<br/>
+	 * Don't forget to call reduceDatabaseConnection when you are done with the connection.
+	 *
+	 * @return Connection to the local SQLite database
+	 */
 	public SQLiteDatabase getDatabaseConnection() {
 		synchronized (LOCK) {
 			if (dbConnection == null) {
@@ -71,6 +76,9 @@ public class DbCreator extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Reduce the connection opened. This should always be called after calling getDatabaseConnection and only after that.
+	 */
 	public void reduceDatabaseConnection() {
 		synchronized (LOCK) {
 			int numberOfOpenConnections = OPEN_CONNECTIONS.decrementAndGet();
@@ -81,6 +89,13 @@ public class DbCreator extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Execute a function on the database, to return some values. The opening and closing of the database connection is handled for you.<br/>
+	 * Note if you want to query a cursor from the database consider using the {@code DbCreator#query} or {@code DbCreator#rawQuery} method.<br/>
+	 * This can be useful when working with {@code CursorAdapter}
+	 *
+	 * @param dbFunction Function you want to execute on the database
+	 */
 	public <T> T functionOnDatabase(DbFunction<T> dbFunction) {
 		SQLiteDatabase db = getDatabaseConnection();
 		try {
@@ -90,6 +105,11 @@ public class DbCreator extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Execute an action on the database. The opening and closing of the database connection is handled for you.
+	 *
+	 * @param dbConsumer Action you want to execute on the database
+	 */
 	public void consumeDatabase(DbConsumer dbConsumer) {
 		SQLiteDatabase db = getDatabaseConnection();
 		try {
@@ -99,22 +119,54 @@ public class DbCreator extends SQLiteOpenHelper {
 		}
 	}
 
+	/**
+	 * Executes a query on the database. Note that when calling close on the returned cursor the database connection count is reduces as well.
+	 *
+	 * @param table         Name of the table
+	 * @param columns       Used columns of the queried table
+	 * @param selection     Selection statement
+	 * @param selectionArgs Selection arguments
+	 * @param groupBy       SQL group by
+	 * @param having        SQL having
+	 * @param orderBy       SQL order by
+	 * @return A Cursor containing the result, which reduces the database connection count when closed
+	 */
 	public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
 		SQLiteDatabase db = getDatabaseConnection();
 		return new DbClosingCursor(db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy), this);
 	}
 
+	/**
+	 * Executes a raw query on the database. Note that when calling close on the returned cursor the database connection count is reduces as well.
+	 *
+	 * @param sql Raw SQL statement
+	 * @return A Cursor containing the result, which reduces the database connection count when closed
+	 */
 	public Cursor rawQuery(String sql) {
 		SQLiteDatabase db = getDatabaseConnection();
 		return new DbClosingCursor(db.rawQuery(sql, null), this);
 	}
 
+	/**
+	 * This method is not supported with this helper. You have to use getDatabaseConnection and reduceDatabaseConnection
+	 *
+	 * @throws UnsupportedOperationException Use the getDatabaseConnection method and the reduceDatabaseConnection method to access the {@code SQLiteDatabase}
+	 * @deprecated Don't use this method any more. Use getDatabaseConnection.
+	 */
 	@Override
+	@Deprecated
 	public synchronized SQLiteDatabase getReadableDatabase() {
 		throw new UnsupportedOperationException("Use getDatabaseConnection and reduceDatabaseConnection or one of the performOnDatabase methods");
 	}
 
+	/**
+	 * This method is not supported with this helper. You have to use getDatabaseConnection and reduceDatabaseConnection
+	 *
+	 * @throws UnsupportedOperationException Use the getDatabaseConnection method and the reduceDatabaseConnection method to access the {@code SQLiteDatabase}
+	 * @deprecated Don't use this method any more. Use getDatabaseConnection.
+	 */
 	@Override
+	@Deprecated
 	public synchronized SQLiteDatabase getWritableDatabase() {
 		throw new UnsupportedOperationException("Use getDatabaseConnection and reduceDatabaseConnection or one of the performOnDatabase methods");
 	}
