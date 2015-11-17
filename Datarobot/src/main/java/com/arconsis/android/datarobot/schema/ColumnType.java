@@ -19,7 +19,7 @@ import java.util.Date;
 
 /**
  * Supported column types for SQLite.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
@@ -38,13 +38,15 @@ public enum ColumnType {
 
 	/**
 	 * Resolves the matching {@link ColumnType} to a fieldType.
+	 *
+	 * @param type String type to be resolved
+	 * @return The resolved ColumnType
 	 */
 	public static ColumnType resolveColumnType(final String type) {
 		if (matches(String.class, type)) {
 			return ColumnType.TEXT;
-		} else if (matches(Integer.class, type) || matches(int.class, type) || matches(Boolean.class, type) || matches(boolean.class, type)
-				|| matches(Date.class, type) || matches(Long.class, type)
-				|| matches(long.class, type)) {
+		} else if (matches(Integer.class, type) || matches(int.class, type) || matches(Boolean.class, type) || matches(boolean.class, type) ||
+				matches(Date.class, type) || matches(Long.class, type) || matches(long.class, type)) {
 			return ColumnType.INTEGER;
 		} else if (matches(Double.class, type) || matches(Float.class, type) || matches(double.class, type) || matches(float.class, type)) {
 			return ColumnType.REAL;

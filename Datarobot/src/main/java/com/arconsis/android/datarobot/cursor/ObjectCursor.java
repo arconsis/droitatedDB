@@ -49,7 +49,7 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * @return the element at the current position of the {@code ObjectCursor}.
-	 * <p/>
+	 * <br>
 	 * If the {@link Cursor} is before the first element, the position is changed to the first position, if the
 	 * {@link Cursor} is after the last element, the position is changed to the last elements position
 	 * @throws NoSuchElementException if there are no elements to be returned.
@@ -58,7 +58,7 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * @return the element at the first position of the {@code ObjectCursor}.
-	 * <p/>
+	 * <br>
 	 * The {@link Cursor} is moved to the first position.
 	 * @throws NoSuchElementException if there is no element to be returned.
 	 */
@@ -66,7 +66,7 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * @return the element at the last position of the {@code ObjectCursor}.
-	 * <p/>
+	 * <br>
 	 * The {@link Cursor} is moved to the last position.
 	 * @throws NoSuchElementException if there is no element to be returned.
 	 */
@@ -74,7 +74,7 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * Returns the element at the next position of the {@code ObjectCursor}.
-	 * <p/>
+	 * <br>
 	 * The {@link Cursor} is moved to the next position.
 	 *
 	 * @return Element at next position
@@ -102,7 +102,7 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * @return the element at the position before the current position of the {@code ObjectCursor}.
-	 * <p/>
+	 * <br>
 	 * The {@link Cursor} is moved to the previous position.
 	 * @throws NoSuchElementException if there is no element to be returned.
 	 * @see #hasPrevious

@@ -96,6 +96,7 @@ public class DbCreator extends SQLiteOpenHelper {
 	 *
 	 * @param <T>        Resulting type
 	 * @param dbFunction Function you want to execute on the database
+	 * @return The result of the function call
 	 */
 	public <T> T functionOnDatabase(DbFunction<T> dbFunction) {
 		SQLiteDatabase db = getDatabaseConnection();
