@@ -18,9 +18,9 @@ package com.arconsis.android.datarobot.cursor;
 import android.database.Cursor;
 
 /**
+ * @param <T> Entity type represented within the Cursor
  * @author Falk Appel
  * @author Alexander Frank
- * @param <T>
  */
 public interface CombinedCursor<T> extends Cursor, ObjectCursor<T> {
 	// combines interfaces

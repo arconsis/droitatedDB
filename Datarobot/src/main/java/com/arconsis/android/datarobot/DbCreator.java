@@ -60,7 +60,7 @@ public class DbCreator extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Gives you a database connection you can access the database with.<br/>
+	 * Gives you a database connection you can access the database with.<br>
 	 * Don't forget to call reduceDatabaseConnection when you are done with the connection.
 	 *
 	 * @return Connection to the local SQLite database
@@ -90,10 +90,11 @@ public class DbCreator extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Execute a function on the database, to return some values. The opening and closing of the database connection is handled for you.<br/>
-	 * Note if you want to query a cursor from the database consider using the {@code DbCreator#query} or {@code DbCreator#rawQuery} method.<br/>
+	 * Execute a function on the database, to return some values. The opening and closing of the database connection is handled for you.<br>
+	 * Note if you want to query a cursor from the database consider using the {@code DbCreator#query} or {@code DbCreator#rawQuery} method.<br>
 	 * This can be useful when working with {@code CursorAdapter}
 	 *
+	 * @param <T>        Resulting type
 	 * @param dbFunction Function you want to execute on the database
 	 */
 	public <T> T functionOnDatabase(DbFunction<T> dbFunction) {

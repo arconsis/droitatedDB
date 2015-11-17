@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Callback for updating the SQLite database on version change.
- * 
+ *
  * @author Alexander Frank
  * @author Falk Appel
  */
@@ -28,6 +28,10 @@ public interface DbUpdate {
 	/**
 	 * Implement the specific db update in this method. <br>
 	 * It will be called within the {@link SQLiteOpenHelper#onUpgrade(SQLiteDatabase, int, int)} method.
+	 *
+	 * @param db         Open database connection
+	 * @param oldVersion old version migrating from
+	 * @param newVersion new version migrating to
 	 */
 	void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion);
 }

@@ -93,6 +93,7 @@ public abstract class BaseContentProvider extends ContentProvider {
 	 * multiple {@link Entity} elements.
 	 *
 	 * @param tableName Name of the Table (simple {@link Entity} name) the data should be retrieved from.
+	 * @return Uri to access the tables data
 	 */
 	public static Uri uri(final String tableName) {
 		return REGISTRY.getDictionaryUri(tableName);
@@ -105,6 +106,7 @@ public abstract class BaseContentProvider extends ContentProvider {
 	 *
 	 * @param tableName Name of the Table (simple {@link Entity} name) the data should be retrieved from.
 	 * @param id        Primary key of the {@link Entity} to be accessed
+	 * @return Uri to access the specific item in the table
 	 */
 	public static Uri uriForItem(final String tableName, final long id) {
 		return REGISTRY.getItemUri(tableName, Long.toString(id));
@@ -113,17 +115,23 @@ public abstract class BaseContentProvider extends ContentProvider {
 	/**
 	 * Has to return the authority to be used for this {@link ContentProvider}.<br>
 	 * If generated this is the authority defined in the {@link Entity} class
+	 *
+	 * @return The authority used for the ContentProvider
 	 */
 	protected abstract String getAuthority();
 
 	/**
 	 * Has to return the attribute describing the primary key of the {@link Entity}.<br>
 	 * Id generated this is the {@link PrimaryKey} annotated {@link Column}.
+	 *
+	 * @return The description of the primary key of the table access by this ContentProvider
 	 */
 	protected abstract AbstractAttribute getIdAttribute();
 
 	/**
 	 * Has to return metadata of the {@link Entity} this {@link ContentProvider} is for.
+	 *
+	 * @return Metadata to the {@link Entity} being accessed
 	 */
 	protected abstract EntityInfo getEntityInfo();
 

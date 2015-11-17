@@ -37,7 +37,7 @@ import static com.arconsis.android.datarobot.Utilities.handle;
 import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTES;
 
 /**
- * @param <T>
+ * @param <T> Entity type represented within the Cursor
  * @author Falk Appel
  * @author Alexander Frank
  */

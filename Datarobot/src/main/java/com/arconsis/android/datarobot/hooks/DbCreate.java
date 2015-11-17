@@ -12,6 +12,8 @@ public interface DbCreate {
 	/**
 	 * Implement the specific db initialization in this method. <br>
 	 * It will be called after the database is created.
+	 *
+	 * @param db Open database connection
 	 */
-	public void onCreate(SQLiteDatabase db);
+	void onCreate(SQLiteDatabase db);
 }

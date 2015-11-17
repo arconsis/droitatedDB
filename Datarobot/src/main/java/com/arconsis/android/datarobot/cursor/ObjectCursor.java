@@ -15,17 +15,17 @@
  */
 package com.arconsis.android.datarobot.cursor;
 
-import java.io.Closeable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.database.Cursor;
 
 import com.arconsis.android.datarobot.BaseContentProvider;
 import com.arconsis.android.datarobot.CursorUtil;
+
+import java.io.Closeable;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Cursor for objects of type <code>T</code> which works on the original {@link Cursor}. <br>
@@ -34,124 +34,106 @@ import com.arconsis.android.datarobot.CursorUtil;
  * <br>
  * Resolve the {@code ObjectCursor} with an {@link CursorUtil#getObjectCursor(Cursor cursor)} from a {@link Cursor}
  * resolved with a {@link ContentResolver} from a {@link ContentProvider} derived by {@link BaseContentProvider}.
- * 
+ *
+ * @param <T> Type of the entity.
  * @author Falk Appel
  * @author Alexander Frank
- * 
- * @param <T>
- *            Type of the entity.
  */
 public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * @return a new mutable {@code Collection} containing all elements contained in this {@code ObjectCursor}. If the
-	 *         {@code ObjectCursor} is empty an empty {@code Collection} is returned.
+	 * {@code ObjectCursor} is empty an empty {@code Collection} is returned.
 	 */
 	Collection<T> getAll();
 
 	/**
 	 * @return the element at the current position of the {@code ObjectCursor}.
-	 * 
-	 *         If the {@link Cursor} is before the first element, the position is changed to the first position, if the
-	 *         {@link Cursor} is after the last element, the position is changed to the last elements position
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there are no elements to be returned.
+	 * <p/>
+	 * If the {@link Cursor} is before the first element, the position is changed to the first position, if the
+	 * {@link Cursor} is after the last element, the position is changed to the last elements position
+	 * @throws NoSuchElementException if there are no elements to be returned.
 	 */
 	T getCurrent();
 
 	/**
 	 * @return the element at the first position of the {@code ObjectCursor}.
-	 * 
-	 *         The {@link Cursor} is moved to the first position.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there is no element to be returned.
+	 * <p/>
+	 * The {@link Cursor} is moved to the first position.
+	 * @throws NoSuchElementException if there is no element to be returned.
 	 */
 	T getFirst();
 
 	/**
 	 * @return the element at the last position of the {@code ObjectCursor}.
-	 * 
-	 *         The {@link Cursor} is moved to the last position.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there is no element to be returned.
+	 * <p/>
+	 * The {@link Cursor} is moved to the last position.
+	 * @throws NoSuchElementException if there is no element to be returned.
 	 */
 	T getLast();
 
 	/**
 	 * Returns the element at the next position of the {@code ObjectCursor}.
-	 *
+	 * <p/>
 	 * The {@link Cursor} is moved to the next position.
 	 *
-	 * @throws NoSuchElementException
-	 *             if there is no element to be returned.
+	 * @return Element at next position
+	 * @throws NoSuchElementException if there is no element to be returned.
 	 * @see #hasNext
 	 */
 	T getNext();
 
 	/**
+	 * @param amount Number of positions to move forward
 	 * @return a new mutable {@code Collection} containing the next <code>amount</code> elements contained in this
-	 *         {@code ObjectCursor}. If the {@code ObjectCursor} contains less than <code>amount</code> elements
-	 *         following the current position a collection with less than <code>amount</code> elements is returned.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there are no next elements at all
+	 * {@code ObjectCursor}. If the {@code ObjectCursor} contains less than <code>amount</code> elements
+	 * following the current position a collection with less than <code>amount</code> elements is returned.
+	 * @throws NoSuchElementException if there are no next elements at all
 	 */
 	Collection<T> getNext(int amount);
 
 	/**
 	 * @return the element at the first position of the {@code ObjectCursor}. It is expected, that the {@link Cursor}
-	 *         contains exactly one element.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there is no element to be returned.
-	 * @throws IllegalStateException
-	 *             if the {@link Cursor} contains more than one element
+	 * contains exactly one element.
+	 * @throws NoSuchElementException if there is no element to be returned.
+	 * @throws IllegalStateException  if the {@link Cursor} contains more than one element
 	 */
 	T getOne();
 
 	/**
 	 * @return the element at the position before the current position of the {@code ObjectCursor}.
-	 * 
-	 *         The {@link Cursor} is moved to the previous position.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there is no element to be returned.
+	 * <p/>
+	 * The {@link Cursor} is moved to the previous position.
+	 * @throws NoSuchElementException if there is no element to be returned.
 	 * @see #hasPrevious
 	 */
 	T getPrevious();
 
 	/**
+	 * @param amount Number of positions to move backwards
 	 * @return a new mutable {@code Collection} containing the previous <code>amount</code> elements contained in this
-	 *         {@code ObjectCursor}. If the {@code ObjectCursor} contains less than <code>amount</code> elements
-	 *         preceding the current position a collection with less than <code>amount</code> elements is returned.
-	 * 
-	 * @throws NoSuchElementException
-	 *             if there are no preceding elements at all
+	 * {@code ObjectCursor}. If the {@code ObjectCursor} contains less than <code>amount</code> elements
+	 * preceding the current position a collection with less than <code>amount</code> elements is returned.
+	 * @throws NoSuchElementException if there are no preceding elements at all
 	 */
 	Collection<T> getPrevious(int amount);
 
 	/**
 	 * @return <code>true</code> if there is at least one more element after the current position, <code>false</code>
-	 *         otherwise.
-	 * 
+	 * otherwise.
 	 * @see #getNext
 	 */
 	boolean hasNext();
 
 	/**
 	 * @return <code>true</code> if there is at least one more element before the current position, <code>false</code>
-	 *         otherwise.
-	 * 
+	 * otherwise.
 	 * @see #getPrevious
 	 */
 	boolean hasPrevious();
 
 	/**
 	 * @return an {@link Iterator} which does not support the {@link Iterator#remove()} operation.
-	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
@@ -174,35 +156,36 @@ public interface ObjectCursor<T> extends Iterable<T>, Closeable {
 
 	/**
 	 * Move the cursor to an absolute position.
-	 * 
+	 *
+	 * @param position Position to move to
 	 * @return <code>true</code> if the move was succesful.
 	 */
 	boolean moveToPosition(int position);
 
 	/**
 	 * Move the cursor to the first row.
-	 * 
+	 *
 	 * @return <code>true</code> if the move was succesful.
 	 */
 	boolean moveToFirst();
 
 	/**
 	 * Move the cursor to the last row.
-	 * 
+	 *
 	 * @return <code>true</code> if the move was succesful.
 	 */
 	boolean moveToLast();
 
 	/**
 	 * Move the cursor to the next row.
-	 * 
+	 *
 	 * @return <code>true</code> if the move was succesful.
 	 */
 	boolean moveToNext();
 
 	/**
 	 * Move the cursor to the previous row.
-	 * 
+	 *
 	 * @return <code>true</code> if the move was succesful.
 	 */
 	boolean moveToPrevious();

@@ -24,7 +24,7 @@ import com.arconsis.android.datarobot.cursor.ObjectCursor;
 
 /**
  * Provides utility methods for cursors.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
@@ -35,20 +35,14 @@ public class CursorUtil {
 	 * This is only possible for {@link Cursor}s that where queried over a {@link ContentResolver} from a
 	 * {@link ContentProvider} derived by {@link BaseContentProvider}.
 	 *
-	 * @param cursor
-	 *            Android {@link Cursor}
+	 * @param <T>    Entity class represented within the Cursor
+	 * @param cursor Android {@link Cursor}
 	 * @return The {@link ObjectCursor} representation of the given Android {@link Cursor}
-	 *
-	 * @throws NullPointerException
-	 *             When the given cursor is null
-	 *
-	 * @throws IllegalArgumentException
-	 *             When the given cursor is not of the type {@link CursorWrapper}, which will be returned by a
-	 *             {@link ContentResolver}
-	 *
-	 * @throws IllegalStateException
-	 *             When the wrapped cursor within the given cursor is not of type {@link ObjectCursor}. This indicates
-	 *             that the given cursor was not queried from a derivation {@link BaseContentProvider}
+	 * @throws NullPointerException     When the given cursor is null
+	 * @throws IllegalArgumentException When the given cursor is not of the type {@link CursorWrapper}, which will be returned by a
+	 *                                  {@link ContentResolver}
+	 * @throws IllegalStateException    When the wrapped cursor within the given cursor is not of type {@link ObjectCursor}. This indicates
+	 *                                  that the given cursor was not queried from a derivation {@link BaseContentProvider}
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> ObjectCursor<T> getObjectCursor(final Cursor cursor) {
@@ -56,17 +50,19 @@ public class CursorUtil {
 			throw new NullPointerException("The given cursor is null");
 		}
 		if (!(cursor instanceof CursorWrapper)) {
-			throw new IllegalArgumentException("The given cursor is not of type " + CursorWrapper.class.getCanonicalName() + ". It has type "
-					+ cursor.getClass().getCanonicalName() + ". Was it queried with a ContentResolver?");
+			throw new IllegalArgumentException(
+					"The given cursor is not of type " + CursorWrapper.class.getCanonicalName() + ". It has type " + cursor.getClass().getCanonicalName() +
+							". Was it queried with a ContentResolver?");
 		}
 
 		CursorWrapper wrapper = (CursorWrapper) cursor;
 		Cursor wrappedCursor = wrapper.getWrappedCursor();
 
 		if (!(wrappedCursor instanceof ObjectCursor)) {
-			throw new IllegalStateException("The wrapped cursor of the given CursorWrapper is not of type " + ObjectCursor.class.getCanonicalName()
-					+ ". It has type " + wrappedCursor.getClass().getCanonicalName()
-					+ ". Was it queried over a ContentResolver from BaseContentProvider derived ContentProvider?");
+			throw new IllegalStateException(
+					"The wrapped cursor of the given CursorWrapper is not of type " + ObjectCursor.class.getCanonicalName() + ". It has type " +
+							wrappedCursor.getClass().getCanonicalName() +
+							". Was it queried over a ContentResolver from BaseContentProvider derived ContentProvider?");
 		}
 		return (ObjectCursor<T>) wrappedCursor;
 	}
