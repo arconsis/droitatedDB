@@ -15,9 +15,6 @@
  */
 package com.arconsis.android.datarobot;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -35,8 +32,10 @@ import com.arconsis.android.datarobot.entity.PrimaryKey;
 import com.arconsis.android.datarobot.schema.AbstractAttribute;
 import com.arconsis.android.datarobot.schema.EntityInfo;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
- * 
  * The {@link BaseContentProvider} is the base class of all generated {@link ContentProvider} for {@link Entity} classes.<br>
  * <br>
  * For each {@link Entity} which allows {@link ContentProvider} generation a separate {@link ContentProvider} will be generated. The generated
@@ -55,22 +54,22 @@ import com.arconsis.android.datarobot.schema.EntityInfo;
  * {@link BaseContentProvider#uri(String)}: Returns a {@link Uri} for accessing multiple {@link Entity} elements.<br>
  * <br>
  * {@link BaseContentProvider#uriForItem(String, long)}: Returns a {@link Uri} for accessing a specific {@link Entity} element<br>
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 
 public abstract class BaseContentProvider extends ContentProvider {
 
-	private static final int MATCH_DIR = 0;
-	private static final int MATCH_ITEM = 1;
-	private static final String PROTOCOL = "content://";
-	private static final UriRegistry REGISTRY = new UriRegistry();
+	private static final int         MATCH_DIR  = 0;
+	private static final int         MATCH_ITEM = 1;
+	private static final String      PROTOCOL   = "content://";
+	private static final UriRegistry REGISTRY   = new UriRegistry();
 
-	private final String contentUri;
-	private final String dirContentType;
-	private final String itemContentType;
-	private DbCreator dbCreator;
+	private final String    contentUri;
+	private final String    dirContentType;
+	private final String    itemContentType;
+	private       DbCreator dbCreator;
 
 	private final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -93,21 +92,19 @@ public abstract class BaseContentProvider extends ContentProvider {
 	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The {@link Uri} allows CRUD operations on
 	 * multiple {@link Entity} elements.
 	 *
-	 * @param tableName
-	 *            Name of the Table (simple {@link Entity} name) the data should be retrieved from.
+	 * @param tableName Name of the Table (simple {@link Entity} name) the data should be retrieved from.
 	 */
 	public static Uri uri(final String tableName) {
 		return REGISTRY.getDictionaryUri(tableName);
 	}
 
 	/**
-	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The {@link Uri} allows CRUD operations on a
+	 * Returns a {@link Uri} for the using it with a {@link ContentResolver} to access this {@link ContentProvider}. The {@link Uri} allows CRUD operations
+	 * on a
 	 * single {@link Entity} element, qualified by its primary key.
 	 *
-	 * @param tableName
-	 *            Name of the Table (simple {@link Entity} name) the data should be retrieved from.
-	 * @param id
-	 *            Primary key of the {@link Entity} to be accessed
+	 * @param tableName Name of the Table (simple {@link Entity} name) the data should be retrieved from.
+	 * @param id        Primary key of the {@link Entity} to be accessed
 	 */
 	public static Uri uriForItem(final String tableName, final long id) {
 		return REGISTRY.getItemUri(tableName, Long.toString(id));
@@ -162,20 +159,24 @@ public abstract class BaseContentProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(final Uri uri, final ContentValues values) {
-		switch (uriMatcher.match(uri)) {
-			case MATCH_DIR:
-				SQLiteDatabase db = dbCreator.getWritableDatabase();
-				long id = db.insertWithOnConflict(getTableName(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
-				getContext().getContentResolver().notifyChange(uri, null);
-				return Uri.parse(contentUri + "/" + id);
-			default:
-				throw new UnsupportedOperationException("Insert not allowed with specific note uri");
-		}
+		return dbCreator.functionOnDatabase(new DbFunction<Uri>() {
+			@Override
+			public Uri apply(SQLiteDatabase db) {
+				switch (uriMatcher.match(uri)) {
+					case MATCH_DIR:
+						long id = db.insertWithOnConflict(getTableName(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
+						getContext().getContentResolver().notifyChange(uri, null);
+						return Uri.parse(contentUri + "/" + id);
+					default:
+						throw new UnsupportedOperationException("Insert not allowed with specific note uri");
+				}
+			}
+		});
 	}
 
 	@Override
 	public Cursor query(final Uri uri, final String[] projection, final String selection, final String[] selectionArgs, final String sortOrder) {
-		SQLiteDatabase db = dbCreator.getReadableDatabase();
+		SQLiteDatabase db = dbCreator.getDatabaseConnection();
 		SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
 		builder.setTables(getTableName());
 		switch (uriMatcher.match(uri)) {
@@ -192,36 +193,47 @@ public abstract class BaseContentProvider extends ContentProvider {
 
 	@Override
 	public int update(final Uri uri, final ContentValues values, final String selection, final String[] selectionArgs) {
-		SQLiteDatabase db = dbCreator.getWritableDatabase();
-		switch (uriMatcher.match(uri)) {
-			case MATCH_DIR:
-				return db.update(getTableName(), values, selection, selectionArgs);
-			case MATCH_ITEM:
-				String selectId = getIdName() + " = " + Integer.parseInt(uri.getLastPathSegment());
-				return db.update(getTableName(), values, getEffectivSelection(selection, selectId), selectionArgs);
-			default:
-				throw new UnsupportedOperationException("Update not supported for the given Uri + " + uri + ". Only single item updates are allowed right now");
-		}
+		return dbCreator.functionOnDatabase(new DbFunction<Integer>() {
+			@Override
+			public Integer apply(SQLiteDatabase db) {
+				switch (uriMatcher.match(uri)) {
+					case MATCH_DIR:
+						return db.update(getTableName(), values, selection, selectionArgs);
+					case MATCH_ITEM:
+						String selectId = getIdName() + " = " + Integer.parseInt(uri.getLastPathSegment());
+						return db.update(getTableName(), values, getEffectivSelection(selection, selectId), selectionArgs);
+					default:
+						throw new UnsupportedOperationException(
+								"Update not supported for the given Uri + " + uri + ". Only single item updates are allowed right " +
+										"now");
+				}
+			}
+		});
 	}
 
 	@Override
 	public int delete(final Uri uri, final String selection, final String[] selectionArgs) {
-		SQLiteDatabase db = dbCreator.getWritableDatabase();
-		switch (uriMatcher.match(uri)) {
-			case MATCH_DIR:
-				return db.delete(getTableName(), selection, selectionArgs);
-			case MATCH_ITEM:
-				String selectId = getIdName() + " = " + Integer.parseInt(uri.getLastPathSegment());
-				return db.delete(getTableName(), getEffectivSelection(selection, selectId), selectionArgs);
-			default:
-				throw new UnsupportedOperationException("Delete not supported for the given Uri + " + uri + ". Only single item deletes are allowed right now");
-		}
+		return dbCreator.functionOnDatabase(new DbFunction<Integer>() {
+			@Override
+			public Integer apply(SQLiteDatabase db) {
+				switch (uriMatcher.match(uri)) {
+					case MATCH_DIR:
+						return db.delete(getTableName(), selection, selectionArgs);
+					case MATCH_ITEM:
+						String selectId = getIdName() + " = " + Integer.parseInt(uri.getLastPathSegment());
+						return db.delete(getTableName(), getEffectivSelection(selection, selectId), selectionArgs);
+					default:
+						throw new UnsupportedOperationException(
+								"Delete not supported for the given Uri + " + uri + ". Only single item deletes are allowed right now");
+				}
+			}
+		});
 	}
 
 	private Cursor wrap(final Cursor cursor, final Uri uri) {
 		try {
 			EntityInfo entityInfo = getEntityInfo();
-			CombinedCursor<?> magicCursor = CombinedCursorImpl.create(cursor, entityInfo, Class.forName(entityInfo.className()));
+			CombinedCursor<?> magicCursor = CombinedCursorImpl.create(getContext(), cursor, entityInfo, Class.forName(entityInfo.className()));
 			magicCursor.setNotificationUri(getContext().getContentResolver(), uri);
 			return magicCursor;
 		} catch (Exception e) {
@@ -257,8 +269,8 @@ public abstract class BaseContentProvider extends ContentProvider {
 		private String getRegisteredUri(final String tableName) {
 			String uri = registry.get(tableName);
 			if (uri == null) {
-				throw new IllegalStateException("No ContentProvider Uri was registered for table " + tableName
-						+ ". Did you forget to set \"contentProvider=true\" on the corresponding @Entity annotation?");
+				throw new IllegalStateException("No ContentProvider Uri was registered for table " + tableName +
+						". Did you forget to set \"contentProvider=true\" on the corresponding @Entity annotation?");
 			}
 			return uri;
 		}

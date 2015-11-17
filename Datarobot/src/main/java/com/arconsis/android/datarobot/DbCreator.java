@@ -16,11 +16,14 @@
 package com.arconsis.android.datarobot;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.arconsis.android.datarobot.hooks.DbCreate;
 import com.arconsis.android.datarobot.hooks.DbUpdate;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Handles db creation and updates.
@@ -30,12 +33,18 @@ import com.arconsis.android.datarobot.hooks.DbUpdate;
  */
 public class DbCreator extends SQLiteOpenHelper {
 
-	private static final Object LOCK = new Object();
+	private static final Object        LOCK             = new Object();
+	private static final AtomicInteger OPEN_CONNECTIONS = new AtomicInteger(0);
 	private static PersistenceDefinition PERSISTENCE_DEFINITION;
-	private final  PersistenceDefinition persistence;
+	private static DbCreator             DB_CREATOR_INSTANCE;
+	private static SQLiteDatabase        dbConnection;
 
-	DbCreator(final Context context, final PersistenceDefinition persistence) {
+	private final Context               context;
+	private final PersistenceDefinition persistence;
+
+	private DbCreator(final Context context, final PersistenceDefinition persistence) {
 		super(context, persistence.getName(), null, persistence.getVersion());
+		this.context = context;
 		this.persistence = persistence;
 	}
 
@@ -44,8 +53,70 @@ public class DbCreator extends SQLiteOpenHelper {
 			if (PERSISTENCE_DEFINITION == null) {
 				PERSISTENCE_DEFINITION = PersistenceDefinition.create(context.getApplicationContext());
 			}
+			if (DB_CREATOR_INSTANCE == null) {
+				DB_CREATOR_INSTANCE = new DbCreator(context, PERSISTENCE_DEFINITION);
+			}
+			return DB_CREATOR_INSTANCE;
 		}
-		return new DbCreator(context, PERSISTENCE_DEFINITION);
+	}
+
+	public SQLiteDatabase getDatabaseConnection() {
+		synchronized (LOCK) {
+			if (dbConnection == null) {
+				OPEN_CONNECTIONS.set(0);
+				dbConnection = super.getWritableDatabase();
+			}
+			OPEN_CONNECTIONS.incrementAndGet();
+			return dbConnection;
+		}
+	}
+
+	public void reduceDatabaseConnection() {
+		synchronized (LOCK) {
+			int numberOfOpenConnections = OPEN_CONNECTIONS.decrementAndGet();
+			if (numberOfOpenConnections == 0 && dbConnection != null) {
+				dbConnection.close();
+				dbConnection = null;
+			}
+		}
+	}
+
+	public <T> T functionOnDatabase(DbFunction<T> dbFunction) {
+		SQLiteDatabase db = getDatabaseConnection();
+		try {
+			return dbFunction.apply(db);
+		} finally {
+			reduceDatabaseConnection();
+		}
+	}
+
+	public void consumeDatabase(DbConsumer dbConsumer) {
+		SQLiteDatabase db = getDatabaseConnection();
+		try {
+			dbConsumer.consume(db);
+		} finally {
+			reduceDatabaseConnection();
+		}
+	}
+
+	public Cursor query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy) {
+		SQLiteDatabase db = getDatabaseConnection();
+		return new DbClosingCursor(db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy), this);
+	}
+
+	public Cursor rawQuery(String sql) {
+		SQLiteDatabase db = getDatabaseConnection();
+		return new DbClosingCursor(db.rawQuery(sql, null), this);
+	}
+
+	@Override
+	public synchronized SQLiteDatabase getReadableDatabase() {
+		throw new UnsupportedOperationException("Use getDatabaseConnection and reduceDatabaseConnection or one of the performOnDatabase methods");
+	}
+
+	@Override
+	public synchronized SQLiteDatabase getWritableDatabase() {
+		throw new UnsupportedOperationException("Use getDatabaseConnection and reduceDatabaseConnection or one of the performOnDatabase methods");
 	}
 
 	@Override
@@ -81,5 +152,4 @@ public class DbCreator extends SQLiteOpenHelper {
 			}
 		}
 	}
-
 }

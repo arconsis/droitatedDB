@@ -15,8 +15,12 @@
  */
 package com.arconsis.android.datarobot.cursor;
 
-import static com.arconsis.android.datarobot.Utilities.handle;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTES;
+import android.content.Context;
+import android.database.Cursor;
+
+import com.arconsis.android.datarobot.DbCreator;
+import com.arconsis.android.datarobot.schema.AbstractAttribute;
+import com.arconsis.android.datarobot.schema.EntityInfo;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,26 +33,24 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import android.database.Cursor;
-
-import com.arconsis.android.datarobot.schema.AbstractAttribute;
-import com.arconsis.android.datarobot.schema.EntityInfo;
+import static com.arconsis.android.datarobot.Utilities.handle;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTES;
 
 /**
+ * @param <T>
  * @author Falk Appel
  * @author Alexander Frank
- * 
- * @param <T>
  */
 public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCursor<T> {
 
 	@SuppressWarnings("unchecked")
-	public static final <C> CombinedCursor<C> create(final Cursor originalCursor, final EntityInfo entityInfo, final Class<C> entityClass) {
+	public static final <C> CombinedCursor<C> create(Context context, final Cursor originalCursor, final EntityInfo entityInfo, final Class<C> entityClass) {
 		try {
 			Class<?> definition = entityInfo.definition();
 			Field dbAttributes = definition.getDeclaredField(ATTRIBUTES);
 			dbAttributes.setAccessible(true);
 			AbstractAttribute[] attributes = (AbstractAttribute[]) dbAttributes.get(null);
+			final Context appContext = context.getApplicationContext();
 
 			final CombinedCursorImpl<C> magicCursor = new CombinedCursorImpl<C>(originalCursor, entityClass, attributes);
 			InvocationHandler handler = new InvocationHandler() {
@@ -63,7 +65,11 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 					}
 
 					try {
-						if (ReflectionUtil.isMethodOfType(method, argTypes, Cursor.class)) {
+						if (ReflectionUtil.isCloseMethod(method)) {
+							method.invoke(originalCursor, args);
+							DbCreator.getInstance(appContext).reduceDatabaseConnection();
+							return null;
+						} else if (ReflectionUtil.isMethodOfType(method, argTypes, Cursor.class)) {
 							return method.invoke(originalCursor, args);
 						} else if (ReflectionUtil.isMethodOfType(method, argTypes, ObjectCursor.class)) {
 							return method.invoke(magicCursor, args);
@@ -76,14 +82,14 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 				}
 
 			};
-			return (CombinedCursor<C>) Proxy.newProxyInstance(CombinedCursorImpl.class.getClassLoader(), new Class<?>[] { CombinedCursor.class }, handler);
+			return (CombinedCursor<C>) Proxy.newProxyInstance(CombinedCursorImpl.class.getClassLoader(), new Class<?>[]{CombinedCursor.class}, handler);
 		} catch (Exception e) {
 			throw handle(e);
 		}
 	}
 
 	private final AbstractAttribute[] attributes;
-	private final Class<T> entityClass;
+	private final Class<T>            entityClass;
 
 	private final Cursor originalCursor;
 
@@ -257,5 +263,4 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 	public int size() {
 		return originalCursor.getCount();
 	}
-
 }

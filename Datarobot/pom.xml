@@ -85,7 +85,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Build with-sources.jar jar with classes and sources. This is useful 
+			<!-- Build with-sources.jar jar with classes and sources. This is useful
 				for Android debugging. -->
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>

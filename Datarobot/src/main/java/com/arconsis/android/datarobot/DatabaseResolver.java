@@ -94,12 +94,12 @@ class DatabaseResolver {
 		}
 	}
 
-	private void handleToOneAssociation(final Integer idRequestingObject, final Object requestingObject, final Field associationField,
-										final ToOneAssociation toOneAssociation, final int currentDepth, final int maxDepth) {
+	private void handleToOneAssociation(final Integer idRequestingObject, final Object requestingObject, final Field associationField, final ToOneAssociation
+			toOneAssociation, final int currentDepth, final int maxDepth) {
 		String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
 		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
-				toOneAssociation.getAssociationAttribute().columnName()},
+						toOneAssociation.getAssociationAttribute().columnName()},
 				keyName + " = ?", new String[]{Integer.toString(idRequestingObject)}, null, null, null);
 		tryOnCursor(fkCursor, new CursorOperation<Void>() {
 			@Override
@@ -112,8 +112,8 @@ class DatabaseResolver {
 		});
 	}
 
-	private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration,
-								   final int currentDepth, final int maxDepth) {
+	private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+			currentDepth, final int maxDepth) {
 		String mixedId = "class " + declaration.getAssociatedType().getCanonicalName() + "#" + id;
 		if (loadedObjects.containsKey(mixedId)) {
 			setFieldValue(associationField, requestingObject, loadedObjects.get(mixedId));
@@ -122,17 +122,17 @@ class DatabaseResolver {
 		}
 	}
 
-	private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration,
-								  final int currentDepth, final int maxDepth) {
+	private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+			currentDepth, final int maxDepth) {
 		Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
 				EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Integer.toString(id)}, null, null, null);
 		tryOnCursor(associationCursor, new CursorOperation<Void>() {
 			@Override
 			public Void execute(final Cursor cursor) {
 				if (cursor.moveToFirst()) {
-					Object association = CombinedCursorImpl.create(cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
+					Object association = CombinedCursorImpl.create(context, cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
 							declaration
-							.getAssociatedType()).getCurrent();
+									.getAssociatedType()).getCurrent();
 					setFieldValue(associationField, requestingObject, association);
 					loadedObjects.put(declaration.getAssociatedType().getCanonicalName() + "#" + id, association);
 					resolve(association, currentDepth + 1, maxDepth);
@@ -142,8 +142,8 @@ class DatabaseResolver {
 		});
 	}
 
-	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany,
-										 final int currentDepth, final int maxDepth) {
+	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany, final int 
+			currentDepth, final int maxDepth) {
 
 		final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
 		if (foreignAttribute != null) {
@@ -172,9 +172,9 @@ class DatabaseResolver {
 						@Override
 						public Object execute(final Cursor cursor) {
 							if (cursor.getCount() > 0) {
-								Object loaded = CombinedCursorImpl.create(cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
+								Object loaded = CombinedCursorImpl.create(context, cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
 										foreignAttribute
-										.type()).getOne();
+												.type()).getOne();
 								loadedObjects.put(mixedId, loaded);
 								resolve(loaded, currentDepth + 1, maxDepth);
 								return loaded;
@@ -205,8 +205,8 @@ class DatabaseResolver {
 		return null;
 	}
 
-	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute,
-											   final ToManyAssociation toMany) {
+	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
+	ToManyAssociation toMany) {
 		String tableName = getLinkTableName(toMany.getLinkTableSchema());
 		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 

@@ -15,40 +15,34 @@
  */
 package com.arconsis.android.datarobot;
 
-import java.io.Closeable;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.arconsis.android.datarobot.entity.Entity;
 
+import java.io.Closeable;
+
 /**
  * Provides a version of the {@link EntityService} with an open connection to the {@link SQLiteDatabase}. Make sure to
  * close the connection with {@link ConnectedEntityService#close()} when you finished using the service.
- * 
+ *
+ * @param <E> Entity, for which this service will be used
  * @author Falk Appel
  * @author Alexander Frank
- * 
- * @param <E>
- *            Entity, for which this service will be used
  */
 public class ConnectedEntityService<E> extends EntityService<E> implements Closeable {
 	private final SQLiteDatabase database;
 
 	/**
 	 * Creates a {@link ConnectedEntityService} for the given {@link Entity}
-	 * 
-	 * @param context
-	 *            Android context
-	 * @param entityClass
-	 *            Class of the {@link Entity}, the service should be used for
-	 * 
-	 * @throws IllegalArgumentException
-	 *             When the given {@link #entityClass} is no {@link Entity}
+	 *
+	 * @param context     Android context
+	 * @param entityClass Class of the {@link Entity}, the service should be used for
+	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
 	 */
 	public ConnectedEntityService(final Context context, final Class<E> entityClass) {
 		super(context, entityClass);
-		this.database = dbCreator.getWritableDatabase();
+		this.database = dbCreator.getDatabaseConnection();
 	}
 
 	/*
@@ -71,7 +65,7 @@ public class ConnectedEntityService<E> extends EntityService<E> implements Close
 
 	@Override
 	public void close() {
-		database.close();
+		dbCreator.reduceDatabaseConnection();
 	}
 
 }

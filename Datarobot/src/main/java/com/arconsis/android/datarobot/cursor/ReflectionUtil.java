@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 /**
  * @author Falk Appel
  * @author Alexander Frank
- * 
  */
 class ReflectionUtil {
 	static Class<?>[] getArgTypes(final Object[] args) {
@@ -29,6 +28,11 @@ class ReflectionUtil {
 			argTypes[i] = args[i].getClass();
 		}
 		return argTypes;
+	}
+
+
+	static boolean isCloseMethod(Method method) {
+		return method.getName().equals("close") && method.getParameterTypes().length == 0;
 	}
 
 	static boolean isMethodOfType(final Method method, final Class<?>[] argTypes, final Class<?> type) {
@@ -50,7 +54,6 @@ class ReflectionUtil {
 			}
 		}
 		return false;
-
 	}
 
 	private static boolean isPrimitiveAssignable(final Class<?> paramType, final Class<?> argType) {
@@ -83,5 +86,4 @@ class ReflectionUtil {
 			return isPrimitiveAssignable(paramType, argType);
 		}
 	}
-
 }

@@ -71,7 +71,7 @@ public class EntityService<E> {
 	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
 	 */
 	public EntityService(final Context context, final Class<E> entityClass) {
-		this(context, entityClass, ValidationToggle.ON, new DbCreator(context, PersistenceDefinition.create(context)));
+		this(context, entityClass, ValidationToggle.ON, DbCreator.getInstance(context));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class EntityService<E> {
 	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
 	 */
 	public EntityService(final Context context, final Class<E> entityClass, ValidationToggle toggle) {
-		this(context, entityClass, toggle, new DbCreator(context, PersistenceDefinition.create(context)));
+		this(context, entityClass, toggle, DbCreator.getInstance(context));
 	}
 
 	/*
@@ -142,7 +142,7 @@ public class EntityService<E> {
 			return tryOnCursor(cursor, new CursorOperation<E>() {
 				@Override
 				public E execute(final Cursor cursor) {
-					return CombinedCursorImpl.create(cursor, entityInfo, entityClass).getCurrent();
+					return CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getCurrent();
 				}
 			});
 		} finally {
@@ -151,11 +151,11 @@ public class EntityService<E> {
 	}
 
 	protected void closeDB(SQLiteDatabase database) {
-		database.close();
+		dbCreator.reduceDatabaseConnection();
 	}
 
 	protected SQLiteDatabase openDB() {
-		return dbCreator.getWritableDatabase();
+		return dbCreator.getDatabaseConnection();
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class EntityService<E> {
 			return tryOnCursor(cursor, new CursorOperation<List<E>>() {
 				@Override
 				public List<E> execute(final Cursor cursor) {
-					return new ArrayList<E>(CombinedCursorImpl.create(cursor, entityInfo, entityClass).getAll());
+					return new ArrayList<E>(CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getAll());
 				}
 			});
 		} finally {
@@ -218,7 +218,7 @@ public class EntityService<E> {
 	 * @param data {@link Entity} which should be stored
 	 * @return The primary key of the given data.
 	 * @throws IllegalStateException                                            When the {@link PrimaryKey} field and its value of the {@link Entity} could
-	 * not be determined
+	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when the given entity is invalid.
 	 */
 	public int save(final E data) {
@@ -233,7 +233,7 @@ public class EntityService<E> {
 	 * @param maxDepth The maximum depth of the associated objects which should also be saved.
 	 * @return The primary key of the given data.
 	 * @throws IllegalStateException                                            When the {@link PrimaryKey} field and its value of the {@link Entity} could
-     * not be determined
+	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when the given entity is invalid.
 	 */
 	public int save(final E data, final int maxDepth) {
@@ -263,7 +263,7 @@ public class EntityService<E> {
 	 *
 	 * @param data {@link Entity}s which should be stored
 	 * @throws IllegalStateException                                            When the {@link PrimaryKey} field and its value of the {@link Entity} could
-     * not be determined
+	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when at least one of the given entities is invalid.
 	 */
 	public void save(final Collection<E> data) {
@@ -278,7 +278,7 @@ public class EntityService<E> {
 	 * @param data     {@link Entity} which should be stored
 	 * @param maxDepth The maximum depth of the associated objects which should also be saved.
 	 * @throws IllegalStateException                                            When the {@link PrimaryKey} field and its value of the {@link Entity} could
-     * not be determined
+	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when at least one of the given entities is invalid.
 	 */
 	public void save(final Collection<E> data, final int maxDepth) {
