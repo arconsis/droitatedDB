@@ -38,11 +38,11 @@ public class DbCreator extends SQLiteOpenHelper {
 
 	private static          PersistenceDefinition PERSISTENCE_DEFINITION;
 	private static          DbCreator             DB_CREATOR_INSTANCE;
-	private static volatile SQLiteDatabase        dbConnection;
+	protected static volatile SQLiteDatabase        dbConnection;
 
 	private final PersistenceDefinition persistence;
 
-	private DbCreator(final Context context, final PersistenceDefinition persistence) {
+	protected DbCreator(final Context context, final PersistenceDefinition persistence) {
 		super(context, persistence.getName(), null, persistence.getVersion());
 		this.persistence = persistence;
 	}

@@ -48,13 +48,13 @@ public class BasePersistenceTest {
     private SQLiteDatabase database;
     protected Context context;
     private final Collection<ConnectedEntityService<?>> services = new ArrayList<ConnectedEntityService<?>>();
-    protected DbCreator dbCreator;
+    protected TestDBCreator dbCreator;
 
     @Before
     public void setUp() throws Exception {
         context = Robolectric.getShadowApplication().getApplicationContext();
-        dbCreator = spy(DbCreator.getInstance(context));
-        database = spy(dbCreator.getWritableDatabase());
+        dbCreator = spy(TestDBCreator.getInstance(context));
+        database = spy(dbCreator.getTestDB());
         database.execSQL(DROP + DB.AuthorTable.TABLE_NAME);
         database.execSQL(DROP + DB.BidirectionalOneTable.TABLE_NAME);
         database.execSQL(DROP + DB.StageOneTable.TABLE_NAME);
@@ -90,7 +90,8 @@ public class BasePersistenceTest {
         for (ConnectedEntityService<?> service : services) {
             service.close();
         }
-        database.close();
+		dbCreator.tearDown();
+
     }
 
     protected <T> EntityService<T> entityService(Class<T> entityClass) {

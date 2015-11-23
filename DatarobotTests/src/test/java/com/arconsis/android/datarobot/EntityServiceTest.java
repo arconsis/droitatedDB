@@ -58,7 +58,7 @@ public class EntityServiceTest {
                 .thenReturn(cursor);
 
         dbCreator = mock(DbCreator.class);
-        when(dbCreator.getWritableDatabase()).thenReturn(db);
+        when(dbCreator.getDatabaseConnection()).thenReturn(db);
 
         context = mock(Context.class);
         when(context.getPackageName()).thenReturn("com.arconsis.android.datrobot.test.data");
