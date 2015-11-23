@@ -31,10 +31,7 @@ import com.arconsis.android.datarobot.validation.ValidationToggle;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static com.arconsis.android.datarobot.CursorOperation.tryOnCursor;
 import static com.arconsis.android.datarobot.SchemaUtil.getEntityInfo;
@@ -54,11 +51,10 @@ import static com.arconsis.android.datarobot.SchemaUtil.getTableName;
 public class EntityService<E> {
 	private final Context              context;
 	private final Class<E>             entityClass;
-	private       String               tableName;
 	private final EntityInfo           entityInfo;
-	private       LinkedList<Field>    columns;
-	private       Field                primaryKey;
 	protected     DbCreator            dbCreator;
+	private       String               tableName;
+	private       Field                primaryKey;
 	private       DatabaseValidator<E> databaseValidator;
 	private       ValidationToggle     toggle;
 
@@ -72,18 +68,6 @@ public class EntityService<E> {
 	 */
 	public EntityService(final Context context, final Class<E> entityClass) {
 		this(context, entityClass, ValidationToggle.ON, DbCreator.getInstance(context));
-	}
-
-	/**
-	 * Creates a {@link EntityService} for the given {@link Entity}
-	 *
-	 * @param context     Android context
-	 * @param entityClass Class of the {@link Entity}, the service should be used for
-	 * @param toggle      Controls the use of validation on saving  {@link Entity}s
-	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
-	 */
-	public EntityService(final Context context, final Class<E> entityClass, ValidationToggle toggle) {
-		this(context, entityClass, toggle, DbCreator.getInstance(context));
 	}
 
 	/*
@@ -104,17 +88,25 @@ public class EntityService<E> {
 	}
 
 	private void initColumns() {
-		columns = new LinkedList<Field>();
-		Set<String> names = new TreeSet<String>();
 		for (Field field : entityClass.getDeclaredFields()) {
 			if (field.getAnnotation(Column.class) != null) {
 				if (field.getAnnotation(PrimaryKey.class) != null) {
 					primaryKey = field;
 				}
-				columns.add(field);
-				names.add(field.getName());
 			}
 		}
+	}
+
+	/**
+	 * Creates a {@link EntityService} for the given {@link Entity}
+	 *
+	 * @param context     Android context
+	 * @param entityClass Class of the {@link Entity}, the service should be used for
+	 * @param toggle      Controls the use of validation on saving  {@link Entity}s
+	 * @throws IllegalArgumentException When the given {@link #entityClass} is no {@link Entity}
+	 */
+	public EntityService(final Context context, final Class<E> entityClass, ValidationToggle toggle) {
+		this(context, entityClass, toggle, DbCreator.getInstance(context));
 	}
 
 	/**
@@ -124,38 +116,6 @@ public class EntityService<E> {
 	 */
 	public List<E> get() {
 		return find(null, null, null);
-	}
-
-	/**
-	 * Gets a specific {@link Entity} according to the given id
-	 *
-	 * @param id primary key of the {@link Entity}
-	 * @return The {@link Entity} to the given id, or null if non was found
-	 */
-	public E get(final int id) {
-		SQLiteDatabase database = openDB();
-		try {
-			Cursor cursor = database.query(tableName, null, primaryKey.getName() + " = ?", new String[]{Integer.toString(id)}, null, null, null);
-			if (cursor.getCount() == 0) {
-				return null;
-			}
-			return tryOnCursor(cursor, new CursorOperation<E>() {
-				@Override
-				public E execute(final Cursor cursor) {
-					return CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getCurrent();
-				}
-			});
-		} finally {
-			closeDB(database);
-		}
-	}
-
-	protected void closeDB(SQLiteDatabase database) {
-		dbCreator.reduceDatabaseConnection();
-	}
-
-	protected SQLiteDatabase openDB() {
-		return dbCreator.getDatabaseConnection();
 	}
 
 	/**
@@ -170,12 +130,46 @@ public class EntityService<E> {
 		SQLiteDatabase database = openDB();
 		try {
 			Cursor cursor = database.query(tableName, null, selection, selectionArgs, null, null, order);
-			return tryOnCursor(cursor, new CursorOperation<List<E>>() {
-				@Override
-				public List<E> execute(final Cursor cursor) {
-					return new ArrayList<E>(CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getAll());
-				}
-			});
+			return tryOnCursor(
+					cursor, new CursorOperation<List<E>>() {
+						@Override
+						public List<E> execute(final Cursor cursor) {
+							return new ArrayList<E>(CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getAll());
+						}
+					});
+		} finally {
+			closeDB(database);
+		}
+	}
+
+	protected SQLiteDatabase openDB() {
+		return dbCreator.getDatabaseConnection();
+	}
+
+	protected void closeDB(SQLiteDatabase database) {
+		dbCreator.reduceDatabaseConnection();
+	}
+
+	/**
+	 * Gets a specific {@link Entity} according to the given id
+	 *
+	 * @param id primary key of the {@link Entity}
+	 * @return The {@link Entity} to the given id, or null if non was found
+	 */
+	public E get(final long id) {
+		SQLiteDatabase database = openDB();
+		try {
+			Cursor cursor = database.query(tableName, null, primaryKey.getName() + " = ?", new String[]{Long.toString(id)}, null, null, null);
+			if (cursor.getCount() == 0) {
+				return null;
+			}
+			return tryOnCursor(
+					cursor, new CursorOperation<E>() {
+						@Override
+						public E execute(final Cursor cursor) {
+							return CombinedCursorImpl.create(context, cursor, entityInfo, entityClass).getCurrent();
+						}
+					});
 		} finally {
 			closeDB(database);
 		}
@@ -221,7 +215,7 @@ public class EntityService<E> {
 	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when the given entity is invalid.
 	 */
-	public int save(final E data) {
+	public long save(final E data) {
 		return save(data, Integer.MAX_VALUE);
 	}
 
@@ -236,7 +230,7 @@ public class EntityService<E> {
 	 *                                                                          not be determined
 	 * @throws com.arconsis.android.datarobot.validation.InvalidEntityException when the given entity is invalid.
 	 */
-	public int save(final E data, final int maxDepth) {
+	public long save(final E data, final int maxDepth) {
 		if (toggle == ValidationToggle.ON) {
 			AccumulatedValidationResult validationResult = databaseValidator.validate(data, maxDepth);
 			if (!validationResult.isValid()) {
@@ -246,14 +240,27 @@ public class EntityService<E> {
 
 		final SQLiteDatabase database = openDB();
 		try {
-			return transactional(database, new DatabaseOperation<Integer>() {
-				@Override
-				public Integer execute() {
-					return new DatabaseSaver(context, database, maxDepth).save(data);
-				}
-			});
+			Number number = transactional(
+					database, new DatabaseOperation<Number>() {
+						@Override
+						public Number execute() {
+							return new DatabaseSaver(context, database, maxDepth).save(data);
+						}
+					});
+			return number.longValue();
 		} finally {
 			closeDB(database);
+		}
+	}
+
+	private <T> T transactional(SQLiteDatabase database, final DatabaseOperation<T> operation) {
+		database.beginTransaction();
+		try {
+			T result = operation.execute();
+			database.setTransactionSuccessful();
+			return result;
+		} finally {
+			database.endTransaction();
 		}
 	}
 
@@ -292,15 +299,16 @@ public class EntityService<E> {
 		SQLiteDatabase database = openDB();
 		try {
 			final DatabaseSaver databaseSaver = new DatabaseSaver(context, database, maxDepth);
-			transactional(database, new DatabaseOperation<Void>() {
-				@Override
-				public Void execute() {
-					for (E object : data) {
-						databaseSaver.save(object);
-					}
-					return null;
-				}
-			});
+			transactional(
+					database, new DatabaseOperation<Void>() {
+						@Override
+						public Void execute() {
+							for (E object : data) {
+								databaseSaver.save(object);
+							}
+							return null;
+						}
+					});
 		} finally {
 			closeDB(database);
 		}
@@ -339,21 +347,6 @@ public class EntityService<E> {
 		}
 	}
 
-	private <T> T transactional(SQLiteDatabase database, final DatabaseOperation<T> operation) {
-		database.beginTransaction();
-		try {
-			T result = operation.execute();
-			database.setTransactionSuccessful();
-			return result;
-		} finally {
-			database.endTransaction();
-		}
-	}
-
-	private static interface DatabaseOperation<E> {
-		public E execute();
-	}
-
 	/**
 	 * Will be removed with Version 0.2.0 <br>
 	 * Use {@link ConnectedEntityService} if you need only one db connection.
@@ -362,6 +355,10 @@ public class EntityService<E> {
 	@Deprecated
 	public void close() {
 
+	}
+
+	private static interface DatabaseOperation<E> {
+		public E execute();
 	}
 
 }

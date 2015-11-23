@@ -78,7 +78,7 @@ class DatabaseResolver {
 		EntityData entityData = EntityData.getEntityData(data);
 		if (entityData.allAssociations.size() > 0) {
 			Class<?> associationsDeclaration = getAssociationsSchema(data.getClass(), context.getPackageName());
-			Integer id = getPrimaryKey(data, entityData);
+			Number id = getPrimaryKey(data, entityData);
 
 			if (id != null) {
 				loadedObjects.put("class " + data.getClass().getCanonicalName() + "#" + id, data);
@@ -94,13 +94,13 @@ class DatabaseResolver {
 		}
 	}
 
-	private void handleToOneAssociation(final Integer idRequestingObject, final Object requestingObject, final Field associationField, final ToOneAssociation
+	private void handleToOneAssociation(final Number idRequestingObject, final Object requestingObject, final Field associationField, final ToOneAssociation
 			toOneAssociation, final int currentDepth, final int maxDepth) {
 		String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
 		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
 						toOneAssociation.getAssociationAttribute().columnName()},
-				keyName + " = ?", new String[]{Integer.toString(idRequestingObject)}, null, null, null);
+				keyName + " = ?", new String[]{idRequestingObject.toString()}, null, null, null);
 		tryOnCursor(fkCursor, new CursorOperation<Void>() {
 			@Override
 			public Void execute(final Cursor cursor) throws Exception {
@@ -142,7 +142,7 @@ class DatabaseResolver {
 		});
 	}
 
-	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany, final int 
+	private void handleToManyAssociation(final Number primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany, final int
 			currentDepth, final int maxDepth) {
 
 		final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
@@ -205,12 +205,12 @@ class DatabaseResolver {
 		return null;
 	}
 
-	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
+	private List<Integer> loadIdsFromLinkTable(final Number primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
 	ToManyAssociation toMany) {
 		String tableName = getLinkTableName(toMany.getLinkTableSchema());
 		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 
-		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{Integer.toString(primaryKeyData)}, null, null, null);
+		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{primaryKeyData.toString()}, null, null, null);
 		return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
 			@Override
 			public List<Integer> execute(final Cursor cursor) throws Exception {

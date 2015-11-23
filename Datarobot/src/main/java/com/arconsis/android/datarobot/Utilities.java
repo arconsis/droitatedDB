@@ -15,13 +15,13 @@
  */
 package com.arconsis.android.datarobot;
 
-import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTES;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.PROJECTION;
-import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE_NAME;
+import com.arconsis.android.datarobot.schema.AbstractAttribute;
 
 import java.lang.reflect.Field;
 
-import com.arconsis.android.datarobot.schema.AbstractAttribute;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.ATTRIBUTES;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.PROJECTION;
+import static com.arconsis.android.datarobot.schema.SchemaConstants.TABLE_NAME;
 
 /**
  * Provides utility methods for datarobot.
@@ -80,7 +80,7 @@ public class Utilities {
 		}
 	}
 
-	static Integer getPrimaryKey(final Object data, EntityData entityData) {
-		return (Integer) getFieldValue(data, entityData.primaryKey);
+	static Number getPrimaryKey(final Object data, EntityData entityData) {
+		return (Number) getFieldValue(data, entityData.primaryKey);
 	}
 }

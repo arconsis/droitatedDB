@@ -15,19 +15,19 @@
  */
 package com.arconsis.android.datarobot;
 
-import static org.fest.assertions.Assertions.assertThat;
-
-import java.util.Date;
+import com.arconsis.android.datrobot.test.data.Non;
+import com.arconsis.android.datrobot.test.data.Simple;
+import com.arconsis.android.datrobot.test.data.StageOne;
+import com.arconsis.android.datrobot.test.data.StageTwo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import com.arconsis.android.datrobot.test.data.Non;
-import com.arconsis.android.datrobot.test.data.Simple;
-import com.arconsis.android.datrobot.test.data.StageOne;
-import com.arconsis.android.datrobot.test.data.StageTwo;
+import java.util.Date;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * @author Falk Appel
@@ -43,7 +43,7 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 	public void saveAndRetrieveSimple() {
 		EntityService<Simple> entityService = entityService(Simple.class);
 		Simple data = new Simple(null, ONE_STRING);
-		int id = entityService.save(data);
+		long id = entityService.save(data);
 
 		Simple savedSimple = entityService.get(id);
 
@@ -58,7 +58,7 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		assertThat(savedSimple.getMyInt()).isEqualTo(0);
 		assertThat(savedSimple.getSoLong()).isEqualTo(0l);
 		assertThat(savedSimple).isNotSameAs(data);
-		assertThat(savedSimple.getId()).isEqualTo(id);
+		assertThat(savedSimple.getId()).isEqualTo((int) id);
 		assertThat(savedSimple.getMyString()).isEqualTo(ONE_STRING);
 		assertInsertsAndUpdatesAmountToDB(1, 0);
 	}
@@ -79,7 +79,7 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		data.setSoLong(567l);
 		data.setSomeBytes("someBytes".getBytes());
 
-		int id = entityService.save(data);
+		long id = entityService.save(data);
 		assertInsertsAndUpdatesAmountToDB(1, 0);
 
 		Simple savedSimple = entityService.get(id);
@@ -98,7 +98,7 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		Simple testEntity = new Simple(null, "Test");
 
 		EntityService<Simple> entityService = entityService(Simple.class);
-		int id = entityService.save(testEntity);
+		long id = entityService.save(testEntity);
 
 		assertThat(id).isEqualTo(1);
 		assertThat(entityService.get()).hasSize(1);
@@ -130,17 +130,17 @@ public class EntityServiceWithRealSQLiteDatabaseTest extends BasePersistenceTest
 		one.setEntity(two);
 
 		EntityService<StageOne> entityService = entityService(StageOne.class);
-		int id = entityService.save(one, 1);
+		long id = entityService.save(one, 1);
 
 		assertInsertsAndUpdatesAmountToDB(2, 0);
 
 		StageOne savedStageOne = entityService.get(id);
 		assertSameFields(savedStageOne, one);
-		assertThat(savedStageOne.getId()).isEqualTo(id);
+		assertThat(savedStageOne.getId()).isEqualTo((int) id);
 		assertThat(savedStageOne.getEntity()).isNull();
 
 		entityService.resolveAssociations(savedStageOne, 0);
-		assertThat(savedStageOne.getId()).isEqualTo(id);
+		assertThat(savedStageOne.getId()).isEqualTo((int) id);
 		assertThat(savedStageOne.getEntity()).isNull();
 
 		entityService.resolveAssociations(savedStageOne, 1);

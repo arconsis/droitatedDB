@@ -15,11 +15,8 @@
  */
 package com.arconsis.android.datarobot;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.fest.assertions.Assertions.assertThat;
-
-import java.util.Collection;
-import java.util.List;
+import com.arconsis.android.datrobot.test.data.Author;
+import com.arconsis.android.datrobot.test.data.Text;
 
 import org.fest.assertions.Assertions;
 import org.junit.Test;
@@ -27,8 +24,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import com.arconsis.android.datrobot.test.data.Author;
-import com.arconsis.android.datrobot.test.data.Text;
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * @author Falk Appel
@@ -58,7 +58,7 @@ public class NToMAssoTest extends BasePersistenceTest {
 
 		EntityService<Author> entityService = entityService(Author.class);
 
-		int id = entityService.save(author, 1);
+		long id = entityService.save(author, 1);
 		assertInsertsAndUpdatesAmountToDB(3, 0);
 		Author authorFromDb = entityService.get(id);
 		assertThat(authorFromDb.getTexts()).isNull();
@@ -77,7 +77,7 @@ public class NToMAssoTest extends BasePersistenceTest {
 
 		EntityService<Author> entityService = entityService(Author.class);
 
-		int id = entityService.save(author);
+		long id = entityService.save(author);
 		assertInsertsAndUpdatesAmountToDB(4, 0);
 		Author authorFromDb = entityService.get(id);
 		assertThat(authorFromDb.getTexts()).isNull();
@@ -144,7 +144,7 @@ public class NToMAssoTest extends BasePersistenceTest {
 		List<Author> list = entityService.get();
 		assertThat(list).hasSize(0);
 
-		int authorId = entityService.save(author);
+		long authorId = entityService.save(author);
 		assertInsertsAndUpdatesAmountToDB(7, 0);
 		Text text3 = new Text("Text3");
 		author.getTexts().add(text3);
@@ -180,7 +180,7 @@ public class NToMAssoTest extends BasePersistenceTest {
 		assertInsertsAndUpdatesAmountToDB(7, 0);
 		author.getTexts().remove(text2);
 		text2.getAuthors().remove(author);
-		int authorId = entityService.save(author);
+		long authorId = entityService.save(author);
 		assertInsertsAndUpdatesAmountToDB(0, 2, 1);
 
 		Author fromDB = entityService.get(authorId);

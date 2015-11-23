@@ -15,18 +15,18 @@
  */
 package com.arconsis.android.datarobot;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.fest.assertions.Assertions.assertThat;
-
-import java.util.Collection;
+import com.arconsis.android.datrobot.test.data.Author;
+import com.arconsis.android.datrobot.test.data.Comment;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import com.arconsis.android.datrobot.test.data.Author;
-import com.arconsis.android.datrobot.test.data.Comment;
+import java.util.Collection;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static org.fest.assertions.Assertions.assertThat;
 
 /**
  * @author Falk Appel
@@ -124,7 +124,7 @@ public class NTOneAssoTest extends BasePersistenceTest {
 		c2.setAuthor(a);
 
 		EntityService<Comment> entityService = entityService(Comment.class);
-		int id = entityService.save(c1);
+		long id = entityService.save(c1);
 		assertInsertsAndUpdatesAmountToDB(5, 0);
 		Comment fromDb = entityService.get(id);
 		entityService.resolveAssociations(fromDb);
@@ -153,7 +153,7 @@ public class NTOneAssoTest extends BasePersistenceTest {
 		c2.setAuthor(a);
 
 		EntityService<Author> entityService = entityService(Author.class);
-		int id = entityService.save(a);
+		long id = entityService.save(a);
 		assertInsertsAndUpdatesAmountToDB(5, 0);
 		Author author = entityService.get(id);
 		entityService.resolveAssociations(author);
