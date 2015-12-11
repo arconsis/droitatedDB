@@ -323,11 +323,24 @@ public class EntityService<E> {
 	 * @throws IllegalArgumentException When the value of the {@link PrimaryKey} field is null
 	 */
 	public boolean delete(final E data) {
-		Integer id = (Integer) Utilities.getFieldValue(data, primaryKey);
+		Number id = (Number) Utilities.getFieldValue(data, primaryKey);
 		if (id == null) {
 			throw new IllegalArgumentException("The @PrimaryKey of the given @Entity can not be null");
 		}
-		return delete(id);
+		return deleteInternal(id);
+	}
+
+	private boolean deleteInternal(final Number id) {
+		SQLiteDatabase database = openDB();
+		try {
+
+			int delete = database.delete(
+					tableName, EntityData.getEntityData(entityClass).primaryKey.getName() + "= ?", new String[]{
+							String.valueOf(id.longValue())});
+			return delete == 1;
+		} finally {
+			closeDB(database);
+		}
 	}
 
 	/**
@@ -336,15 +349,8 @@ public class EntityService<E> {
 	 * @param id primary key of the {@link Entity} to be deleted
 	 * @return <code>true</code> if the {@link Entity} could be deleted, <code>false</code> otherwise
 	 */
-	public boolean delete(final int id) {
-		SQLiteDatabase database = openDB();
-		try {
-
-			int delete = database.delete(tableName, EntityData.getEntityData(entityClass).primaryKey.getName() + "= ?", new String[]{Integer.toString(id)});
-			return delete == 1;
-		} finally {
-			closeDB(database);
-		}
+	public boolean delete(final long id) {
+		return deleteInternal(id);
 	}
 
 	/**
