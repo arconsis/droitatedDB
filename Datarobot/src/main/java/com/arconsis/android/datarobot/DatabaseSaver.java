@@ -115,7 +115,7 @@ class DatabaseSaver {
 			id = insert(data.getClass(), contentValuesEntity);
 			// 5. put id into object graph
 			idsInGraph.put(data, id);
-			setFieldValue(entityData.primaryKey, data, id);
+			setFieldValue(entityData.primaryKey, data, castToIdType(entityData.primaryKey, id));
 			// 6. deregister new now saved Object
 			newUnsavedObjects.remove(data);
 		}
@@ -125,6 +125,14 @@ class DatabaseSaver {
 
 		return id;
 
+	}
+
+	private Object castToIdType(final Field primaryKey, final Number id) {
+		if (primaryKey.getType().equals(Integer.class)) {
+			return (int) (long) (Long) id;
+		} else {
+			return id;
+		}
 	}
 
 	private void performPendingToOneUpdates() {
@@ -335,8 +343,8 @@ class DatabaseSaver {
 		}
 	}
 
-	private int insert(final Class<? extends Object> entityClass, final ContentValues contentValues) {
-		return (int) database.insertOrThrow(entityClass.getSimpleName(), null, contentValues);
+	private long insert(final Class<? extends Object> entityClass, final ContentValues contentValues) {
+		return database.insertOrThrow(entityClass.getSimpleName(), null, contentValues);
 	}
 
 	private static final class ToOneUpdate {
