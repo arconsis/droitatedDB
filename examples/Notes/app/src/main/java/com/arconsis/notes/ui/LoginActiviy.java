@@ -1,7 +1,5 @@
 package com.arconsis.notes.ui;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,12 +16,14 @@ import com.arconsis.notes.db.User;
 import com.arconsis.notes.generated.DB;
 import com.arconsis.notes.preferences.LoginPreferences;
 
+import java.util.List;
+
 public class LoginActiviy extends Activity {
 
-	private EditText user;
-	private EditText password;
+	private EditText            user;
+	private EditText            password;
 	private EntityService<User> userService;
-	private CheckBox stayLoggedIn;
+	private CheckBox            stayLoggedIn;
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -86,19 +86,19 @@ public class LoginActiviy extends Activity {
 	}
 
 	private List<User> findUserByName() {
-		return userService.find(DB.UserTable.NAME.columnName() + "=?", new String[] { user.getText().toString() }, null);
+		return userService.find(DB.UserTable.NAME.columnName() + "=?", new String[]{user.getText().toString()}, null);
 	}
 
 	private boolean checkLoginData() {
 		String userName = user.getText().toString();
 		String pass = password.getText().toString();
 
-		if (userName == null || userName.length() == 0) {
+		if (userName.length() == 0) {
 			Toast.makeText(this, "Enter a user name", Toast.LENGTH_LONG).show();
 			return false;
 		}
 
-		if (pass == null || pass.length() == 0) {
+		if (pass.length() == 0) {
 			Toast.makeText(this, "Enter a password", Toast.LENGTH_LONG).show();
 			return false;
 		}
