@@ -1,14 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.arconsis</groupId>
-    <artifactId>datarobot.processor</artifactId>
+    <artifactId>droitatedDB.processor</artifactId>
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Datarobot for Android - Annotation Processor</name>
-    <description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you
+    <name>droitatedDB - Annotation Processor</name>
+    <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with Androids SQLite
+        database directly if you
         don't want to and let's you access it directly if you have to.
     </description>
-    <url>https://github.com/arconsis/datarobot</url>
+    <url>https://github.com/arconsis/droitatedDB</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gpg.keyname>9D6D0383</gpg.keyname>
@@ -40,9 +42,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/arconsis/datarobot.git</connection>
-        <developerConnection>scm:git:https://github.com/arconsis/datarobot.git</developerConnection>
-        <url>https://github.com/arconsis/datarobot.git</url>
+        <connection>scm:git:https://github.com/arconsis/droitatedDB.git</connection>
+        <developerConnection>scm:git:https://github.com/arconsis/droitatedDB.git</developerConnection>
+        <url>https://github.com/arconsis/droitatedDB.git</url>
         <tag>HEAD</tag>
     </scm>
     <distributionManagement>
@@ -58,7 +60,7 @@
     <dependencies>
         <dependency>
             <groupId>com.arconsis</groupId>
-            <artifactId>datarobot.api</artifactId>
+            <artifactId>droitatedDB.api</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
     </dependencies>
