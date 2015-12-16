@@ -1,5 +1,8 @@
 # __Name conflict! This project will be renamed soon!__ #
-We will let you know our new name soon. Thx to the trademark lawyers from someone else.... 
+
+The new name will be ... wait for it ...
+
+#DROITATED DB
 
 ![logo](https://github.com/arconsis/datarobot/raw/master/resources/Datarobottitle.png)
 =========
