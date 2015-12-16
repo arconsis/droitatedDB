@@ -1,16 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.arconsis.android.datarobot</groupId>
-    <artifactId>datarobot.tests</artifactId>
+    <groupId>com.arconsis.android.droitatedDB</groupId>
+    <artifactId>droitatedDB.tests</artifactId>
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Datarobot for Android - Tests</name>
-    <description>Datarobot for Android is a lightweight framework, which frees you from the burden of dealing with
+    <name>droitatedDB - Tests</name>
+    <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with
         Androids SQLite database directly if you
         don't want to and let's you access it directly if you have to.
     </description>
-    <url>https://github.com/arconsis/datarobot</url>
+    <url>https://github.com/arconsis/droitatedDB</url>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -41,19 +41,19 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git@github.com:arconsis/datarobot.git</connection>
-        <developerConnection>scm:git:git@github.com:arconsis/datarobot.git</developerConnection>
-        <url>git@github.com:arconsis/datarobot.git</url>
+        <connection>scm:git:git@github.com:arconsis/droitatedDB.git</connection>
+        <developerConnection>scm:git:git@github.com:arconsis/droitatedDB.git</developerConnection>
+        <url>git@github.com:arconsis/droitatedDB.git</url>
     </scm>
     <dependencies>
         <dependency>
             <groupId>com.arconsis</groupId>
-            <artifactId>datarobot.api</artifactId>
+            <artifactId>droitatedDB.api</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.arconsis</groupId>
-            <artifactId>datarobot.processor</artifactId>
+            <artifactId>droitatedDB.processor</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -100,8 +100,8 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
-	                <!-- configuration for the annotation processor -->
-	                <annotationProcessors>
+                    <!-- configuration for the annotation processor -->
+                    <annotationProcessors>
                         <annotationProcessor>com.arconsis.android.datarobot.processor.EntityAnnotationProcessor
                         </annotationProcessor>
                     </annotationProcessors>
