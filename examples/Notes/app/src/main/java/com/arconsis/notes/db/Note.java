@@ -13,7 +13,7 @@ import org.droitateddb.entity.Relationship;
 import java.util.Date;
 
 
-@Entity(contentProvider = true, authority = "com.arconsis.provider.notes")
+@Entity(contentProvider = true, authority = "org.droitateddb.provider.notes")
 public class Note {
 
 	@Column

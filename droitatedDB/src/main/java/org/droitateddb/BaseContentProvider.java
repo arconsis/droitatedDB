@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Datarobot Authors
+ * Copyright (C) 2014 The droitated DB Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <br>
  * For each {@link Entity} which allows {@link ContentProvider} generation a separate {@link ContentProvider} will be generated. The generated
  * {@link ContentProvider} is also referenced in the AndroidManifest.xml to use an own Implementation remove the attribute
- * <code>arconsis:generated="true"</code> in the <code>provider</code> element of the AndroidManifest.xml<br>
+ * <code>droitateddb:generated="true"</code> in the <code>provider</code> element of the AndroidManifest.xml<br>
  * The authority of the {@link ContentProvider} is therefore defined within the {@link Entity} annotation.<br>
  * <br>
  * The base {@link Uri} for calling the {@link ContentProvider} is build following this schema: content://<b>[authority]</b>/<b>[

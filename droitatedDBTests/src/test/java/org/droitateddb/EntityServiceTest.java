@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 The Datarobot Authors
+ * Copyright (C) 2014 The droitated DB Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import android.database.sqlite.SQLiteDatabase;
 import org.droitateddb.test.data.*;
 import org.droitateddb.validation.InvalidEntityException;
 import org.droitateddb.validation.ValidationToggle;
-import com.arconsis.android.datrobot.test.data.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class EntityServiceTest {
         when(dbCreator.getDatabaseConnection()).thenReturn(db);
 
         context = mock(Context.class);
-        when(context.getPackageName()).thenReturn("com.arconsis.android.datrobot.test.data");
+        when(context.getPackageName()).thenReturn("org.droitateddb.test.data");
     }
 
     @Test(expected = IllegalArgumentException.class)

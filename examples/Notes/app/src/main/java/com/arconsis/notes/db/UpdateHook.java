@@ -16,12 +16,13 @@ public class UpdateHook implements DbUpdate, DbCreate {
 
 	@Override
 	public void onUpdate(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-//		db.execSQL("DROP TABLE IF EXISTS " + DB.NoteTable.TABLE_NAME);
-//		db.execSQL("DROP TABLE IF EXISTS " + DB.UserTable.TABLE_NAME);
-//		db.execSQL("DROP TABLE IF EXISTS " + DB.UserNoteAssociation.TABLE_NAME);
-//		db.execSQL(DB.NoteTable.SQL_CREATION);
-//		db.execSQL(DB.UserTable.SQL_CREATION);
-//		db.execSQL(DB.UserNoteAssociation.SQL_CREATION);
+		//		db.execSQL("DROP TABLE IF EXISTS " + DB.NoteTable.TABLE_NAME);
+		//		db.execSQL("DROP TABLE IF EXISTS " + DB.UserTable.TABLE_NAME);
+		//		db.execSQL("DROP TABLE IF EXISTS " + DB.UserNoteAssociation.TABLE_NAME);
+		//		db.execSQL(DB.NoteTable.SQL_CREATION);
+		//		db.execSQL(DB.UserTable.SQL_CREATION);
+		//		db.execSQL(DB.UserNoteAssociation.SQL_CREATION);
+		db.execSQL("asd");
 
 		db.execSQL("CREATE INDEX simple_idx on Simple (_id)");
 		db.execSQL("CREATE INDEX note_idx on Note (_id, fk_user)");

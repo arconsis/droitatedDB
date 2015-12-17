@@ -3,7 +3,6 @@ package org.droitateddb;
 import android.content.Context;
 import org.droitateddb.test.data.*;
 import org.droitateddb.validation.AccumulatedValidationResult;
-import com.arconsis.android.datrobot.test.data.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +21,7 @@ public class DatabaseValidatorTest {
     @Before
     public void setup() {
         context = mock(Context.class);
-        when(context.getPackageName()).thenReturn("com.arconsis.android.datrobot.test.data");
+        when(context.getPackageName()).thenReturn("org.droitateddb.test.data");
     }
 
     @Test
