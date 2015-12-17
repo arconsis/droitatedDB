@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.droitateddb.EntityServiceWithRealSQLiteDatabaseTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.449 sec

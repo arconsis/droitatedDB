@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="maven-antrun-" default="main"  >
+<target name="main">
+  <echo>Using ANT to create
+                                    api-0.1.6-with-sources.jar</echo>
+  <zip destfile="target/api-0.1.6-with-sources.jar">
+    <zipgroupfileset includes="*.jar" dir="target"/>
+  </zip>
+</target>
+</project>

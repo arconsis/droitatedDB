@@ -1,0 +1,15 @@
+org/droitateddb/FlatEntityParcelableTets.class
+org/droitateddb/TestDBCreator.class
+org/droitateddb/CursorUtilTest$1.class
+org/droitateddb/CursorUtilTest.class
+org/droitateddb/WithoutAutoIncrementTest.class
+org/droitateddb/BasePersistenceTest$1.class
+org/droitateddb/NTOneAssoTest.class
+org/droitateddb/EntityServiceTest.class
+org/droitateddb/EntityServiceWithRealSQLiteDatabaseTest.class
+org/droitateddb/NToMAssoTest.class
+org/droitateddb/CursorUtilTest$CursorDummy.class
+org/droitateddb/CustomSQLiteShadow.class
+org/droitateddb/DatabaseValidatorTest.class
+org/droitateddb/BasePersistenceTest.class
+org/droitateddb/ContentProviderTest.class
