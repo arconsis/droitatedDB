@@ -46,8 +46,8 @@ import java.util.Set;
  * @author Alexander Frank
  * @author Falk Appel
  */
-@SupportedAnnotationTypes({"Entity", "Persistence",
-        "Update", "Create"})
+@SupportedAnnotationTypes({"org.droitateddb.entity.Entity", "org.droitateddb.config.Persistence",
+        "org.droitateddb.hooks.Update", "org.droitateddb.hooks.Create"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EntityAnnotationProcessor extends AbstractProcessor {
 
@@ -66,9 +66,7 @@ public class EntityAnnotationProcessor extends AbstractProcessor {
         if (!roundEnv.processingOver()) {
             try {
                 Persistence persistence = checkPersistenceAnnotation(roundEnv);
-                messager.printMessage(Kind.ERROR, "checking");
                 if (persistence == null) {
-                    messager.printMessage(Kind.ERROR, "No persistance annotation found");
                     return true;
                 }
 

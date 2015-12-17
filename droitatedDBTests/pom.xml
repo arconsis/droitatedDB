@@ -47,13 +47,13 @@
     </scm>
     <dependencies>
         <dependency>
-            <groupId>org.droitated</groupId>
-            <artifactId>droitatedDB.api</artifactId>
+            <groupId>org.droitateddb</groupId>
+            <artifactId>api</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.droitated</groupId>
-            <artifactId>droitatedDB.processor</artifactId>
+            <groupId>org.droitateddb</groupId>
+            <artifactId>processor</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
         <dependency>

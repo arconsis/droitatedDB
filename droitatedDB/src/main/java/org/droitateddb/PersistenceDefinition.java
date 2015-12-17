@@ -29,95 +29,95 @@ import java.util.List;
  */
 final class PersistenceDefinition {
 
-	private final String name;
-	private final int    version;
-	private final ArrayList<String> sqlCreationStatements = new ArrayList<String>();
-	private final ArrayList<String> indexStatements       = new ArrayList<String>();
-	private final Class<?> updateHook;
-	private final Class<?> createHook;
+    private final String name;
+    private final int version;
+    private final ArrayList<String> sqlCreationStatements = new ArrayList<String>();
+    private final ArrayList<String> indexStatements = new ArrayList<String>();
+    private final Class<?> updateHook;
+    private final Class<?> createHook;
 
-	public PersistenceDefinition(final String name, final int version, final Class<?> updateHook, final Class<?> createHook,
-								 final List<String> sqlCreationStatements, final List<String> indexStatements) {
-		this.name = name;
-		this.version = version;
-		this.updateHook = updateHook;
-		this.createHook = createHook;
-		this.sqlCreationStatements.addAll(sqlCreationStatements);
-		this.indexStatements.addAll(indexStatements);
-	}
+    public PersistenceDefinition(final String name, final int version, final Class<?> updateHook, final Class<?> createHook,
+                                 final List<String> sqlCreationStatements, final List<String> indexStatements) {
+        this.name = name;
+        this.version = version;
+        this.updateHook = updateHook;
+        this.createHook = createHook;
+        this.sqlCreationStatements.addAll(sqlCreationStatements);
+        this.indexStatements.addAll(indexStatements);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public Class<?> getUpdateHook() {
-		return updateHook;
-	}
+    public Class<?> getUpdateHook() {
+        return updateHook;
+    }
 
-	public Class<?> getCreateHook() {
-		return createHook;
-	}
+    public Class<?> getCreateHook() {
+        return createHook;
+    }
 
-	public List<String> getSqlCreationStatements() {
-		return Collections.unmodifiableList(sqlCreationStatements);
-	}
+    public List<String> getSqlCreationStatements() {
+        return Collections.unmodifiableList(sqlCreationStatements);
+    }
 
-	public List<String> getIndexStatements() {
-		return Collections.unmodifiableList(indexStatements);
-	}
+    public List<String> getIndexStatements() {
+        return Collections.unmodifiableList(indexStatements);
+    }
 
-	public static final PersistenceDefinition create(final Context context) {
-		return loadPersistenceData(context);
-	}
+    public static PersistenceDefinition create(final Context context) {
+        return loadPersistenceData(context);
+    }
 
-	private static PersistenceDefinition loadPersistenceData(final Context context) {
-		try {
-			Class<?> schemaClass = Class.forName(context.getPackageName() + "." + SchemaConstants.GENERATED_SUFFIX + "." + SchemaConstants.DB);
-			String dbName = (String) schemaClass.getDeclaredField(SchemaConstants.DB_NAME).get(null);
-			int dbVersion = (Integer) schemaClass.getDeclaredField(SchemaConstants.DB_VERSION).get(null);
+    private static PersistenceDefinition loadPersistenceData(final Context context) {
+        try {
+            Class<?> schemaClass = Class.forName(context.getPackageName() + "." + SchemaConstants.GENERATED_SUFFIX + "." + SchemaConstants.DB);
+            String dbName = (String) schemaClass.getDeclaredField(SchemaConstants.DB_NAME).get(null);
+            int dbVersion = (Integer) schemaClass.getDeclaredField(SchemaConstants.DB_VERSION).get(null);
 
-			Class<?> updateHook = getHook(schemaClass, SchemaConstants.UPDATE_HOOK);
-			Class<?> createHook = getHook(schemaClass, SchemaConstants.CREATE_HOOK);
+            Class<?> updateHook = getHook(schemaClass, SchemaConstants.UPDATE_HOOK);
+            Class<?> createHook = getHook(schemaClass, SchemaConstants.CREATE_HOOK);
 
-			Class<?>[] tableDefinitions = schemaClass.getDeclaredClasses();
-			List<String> creationStatements = new ArrayList<String>(tableDefinitions.length);
-			List<String> indexStatements = new ArrayList<String>(tableDefinitions.length);
+            Class<?>[] tableDefinitions = schemaClass.getDeclaredClasses();
+            List<String> creationStatements = new ArrayList<String>(tableDefinitions.length);
+            List<String> indexStatements = new ArrayList<String>(tableDefinitions.length);
 
-			for (Class<?> def : tableDefinitions) {
-				if (def.isInterface() && (def.getSimpleName().endsWith(SchemaConstants.TABLE) || def.getSimpleName().endsWith(SchemaConstants.LINK))) {
-					String statement = (String) def.getDeclaredField(SchemaConstants.SQL_CREATION).get(null);
-					creationStatements.add(statement);
+            for (Class<?> def : tableDefinitions) {
+                if (def.isInterface() && (def.getSimpleName().endsWith(SchemaConstants.TABLE) || def.getSimpleName().endsWith(SchemaConstants.LINK))) {
+                    String statement = (String) def.getDeclaredField(SchemaConstants.SQL_CREATION).get(null);
+                    creationStatements.add(statement);
 
-					Field[] allFields = def.getDeclaredFields();
-					for (Field field : allFields) {
-						if (field.getName().startsWith(SchemaConstants.SQL_INDEX)) {
-							indexStatements.add((String) field.get(null));
-						}
-					}
-				}
-			}
+                    Field[] allFields = def.getDeclaredFields();
+                    for (Field field : allFields) {
+                        if (field.getName().startsWith(SchemaConstants.SQL_INDEX)) {
+                            indexStatements.add((String) field.get(null));
+                        }
+                    }
+                }
+            }
 
-			return new PersistenceDefinition(dbName, dbVersion, updateHook, createHook, creationStatements, indexStatements);
-		} catch (Exception e) {
-			throw new IllegalStateException("Couldn't parse persistence data from DB class", e);
-		}
-	}
+            return new PersistenceDefinition(dbName, dbVersion, updateHook, createHook, creationStatements, indexStatements);
+        } catch (Exception e) {
+            throw new IllegalStateException("Couldn't parse persistence data from DB class", e);
+        }
+    }
 
-	private static Class<?> getHook(Class<?> schemaClass, String hookName) {
-		Class<?> hook = null;
-		try {
-			Field hookField = schemaClass.getDeclaredField(hookName);
-			if (hookField != null) {
-				hook = Class.forName((String) hookField.get(null));
-			}
-		} catch (Exception e) {
-			// ignore
-		}
-		return hook;
-	}
+    private static Class<?> getHook(Class<?> schemaClass, String hookName) {
+        Class<?> hook = null;
+        try {
+            Field hookField = schemaClass.getDeclaredField(hookName);
+            if (hookField != null) {
+                hook = Class.forName((String) hookField.get(null));
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return hook;
+    }
 
 }
