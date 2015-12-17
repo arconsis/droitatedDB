@@ -1,7 +1,5 @@
 package com.arconsis.notes.ui;
 
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -11,9 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.arconsis.android.datarobot.FlatEntityParcelable;
 import com.arconsis.notes.R;
 import com.arconsis.notes.db.Note;
+
+import org.droitateddb.FlatEntityParcelable;
+
+import java.util.Date;
 
 public class NoteDialog extends DialogFragment {
 

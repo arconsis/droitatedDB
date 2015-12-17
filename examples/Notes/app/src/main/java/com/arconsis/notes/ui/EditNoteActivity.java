@@ -1,22 +1,20 @@
 package com.arconsis.notes.ui;
 
-import java.util.Date;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.notes.NotesApplication;
 import com.arconsis.notes.R;
 import com.arconsis.notes.db.Note;
-import com.arconsis.notes.generated.DB;
-import com.arconsis.notes.generated.NoteContentProvider;
+
+import org.droitateddb.EntityService;
+
+import java.util.Date;
 
 public class EditNoteActivity extends Activity {
 	private EditText title;
@@ -59,9 +57,9 @@ public class EditNoteActivity extends Activity {
 			Note newNote = new Note(title.getText().toString(), content.getText().toString(), new Date());
 			NotesApplication.get().getUser().addNote(newNote);
 			newNote.setUser(NotesApplication.get().getUser());
-			Uri saved = NoteContentProvider.uriForItem(DB.NoteTable.TABLE_NAME, noteService.save(newNote));
+//			Uri saved = NoteContentProvider.uriForItem(DB.NoteTable.TABLE_NAME, noteService.save(newNote));
 			Intent result = new Intent();
-			result.setData(saved);
+//			result.setData(saved);
 			setResult(CODE_CREATED, result);
 			finish();
 			return true;

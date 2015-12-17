@@ -1,16 +1,17 @@
 package com.arconsis.notes.db;
 
-import java.util.Date;
-
 import android.database.Cursor;
 
-import com.arconsis.android.datarobot.CursorUtil;
-import com.arconsis.android.datarobot.cursor.ObjectCursor;
-import com.arconsis.android.datarobot.entity.AutoIncrement;
-import com.arconsis.android.datarobot.entity.Column;
-import com.arconsis.android.datarobot.entity.Entity;
-import com.arconsis.android.datarobot.entity.PrimaryKey;
-import com.arconsis.android.datarobot.entity.Relationship;
+import org.droitateddb.CursorUtil;
+import org.droitateddb.cursor.ObjectCursor;
+import org.droitateddb.entity.AutoIncrement;
+import org.droitateddb.entity.Column;
+import org.droitateddb.entity.Entity;
+import org.droitateddb.entity.PrimaryKey;
+import org.droitateddb.entity.Relationship;
+
+import java.util.Date;
+
 
 @Entity(contentProvider = true, authority = "com.arconsis.provider.notes")
 public class Note {
@@ -20,13 +21,13 @@ public class Note {
 	@AutoIncrement
 	private Integer _id;
 	@Column
-	private String title;
+	private String  title;
 	@Column
-	private String content;
+	private String  content;
 	@Column
-	private Date created;
+	private Date    created;
 	@Relationship
-	private User user;
+	private User    user;
 
 	public Note() {
 		// default

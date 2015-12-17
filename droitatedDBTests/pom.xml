@@ -47,12 +47,12 @@
     </scm>
     <dependencies>
         <dependency>
-            <groupId>com.arconsis</groupId>
+            <groupId>org.droitated</groupId>
             <artifactId>droitatedDB.api</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.arconsis</groupId>
+            <groupId>org.droitated</groupId>
             <artifactId>droitatedDB.processor</artifactId>
             <version>0.1.6-SNAPSHOT</version>
         </dependency>
@@ -102,7 +102,7 @@
                     <target>1.6</target>
                     <!-- configuration for the annotation processor -->
                     <annotationProcessors>
-                        <annotationProcessor>com.arconsis.android.datarobot.processor.EntityAnnotationProcessor
+                        <annotationProcessor>org.droitateddb.processor.EntityAnnotationProcessor
                         </annotationProcessor>
                     </annotationProcessors>
                     <generatedSourcesDirectory>src/generated/java</generatedSourcesDirectory>

@@ -11,25 +11,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.arconsis.android.datarobot.BaseContentProvider;
-import com.arconsis.android.datarobot.DbCreator;
-import com.arconsis.android.datarobot.EntityService;
-import com.arconsis.android.datarobot.FlatEntityParcelable;
 import com.arconsis.notes.NotesApplication;
 import com.arconsis.notes.R;
 import com.arconsis.notes.db.Note;
-import com.arconsis.notes.generated.DB;
 import com.arconsis.notes.preferences.LoginPreferences;
 import com.arconsis.notes.ui.NoteDialog.NoteDialogAction;
 
+import org.droitateddb.BaseContentProvider;
+import org.droitateddb.DbCreator;
+import org.droitateddb.EntityService;
+import org.droitateddb.FlatEntityParcelable;
+
 public class NotesActivity extends ListActivity implements NoteDialogAction {
 
-	private NoteCursorAdapter noteCursorAdapter;
+	private NoteCursorAdapter  noteCursorAdapter;
 	private NoteLoaderCallback loaderCallback;
 
-	private static final int NOTE_LOADER_ID = 0;
+	private static final int NOTE_LOADER_ID      = 0;
 	private static final int CREATE_NOTE_REQUEST = 0;
 	private EntityService<Note> noteService;
 
@@ -51,13 +50,13 @@ public class NotesActivity extends ListActivity implements NoteDialogAction {
 			@Override
 			public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, final int postition, final long id) {
 				Cursor cursor = (Cursor) noteCursorAdapter.getItem(postition);
-				int noteId = cursor.getInt(DB.NoteTable._ID.columnIndex());
-				if (noteService.delete(noteId)) {
-					getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();
-					Toast.makeText(NotesActivity.this, R.string.delete_success, Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(NotesActivity.this, R.string.delete_fail, Toast.LENGTH_LONG).show();
-				}
+//				int noteId = cursor.getInt(DB.NoteTable._ID.columnIndex());
+//				if (noteService.delete(noteId)) {
+//					getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();
+//					Toast.makeText(NotesActivity.this, R.string.delete_success, Toast.LENGTH_LONG).show();
+//				} else {
+//					Toast.makeText(NotesActivity.this, R.string.delete_fail, Toast.LENGTH_LONG).show();
+//				}
 				return true;
 			}
 		});
@@ -90,7 +89,7 @@ public class NotesActivity extends ListActivity implements NoteDialogAction {
 		} else if (R.id.delete_all == item.getItemId()) {
 			getContentResolver().delete(BaseContentProvider.uri(Note.class.getSimpleName()), null, null);
 			SQLiteDatabase db = DbCreator.getInstance(this).getWritableDatabase();
-			db.delete(DB.UserNoteAssociation.TABLE_NAME, null, null);
+//			db.delete(DB.UserNoteAssociation.TABLE_NAME, null, null);
 			db.close();
 			NotesApplication.get().getUser().getNotes().clear();
 			getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();

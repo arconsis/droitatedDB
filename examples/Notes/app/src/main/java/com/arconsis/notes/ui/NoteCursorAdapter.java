@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arconsis.notes.R;
-import com.arconsis.notes.generated.DB;
 
 public class NoteCursorAdapter extends CursorAdapter {
 
@@ -36,7 +35,7 @@ public class NoteCursorAdapter extends CursorAdapter {
 		icon.setImageResource(R.drawable.note);
 
 		TextView text = (TextView) view.findViewById(R.id.text);
-		text.setText(cursor.getString(DB.NoteTable.TITLE.columnIndex()));
+//		text.setText(cursor.getString(DB.NoteTable.TITLE.columnIndex()));
 	}
 
 }

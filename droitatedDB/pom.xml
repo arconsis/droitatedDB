@@ -1,12 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.arconsis</groupId>
+    <groupId>org.droitateddb</groupId>
     <artifactId>droitatedDB.api</artifactId>
     <version>0.1.6-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>droitatedDB - API</name>
-    <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with Androids SQLite database directly if you don't want to
+    <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with Androids SQLite
+        database directly if you don't want to
         and let's you access it directly if you have to.
     </description>
     <url>https://github.com/arconsis/droitatedDB</url>

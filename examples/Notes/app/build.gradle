@@ -27,6 +27,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:23.1.1'
-    apt 'com.arconsis:droitatedDB.processor:0.1.6-SNAPSHOT'
-    compile 'com.arconsis:droitatedDB.api:0.1.6-SNAPSHOT'
+    apt 'org.droitateddb:droitatedDB.processor:0.1.6-SNAPSHOT'
+    compile 'org.droitateddb:droitatedDB.api:0.1.6-SNAPSHOT'
 }
