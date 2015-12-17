@@ -1,12 +1,13 @@
 package com.arconsis.android.datarobot.performance.tasks;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import android.content.Context;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.db.Simple;
+
+import org.droitateddb.EntityService;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public final class BulkSimpleCreationTask extends AbstractCreationTask {
 	private final EntityService<Simple> simpleService;

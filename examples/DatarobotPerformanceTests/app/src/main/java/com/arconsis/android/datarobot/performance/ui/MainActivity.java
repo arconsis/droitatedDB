@@ -1,15 +1,5 @@
 package com.arconsis.android.datarobot.performance.ui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
@@ -21,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.arconsis.android.datarobot.BaseContentProvider;
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.R;
 import com.arconsis.android.datarobot.performance.db.Operation;
 import com.arconsis.android.datarobot.performance.tasks.AbstractCreationTask.CreationFinishedListener;
@@ -30,6 +18,19 @@ import com.arconsis.android.datarobot.performance.tasks.BulkNoteCreation;
 import com.arconsis.android.datarobot.performance.tasks.BulkSimpleCreationTask;
 import com.arconsis.android.datarobot.performance.tasks.NoteCreationTask;
 import com.arconsis.android.datarobot.performance.tasks.SimpleCreationTask;
+
+import org.droitateddb.BaseContentProvider;
+import org.droitateddb.EntityService;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends ListActivity {
 
@@ -92,7 +93,7 @@ public class MainActivity extends ListActivity {
 			Builder builder = new AlertDialog.Builder(this);
 
 			builder.setTitle("Choose batch");
-			builder.setSingleChoiceItems(new String[] { "Simple (Single)", "Note (Single)", "Simple (Bulk)", "Note (Bulk)" }, 0, new OnClickListener() {
+			builder.setSingleChoiceItems(new String[]{"Simple (Single)", "Note (Single)", "Simple (Bulk)", "Note (Bulk)"}, 0, new OnClickListener() {
 				@Override
 				public void onClick(final DialogInterface dialog, final int which) {
 					if (which == 0) {

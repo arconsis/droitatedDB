@@ -1,15 +1,16 @@
 package com.arconsis.android.datarobot.performance.tasks;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.content.Context;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.NotesApplication;
 import com.arconsis.android.datarobot.performance.db.Note;
 import com.arconsis.android.datarobot.performance.db.User;
+
+import org.droitateddb.EntityService;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public final class BulkNoteCreation extends AbstractCreationTask {
 

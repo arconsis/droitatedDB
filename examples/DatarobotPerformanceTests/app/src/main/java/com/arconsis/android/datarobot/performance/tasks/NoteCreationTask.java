@@ -1,13 +1,14 @@
 package com.arconsis.android.datarobot.performance.tasks;
 
-import java.util.Date;
-
 import android.content.Context;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.NotesApplication;
 import com.arconsis.android.datarobot.performance.db.Note;
 import com.arconsis.android.datarobot.performance.db.User;
+
+import org.droitateddb.EntityService;
+
+import java.util.Date;
 
 public final class NoteCreationTask extends AbstractCreationTask {
 	private final User user = NotesApplication.get().getUser();

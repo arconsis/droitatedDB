@@ -2,9 +2,9 @@ package com.arconsis.android.datarobot.performance.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.arconsis.android.datarobot.config.Persistence;
-import com.arconsis.android.datarobot.hooks.DbUpdate;
-import com.arconsis.android.datarobot.hooks.Update;
+import org.droitateddb.config.Persistence;
+import org.droitateddb.hooks.DbUpdate;
+import org.droitateddb.hooks.Update;
 
 @Persistence(dbName = "performance.db", dbVersion = 1)
 @Update

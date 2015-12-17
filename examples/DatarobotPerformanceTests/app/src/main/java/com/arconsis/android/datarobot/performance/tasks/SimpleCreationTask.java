@@ -2,8 +2,9 @@ package com.arconsis.android.datarobot.performance.tasks;
 
 import android.content.Context;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.db.Simple;
+
+import org.droitateddb.EntityService;
 
 public final class SimpleCreationTask extends AbstractCreationTask {
 

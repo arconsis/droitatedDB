@@ -2,31 +2,31 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "20.0.0"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.arconsis.android.datarobot.performance"
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 23
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-
-    apt {
-        arguments {
-            manifest '/Users/alexfrank/workspace/DatarobotPerformanceTests/app/src/main/AndroidManifest.xml'
         }
     }
 }
 
+apt {
+    arguments {
+        manifest performanceManifest
+    }
+}
+
 dependencies {
-    compile 'com.android.support:support-v4:20.0.0'
-    apt 'com.arconsis:datarobot.processor:0.1.2-SNAPSHOT'
-    compile 'com.arconsis:datarobot.api:0.1.2-SNAPSHOT'
+    compile 'com.android.support:support-v4:23.1.1'
+    apt 'org.droitateddb:processor:0.1.6-SNAPSHOT'
+    compile 'org.droitateddb:api:0.1.6-SNAPSHOT'
 }

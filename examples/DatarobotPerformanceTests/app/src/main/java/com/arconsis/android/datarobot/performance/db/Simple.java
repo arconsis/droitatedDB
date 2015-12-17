@@ -1,9 +1,10 @@
 package com.arconsis.android.datarobot.performance.db;
 
-import com.arconsis.android.datarobot.entity.AutoIncrement;
-import com.arconsis.android.datarobot.entity.Column;
-import com.arconsis.android.datarobot.entity.Entity;
-import com.arconsis.android.datarobot.entity.PrimaryKey;
+
+import org.droitateddb.entity.AutoIncrement;
+import org.droitateddb.entity.Column;
+import org.droitateddb.entity.Entity;
+import org.droitateddb.entity.PrimaryKey;
 
 @Entity
 public class Simple {
@@ -13,11 +14,11 @@ public class Simple {
 	@Column
 	private Integer _id;
 	@Column
-	private String entry1;
+	private String  entry1;
 	@Column
-	private long value1;
+	private long    value1;
 	@Column
-	private String entry;
+	private String  entry;
 
 	public Simple() {
 		// no-args

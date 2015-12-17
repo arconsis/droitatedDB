@@ -1,9 +1,10 @@
 package com.arconsis.android.datarobot.performance.db;
 
-import com.arconsis.android.datarobot.entity.AutoIncrement;
-import com.arconsis.android.datarobot.entity.Column;
-import com.arconsis.android.datarobot.entity.Entity;
-import com.arconsis.android.datarobot.entity.PrimaryKey;
+
+import org.droitateddb.entity.AutoIncrement;
+import org.droitateddb.entity.Column;
+import org.droitateddb.entity.Entity;
+import org.droitateddb.entity.PrimaryKey;
 
 @Entity
 public class Operation {
@@ -13,9 +14,9 @@ public class Operation {
 	@AutoIncrement
 	private Integer _id;
 	@Column
-	private String type;
+	private String  type;
 	@Column
-	private long duration;
+	private long    duration;
 
 	public Operation() {
 		// no-args

@@ -1,13 +1,14 @@
 package com.arconsis.android.datarobot.performance.db;
 
+import org.droitateddb.entity.AutoIncrement;
+import org.droitateddb.entity.Column;
+import org.droitateddb.entity.Entity;
+import org.droitateddb.entity.PrimaryKey;
+import org.droitateddb.entity.Relationship;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
-import com.arconsis.android.datarobot.entity.AutoIncrement;
-import com.arconsis.android.datarobot.entity.Column;
-import com.arconsis.android.datarobot.entity.Entity;
-import com.arconsis.android.datarobot.entity.PrimaryKey;
-import com.arconsis.android.datarobot.entity.Relationship;
 
 @Entity
 public class User {
@@ -17,7 +18,7 @@ public class User {
 	@Column
 	private Integer _id;
 	@Column
-	private String name;
+	private String  name;
 	@Relationship
 	private final Collection<Note> notes = new LinkedList<Note>();
 

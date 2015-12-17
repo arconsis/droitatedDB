@@ -1,11 +1,12 @@
 package com.arconsis.android.datarobot.performance;
 
-import java.util.List;
-
 import android.app.Application;
 
-import com.arconsis.android.datarobot.EntityService;
 import com.arconsis.android.datarobot.performance.db.User;
+
+import org.droitateddb.EntityService;
+
+import java.util.List;
 
 public class NotesApplication extends Application {
 
