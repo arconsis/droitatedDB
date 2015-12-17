@@ -104,7 +104,7 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>com.arconsis.android.datarobot</include>
+                            <include>org.droitateddb</include>
                         </includes>
                     </artifactSet>
                 </configuration>

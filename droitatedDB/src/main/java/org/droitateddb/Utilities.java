@@ -15,69 +15,69 @@
  */
 package org.droitateddb;
 
-import java.lang.reflect.Field;
-
 import org.droitateddb.schema.AbstractAttribute;
 import org.droitateddb.schema.SchemaConstants;
 
+import java.lang.reflect.Field;
+
 /**
- * Provides utility methods for datarobot.
- * 
+ * Provides utility methods for droitated DB.
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class Utilities {
-	public static RuntimeException handle(Exception e) {
-		if(e instanceof RuntimeException) {
-			throw (RuntimeException) e;
-		} else {
-			throw new RuntimeException(e);
-		}
-	}
+    public static RuntimeException handle(Exception e) {
+        if (e instanceof RuntimeException) {
+            throw (RuntimeException) e;
+        } else {
+            throw new RuntimeException(e);
+        }
+    }
 
-	static void setFieldValue(Field field, final Object data, Object value) {
-		try {
-			field.setAccessible(true);
-			field.set(data, value);
-		} catch (IllegalAccessException e) {
-			throw handle(e);
-		}
-	}
+    static void setFieldValue(Field field, final Object data, Object value) {
+        try {
+            field.setAccessible(true);
+            field.set(data, value);
+        } catch (IllegalAccessException e) {
+            throw handle(e);
+        }
+    }
 
-	static Object getFieldValue(final Object data, Field field) {
-		try {
-			field.setAccessible(true);
-			return field.get(data);
-		} catch (IllegalAccessException e) {
-			throw handle(e);
-		}
-	}
+    static Object getFieldValue(final Object data, Field field) {
+        try {
+            field.setAccessible(true);
+            return field.get(data);
+        } catch (IllegalAccessException e) {
+            throw handle(e);
+        }
+    }
 
-	static String getLinkTableName(Class<?> linkTableSchema) {
-		try {
-			return (String) linkTableSchema.getDeclaredField(SchemaConstants.TABLE_NAME).get(null);
-		} catch (Exception e) {
-			throw handle(e);
-		}
-	}
+    static String getLinkTableName(Class<?> linkTableSchema) {
+        try {
+            return (String) linkTableSchema.getDeclaredField(SchemaConstants.TABLE_NAME).get(null);
+        } catch (Exception e) {
+            throw handle(e);
+        }
+    }
 
-	static AbstractAttribute[] getLinkTableColumns(Class<?> linkTableSchema) {
-		try {
-			return (AbstractAttribute[]) linkTableSchema.getDeclaredField(SchemaConstants.ATTRIBUTES).get(null);
-		} catch (Exception e) {
-			throw handle(e);
-		}
-	}
+    static AbstractAttribute[] getLinkTableColumns(Class<?> linkTableSchema) {
+        try {
+            return (AbstractAttribute[]) linkTableSchema.getDeclaredField(SchemaConstants.ATTRIBUTES).get(null);
+        } catch (Exception e) {
+            throw handle(e);
+        }
+    }
 
-	static String[] getLinkTableProjection(Class<?> linkTableSchema) {
-		try {
-			return (String[]) linkTableSchema.getDeclaredField(SchemaConstants.PROJECTION).get(null);
-		} catch (Exception e) {
-			throw handle(e);
-		}
-	}
+    static String[] getLinkTableProjection(Class<?> linkTableSchema) {
+        try {
+            return (String[]) linkTableSchema.getDeclaredField(SchemaConstants.PROJECTION).get(null);
+        } catch (Exception e) {
+            throw handle(e);
+        }
+    }
 
-	static Integer getPrimaryKey(final Object data, EntityData entityData) {
-		return (Integer) getFieldValue(data, entityData.primaryKey);
-	}
+    static Integer getPrimaryKey(final Object data, EntityData entityData) {
+        return (Integer) getFieldValue(data, entityData.primaryKey);
+    }
 }
