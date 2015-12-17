@@ -2,6 +2,7 @@
 <manifest
 	package="com.arconsis.notes"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:droitateddb="http://droitateddb.org"
 	android:versionCode="1"
 	android:versionName="1.0">
 
@@ -24,6 +25,17 @@
 		</activity>
 		<activity android:name=".ui.NotesActivity"/>
 		<activity android:name=".ui.EditNoteActivity"/>
+
+		<provider
+			android:name="com.arconsis.notes.generated.NoteContentProvider"
+			android:authorities="org.droitateddb.provider.notes"
+			android:exported="false"
+			droitateddb:generated="true"/>
+		<provider
+			android:name="com.arconsis.notes.generated.UserContentProvider"
+			android:authorities="com.arconsis.notes.generated.provider.user"
+			android:exported="false"
+			droitateddb:generated="true"/>
 	</application>
 
 </manifest>

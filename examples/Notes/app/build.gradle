@@ -17,11 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+}
 
-    apt {
-        arguments {
-            manifest variant.outputs[0].processResources.manifestFile
-        }
+apt {
+    arguments {
+        manifest notesManifest
     }
 }
 

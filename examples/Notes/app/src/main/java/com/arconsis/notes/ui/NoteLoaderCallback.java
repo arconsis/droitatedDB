@@ -2,6 +2,7 @@ package com.arconsis.notes.ui;
 
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.widget.CursorAdapter;
 
 import com.arconsis.notes.NotesApplication;
 import com.arconsis.notes.db.User;
+import com.arconsis.notes.generated.DB;
+
+import org.droitateddb.BaseContentProvider;
 
 public class NoteLoaderCallback implements LoaderCallbacks<Cursor> {
 
@@ -27,12 +31,12 @@ public class NoteLoaderCallback implements LoaderCallbacks<Cursor> {
 		if (loaderId == id) {
 			User user = NotesApplication.get().getUser();
 
-//			return new CursorLoader(context,
-//			                        BaseContentProvider.uri(DB.NoteTable.TABLE_NAME),
-//			                        DB.NoteTable.PROJECTION,
-//			                        DB.NoteTable.FK_USER.columnName() + "=?",
-//			                        new String[]{Integer.toString(user.getId())},
-//			                        null);
+			return new CursorLoader(context,
+			                        BaseContentProvider.uri(DB.NoteTable.TABLE_NAME),
+			                        DB.NoteTable.PROJECTION,
+			                        DB.NoteTable.FK_USER.columnName() + "=?",
+			                        new String[]{Integer.toString(user.getId())},
+			                        null);
 		}
 		return null;
 	}

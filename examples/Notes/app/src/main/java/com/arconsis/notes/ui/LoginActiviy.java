@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.arconsis.notes.NotesApplication;
 import com.arconsis.notes.R;
 import com.arconsis.notes.db.User;
+import com.arconsis.notes.generated.DB;
 import com.arconsis.notes.preferences.LoginPreferences;
 
 import org.droitateddb.EntityService;
@@ -86,8 +87,7 @@ public class LoginActiviy extends Activity {
 	}
 
 	private List<User> findUserByName() {
-//		return userService.find(DB.UserTable.NAME.columnName() + "=?", new String[]{user.getText().toString()}, null);
-		return null;
+		return userService.find(DB.UserTable.NAME.columnName() + "=?", new String[]{user.getText().toString()}, null);
 	}
 
 	private boolean checkLoginData() {

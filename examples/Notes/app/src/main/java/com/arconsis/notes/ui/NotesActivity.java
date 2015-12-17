@@ -11,14 +11,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.arconsis.notes.NotesApplication;
 import com.arconsis.notes.R;
 import com.arconsis.notes.db.Note;
+import com.arconsis.notes.generated.DB;
 import com.arconsis.notes.preferences.LoginPreferences;
 import com.arconsis.notes.ui.NoteDialog.NoteDialogAction;
 
 import org.droitateddb.BaseContentProvider;
+import org.droitateddb.DbConsumer;
 import org.droitateddb.DbCreator;
 import org.droitateddb.EntityService;
 import org.droitateddb.FlatEntityParcelable;
@@ -50,13 +53,13 @@ public class NotesActivity extends ListActivity implements NoteDialogAction {
 			@Override
 			public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, final int postition, final long id) {
 				Cursor cursor = (Cursor) noteCursorAdapter.getItem(postition);
-//				int noteId = cursor.getInt(DB.NoteTable._ID.columnIndex());
-//				if (noteService.delete(noteId)) {
-//					getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();
-//					Toast.makeText(NotesActivity.this, R.string.delete_success, Toast.LENGTH_LONG).show();
-//				} else {
-//					Toast.makeText(NotesActivity.this, R.string.delete_fail, Toast.LENGTH_LONG).show();
-//				}
+				int noteId = cursor.getInt(DB.NoteTable._ID.columnIndex());
+				if (noteService.delete(noteId)) {
+					getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();
+					Toast.makeText(NotesActivity.this, R.string.delete_success, Toast.LENGTH_LONG).show();
+				} else {
+					Toast.makeText(NotesActivity.this, R.string.delete_fail, Toast.LENGTH_LONG).show();
+				}
 				return true;
 			}
 		});
@@ -88,9 +91,12 @@ public class NotesActivity extends ListActivity implements NoteDialogAction {
 			return true;
 		} else if (R.id.delete_all == item.getItemId()) {
 			getContentResolver().delete(BaseContentProvider.uri(Note.class.getSimpleName()), null, null);
-			SQLiteDatabase db = DbCreator.getInstance(this).getWritableDatabase();
-//			db.delete(DB.UserNoteAssociation.TABLE_NAME, null, null);
-			db.close();
+			DbCreator.getInstance(this).consumeDatabase(new DbConsumer() {
+				@Override
+				public void consume(SQLiteDatabase db) {
+					db.delete(DB.UserNoteAssociation.TABLE_NAME, null, null);
+				}
+			});
 			NotesApplication.get().getUser().getNotes().clear();
 			getLoaderManager().getLoader(NOTE_LOADER_ID).forceLoad();
 		} else if (R.id.logout == item.getItemId()) {
