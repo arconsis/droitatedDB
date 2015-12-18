@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.droitateddb</groupId>
     <artifactId>processor</artifactId>
-    <version>0.1.6-SNAPSHOT</version>
+    <version>0.1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>droitatedDB - Annotation Processor</name>
     <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with Androids SQLite
@@ -61,7 +60,7 @@
         <dependency>
             <groupId>org.droitateddb</groupId>
             <artifactId>api</artifactId>
-            <version>0.1.6-SNAPSHOT</version>
+            <version>0.1.7-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
