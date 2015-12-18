@@ -1,10 +1,11 @@
 #droitatedDB
 
 ## The name
-droitatedDB is a mix of **Android**, **annotated** and **DB**.
+droitatedDB is a shortened version of **Android** **annotated** **DB**.
 
-An**droid** anno**tated** **DB**
-The result **droitatedDB**
+An**droi**d anno**tated** **DB**
+
+The result is **droitatedDB**
 
 
 ## New logo will be coming soon...
