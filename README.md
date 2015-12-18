@@ -1,5 +1,12 @@
 #droitatedDB
 
+## The name
+droitatedDB is a mix of **Android**, **annotated** and **DB**.
+
+An**droid** anno**tated** **DB**
+The result **droitatedDB**
+
+
 ## New logo will be coming soon...
 =========
 
