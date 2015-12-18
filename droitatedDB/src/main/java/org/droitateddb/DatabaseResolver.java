@@ -18,34 +18,18 @@ package org.droitateddb;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import org.droitateddb.cursor.CombinedCursorImpl;
 import org.droitateddb.schema.AbstractAttribute;
 import org.droitateddb.schema.ToManyAssociation;
 import org.droitateddb.schema.ToOneAssociation;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static org.droitateddb.CursorOperation.tryOnCursor;
-import static org.droitateddb.SchemaUtil.getAssociationsSchema;
-import static org.droitateddb.SchemaUtil.getEntityInfo;
-import static org.droitateddb.SchemaUtil.getTableName;
-import static org.droitateddb.Utilities.getFieldValue;
-import static org.droitateddb.Utilities.getLinkTableColumns;
-import static org.droitateddb.Utilities.getLinkTableName;
-import static org.droitateddb.Utilities.getPrimaryKey;
-import static org.droitateddb.Utilities.handle;
-import static org.droitateddb.Utilities.setFieldValue;
-import static org.droitateddb.schema.SchemaConstants.FOREIGN_KEY;
-import static org.droitateddb.schema.SchemaConstants.FROM_SUFFIX;
-import static org.droitateddb.schema.SchemaConstants.TO_SUFFIX;
+import static org.droitateddb.SchemaUtil.*;
+import static org.droitateddb.Utilities.*;
+import static org.droitateddb.schema.SchemaConstants.*;
 
 /**
  * Resolves entity object graphs from the db.
@@ -55,179 +39,179 @@ import static org.droitateddb.schema.SchemaConstants.TO_SUFFIX;
  */
 class DatabaseResolver {
 
-	private final Map<String, Object> loadedObjects;
-	private final Context             context;
-	private final SQLiteDatabase      database;
+    private final Map<String, Object> loadedObjects;
+    private final Context context;
+    private final SQLiteDatabase database;
 
-	public DatabaseResolver(final Context context, final SQLiteDatabase database) {
-		this.context = context;
-		this.database = database;
-		loadedObjects = new HashMap<String, Object>();
-	}
+    public DatabaseResolver(final Context context, final SQLiteDatabase database) {
+        this.context = context;
+        this.database = database;
+        loadedObjects = new HashMap<String, Object>();
+    }
 
-	public void resolve(final Object data, final int currentDepth, final int maxDepth) {
-		// 1. load associated ids for data
-		// 2. check if (Type/id) tuple is in map if yes 5. else 3.
-		// 3. load object from db
-		// 4. put loaded object into map
-		// 5. set object to data
-		// 6. resolve associations of loaded object to given depth
-		if (currentDepth >= maxDepth) {
-			return;
-		}
-		EntityData entityData = EntityData.getEntityData(data);
-		if (entityData.allAssociations.size() > 0) {
-			Class<?> associationsDeclaration = getAssociationsSchema(data.getClass(), context.getPackageName());
-			Integer id = getPrimaryKey(data, entityData);
+    public void resolve(final Object data, final int currentDepth, final int maxDepth) {
+        // 1. load associated ids for data
+        // 2. check if (Type/id) tuple is in map if yes 5. else 3.
+        // 3. load object from db
+        // 4. put loaded object into map
+        // 5. set object to data
+        // 6. resolve associations of loaded object to given depth
+        if (currentDepth >= maxDepth) {
+            return;
+        }
+        EntityData entityData = EntityData.getEntityData(data);
+        if (entityData.allAssociations.size() > 0) {
+            Class<?> associationsDeclaration = getAssociationsSchema(data.getClass(), context.getPackageName());
+            Number id = getPrimaryKey(data, entityData);
 
-			if (id != null) {
-				loadedObjects.put("class " + data.getClass().getCanonicalName() + "#" + id, data);
-				for (Field associationField : entityData.allAssociations) {
-					Object declaration = getDeclaration(associationsDeclaration, associationField);
-					if (declaration instanceof ToOneAssociation) {
-						handleToOneAssociation(id, data, associationField, (ToOneAssociation) declaration, currentDepth, maxDepth);
-					} else {
-						handleToManyAssociation(id, data, associationField, (ToManyAssociation) declaration, currentDepth, maxDepth);
-					}
-				}
-			}
-		}
-	}
+            if (id != null) {
+                loadedObjects.put("class " + data.getClass().getCanonicalName() + "#" + id, data);
+                for (Field associationField : entityData.allAssociations) {
+                    Object declaration = getDeclaration(associationsDeclaration, associationField);
+                    if (declaration instanceof ToOneAssociation) {
+                        handleToOneAssociation(id, data, associationField, (ToOneAssociation) declaration, currentDepth, maxDepth);
+                    } else {
+                        handleToManyAssociation(id, data, associationField, (ToManyAssociation) declaration, currentDepth, maxDepth);
+                    }
+                }
+            }
+        }
+    }
 
-	private void handleToOneAssociation(final Integer idRequestingObject, final Object requestingObject, final Field associationField, final ToOneAssociation
-			toOneAssociation, final int currentDepth, final int maxDepth) {
-		String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
+    private void handleToOneAssociation(final Number idRequestingObject, final Object requestingObject, final Field associationField, final ToOneAssociation
+            toOneAssociation, final int currentDepth, final int maxDepth) {
+        String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
-		Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
-						toOneAssociation.getAssociationAttribute().columnName()},
-				keyName + " = ?", new String[]{Integer.toString(idRequestingObject)}, null, null, null);
-		tryOnCursor(fkCursor, new CursorOperation<Void>() {
-			@Override
-			public Void execute(final Cursor cursor) throws Exception {
-				if (cursor.moveToFirst() && cursor.getType(0) != Cursor.FIELD_TYPE_NULL) {
-					attachAssociation(cursor.getInt(0), associationField, requestingObject, toOneAssociation, currentDepth, maxDepth);
-				}
-				return null;
-			}
-		});
-	}
+        Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
+                        toOneAssociation.getAssociationAttribute().columnName()},
+                keyName + " = ?", new String[]{idRequestingObject.toString()}, null, null, null);
+        tryOnCursor(fkCursor, new CursorOperation<Void>() {
+            @Override
+            public Void execute(final Cursor cursor) throws Exception {
+                if (cursor.moveToFirst() && cursor.getType(0) != Cursor.FIELD_TYPE_NULL) {
+                    attachAssociation(cursor.getInt(0), associationField, requestingObject, toOneAssociation, currentDepth, maxDepth);
+                }
+                return null;
+            }
+        });
+    }
 
-	private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
-			currentDepth, final int maxDepth) {
-		String mixedId = "class " + declaration.getAssociatedType().getCanonicalName() + "#" + id;
-		if (loadedObjects.containsKey(mixedId)) {
-			setFieldValue(associationField, requestingObject, loadedObjects.get(mixedId));
-		} else {
-			loadFromDatabase(id, associationField, requestingObject, declaration, currentDepth, maxDepth);
-		}
-	}
+    private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+            currentDepth, final int maxDepth) {
+        String mixedId = "class " + declaration.getAssociatedType().getCanonicalName() + "#" + id;
+        if (loadedObjects.containsKey(mixedId)) {
+            setFieldValue(associationField, requestingObject, loadedObjects.get(mixedId));
+        } else {
+            loadFromDatabase(id, associationField, requestingObject, declaration, currentDepth, maxDepth);
+        }
+    }
 
-	private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
-			currentDepth, final int maxDepth) {
-		Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
-				EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Integer.toString(id)}, null, null, null);
-		tryOnCursor(associationCursor, new CursorOperation<Void>() {
-			@Override
-			public Void execute(final Cursor cursor) {
-				if (cursor.moveToFirst()) {
-					Object association = CombinedCursorImpl.create(context, cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
-							declaration
-									.getAssociatedType()).getCurrent();
-					setFieldValue(associationField, requestingObject, association);
-					loadedObjects.put(declaration.getAssociatedType().getCanonicalName() + "#" + id, association);
-					resolve(association, currentDepth + 1, maxDepth);
-				}
-				return null;
-			}
-		});
-	}
+    private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+            currentDepth, final int maxDepth) {
+        Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
+                EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Integer.toString(id)}, null, null, null);
+        tryOnCursor(associationCursor, new CursorOperation<Void>() {
+            @Override
+            public Void execute(final Cursor cursor) {
+                if (cursor.moveToFirst()) {
+                    Object association = CombinedCursorImpl.create(context, cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
+                            declaration
+                                    .getAssociatedType()).getCurrent();
+                    setFieldValue(associationField, requestingObject, association);
+                    loadedObjects.put(declaration.getAssociatedType().getCanonicalName() + "#" + id, association);
+                    resolve(association, currentDepth + 1, maxDepth);
+                }
+                return null;
+            }
+        });
+    }
 
-	private void handleToManyAssociation(final int primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany, final int 
-			currentDepth, final int maxDepth) {
+    private void handleToManyAssociation(final Number primaryKeyData, final Object data, final Field associationField, final ToManyAssociation toMany, final int
+            currentDepth, final int maxDepth) {
 
-		final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
-		if (foreignAttribute != null) {
-			EntityData entityData = EntityData.getEntityData(foreignAttribute.type());
+        final AbstractAttribute foreignAttribute = getForeignAttribute(toMany);
+        if (foreignAttribute != null) {
+            EntityData entityData = EntityData.getEntityData(foreignAttribute.type());
 
-			if (getFieldValue(data, associationField) != null) {
-				for (Object object : getCollection(data, associationField)) {
-					resolve(object, currentDepth + 1, maxDepth);
-					loadedObjects.put(foreignAttribute.type() + "#" + getPrimaryKey(object, entityData), object);
-				}
-			}
-			Collection<Object> target = new ArrayList<Object>();
-			setFieldValue(associationField, data, target);
+            if (getFieldValue(data, associationField) != null) {
+                for (Object object : getCollection(data, associationField)) {
+                    resolve(object, currentDepth + 1, maxDepth);
+                    loadedObjects.put(foreignAttribute.type() + "#" + getPrimaryKey(object, entityData), object);
+                }
+            }
+            Collection<Object> target = new ArrayList<Object>();
+            setFieldValue(associationField, data, target);
 
-			List<Integer> ids = loadIdsFromLinkTable(primaryKeyData, data.getClass(), foreignAttribute, toMany);
-			for (final Integer id : ids) {
-				final String mixedId = foreignAttribute.type() + "#" + id;
-				if (loadedObjects.containsKey(mixedId)) {
-					target.add(loadedObjects.get(mixedId));
-				} else {
-					String primaryKeyName = entityData.primaryKey.getName();
+            List<Integer> ids = loadIdsFromLinkTable(primaryKeyData, data.getClass(), foreignAttribute, toMany);
+            for (final Integer id : ids) {
+                final String mixedId = foreignAttribute.type() + "#" + id;
+                if (loadedObjects.containsKey(mixedId)) {
+                    target.add(loadedObjects.get(mixedId));
+                } else {
+                    String primaryKeyName = entityData.primaryKey.getName();
 
-					Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null,
-							primaryKeyName + "= ?", new String[]{Integer.toString(id)}, null, null, null);
-					Object linkedObject = tryOnCursor(cursor, new CursorOperation<Object>() {
-						@Override
-						public Object execute(final Cursor cursor) {
-							if (cursor.getCount() > 0) {
-								Object loaded = CombinedCursorImpl.create(context, cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
-										foreignAttribute
-												.type()).getOne();
-								loadedObjects.put(mixedId, loaded);
-								resolve(loaded, currentDepth + 1, maxDepth);
-								return loaded;
-							} else {
-								return null;
-							}
-						}
-					});
-					if (linkedObject != null) {
-						target.add(linkedObject);
-					}
-				}
-			}
-		}
-	}
+                    Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null,
+                            primaryKeyName + "= ?", new String[]{Integer.toString(id)}, null, null, null);
+                    Object linkedObject = tryOnCursor(cursor, new CursorOperation<Object>() {
+                        @Override
+                        public Object execute(final Cursor cursor) {
+                            if (cursor.getCount() > 0) {
+                                Object loaded = CombinedCursorImpl.create(context, cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
+                                        foreignAttribute
+                                                .type()).getOne();
+                                loadedObjects.put(mixedId, loaded);
+                                resolve(loaded, currentDepth + 1, maxDepth);
+                                return loaded;
+                            } else {
+                                return null;
+                            }
+                        }
+                    });
+                    if (linkedObject != null) {
+                        target.add(linkedObject);
+                    }
+                }
+            }
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	private Collection<Object> getCollection(final Object data, final Field associationField) {
-		return new ArrayList<Object>((Collection<Object>) getFieldValue(data, associationField));
-	}
+    @SuppressWarnings("unchecked")
+    private Collection<Object> getCollection(final Object data, final Field associationField) {
+        return new ArrayList<Object>((Collection<Object>) getFieldValue(data, associationField));
+    }
 
-	private AbstractAttribute getForeignAttribute(final ToManyAssociation toMany) {
-		for (AbstractAttribute attribute : getLinkTableColumns(toMany.getLinkTableSchema())) {
-			if (attribute.columnName().endsWith(TO_SUFFIX)) {
-				return attribute;
-			}
-		}
-		return null;
-	}
+    private AbstractAttribute getForeignAttribute(final ToManyAssociation toMany) {
+        for (AbstractAttribute attribute : getLinkTableColumns(toMany.getLinkTableSchema())) {
+            if (attribute.columnName().endsWith(TO_SUFFIX)) {
+                return attribute;
+            }
+        }
+        return null;
+    }
 
-	private List<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
-	ToManyAssociation toMany) {
-		String tableName = getLinkTableName(toMany.getLinkTableSchema());
-		String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
+    private List<Integer> loadIdsFromLinkTable(final Number primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
+    ToManyAssociation toMany) {
+        String tableName = getLinkTableName(toMany.getLinkTableSchema());
+        String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 
-		Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{Integer.toString(primaryKeyData)}, null, null, null);
-		return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
-			@Override
-			public List<Integer> execute(final Cursor cursor) throws Exception {
-				LinkedList<Integer> ids = new LinkedList<Integer>();
-				while (cursor.moveToNext()) {
-					ids.add((Integer) foreignAttribute.getValueFromCursor(cursor));
-				}
-				return ids;
-			}
-		});
-	}
+        Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{primaryKeyData.toString()}, null, null, null);
+        return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
+            @Override
+            public List<Integer> execute(final Cursor cursor) throws Exception {
+                LinkedList<Integer> ids = new LinkedList<Integer>();
+                while (cursor.moveToNext()) {
+                    ids.add((Integer) foreignAttribute.getValueFromCursor(cursor));
+                }
+                return ids;
+            }
+        });
+    }
 
-	private static Object getDeclaration(final Class<?> associationsDeclaration, final Field associationField) {
-		try {
-			return associationsDeclaration.getField(associationField.getName().toUpperCase(Locale.getDefault())).get(null);
-		} catch (Exception e) {
-			throw handle(e);
-		}
-	}
+    private static Object getDeclaration(final Class<?> associationsDeclaration, final Field associationField) {
+        try {
+            return associationsDeclaration.getField(associationField.getName().toUpperCase(Locale.getDefault())).get(null);
+        } catch (Exception e) {
+            throw handle(e);
+        }
+    }
 }

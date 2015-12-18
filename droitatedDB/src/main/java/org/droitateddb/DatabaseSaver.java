@@ -36,7 +36,7 @@ class DatabaseSaver {
 
     private final Context context;
     private final SQLiteDatabase database;
-    private final Map<Object, Integer> idsInGraph;
+    private final Map<Object, Number> idsInGraph;
     private final int maxDepth;
     private final Collection<Object> newObjects;
     private final Collection<Object> newUnsavedObjects;
@@ -47,29 +47,29 @@ class DatabaseSaver {
         this.context = context;
         this.database = database;
         this.maxDepth = maxDepth;
-        idsInGraph = new HashMap<Object, Integer>();
+        idsInGraph = new HashMap<Object, Number>();
         newUnsavedObjects = new HashSet<Object>();
         newObjects = new HashSet<Object>();
         toOneUpdaters = new HashMap<Object, Collection<ToOneUpdate>>();
         toManyUpdates = new ArrayList<ToManyUpdate>();
     }
 
-    public int save(final Object data) {
+    public Number save(final Object data) {
         if (idsInGraph.containsKey(data)) {
             return idsInGraph.get(data);
         }
-        int id = save(data, 0);
+        Number id = save(data, 0);
         performPendingToOneUpdates();
         performToManyUpdates();
         return id;
     }
 
-    private int save(final Object data, final int currentDepth) {
+    private Number save(final Object data, final int currentDepth) {
         if (idsInGraph.containsKey(data)) {
             return idsInGraph.get(data);
         }
         EntityData entityData = EntityData.getEntityData(data);
-        Integer id = getPrimaryKey(data, entityData);
+        Number id = getPrimaryKey(data, entityData);
         if (id != null) {
             // 1. put id into object graph
             idsInGraph.put(data, id);
@@ -101,7 +101,7 @@ class DatabaseSaver {
             id = insert(data.getClass(), contentValuesEntity);
             // 5. put id into object graph
             idsInGraph.put(data, id);
-            setFieldValue(entityData.primaryKey, data, id);
+            setFieldValue(entityData.primaryKey, data, castToIdType(entityData.primaryKey, id));
             // 6. deregister new now saved Object
             newUnsavedObjects.remove(data);
         }
@@ -112,6 +112,15 @@ class DatabaseSaver {
         return id;
 
     }
+
+    private Object castToIdType(final Field primaryKey, final Number id) {
+        if (primaryKey.getType().equals(Integer.class)) {
+            return id.intValue();
+        } else {
+            return id;
+        }
+    }
+
 
     private void performPendingToOneUpdates() {
         for (Map.Entry<Object, Collection<ToOneUpdate>> entry : toOneUpdaters.entrySet()) {
@@ -153,8 +162,8 @@ class DatabaseSaver {
                     }
                     collection.add(new ToOneUpdate(SchemaConstants.FOREIGN_KEY + toOneAssociatedField.getName(), associatedObject));
                 } else {
-                    int associationId = save(associatedObject, currentDepth + 1);
-                    contentValuesForeignKeys.put(SchemaConstants.FOREIGN_KEY + toOneAssociatedField.getName(), associationId);
+                    Number associationId = save(associatedObject, currentDepth + 1);
+                    contentValuesForeignKeys.put(SchemaConstants.FOREIGN_KEY + toOneAssociatedField.getName(), associationId.toString());
                 }
             } else {
                 contentValuesForeignKeys.putNull(SchemaConstants.FOREIGN_KEY + toOneAssociatedField.getName());
@@ -175,7 +184,7 @@ class DatabaseSaver {
         }
 
         Cursor cursor = database.query(tableName, projection, entityData.primaryKey.getName() + " = ?",
-                new String[]{Integer.toString(getPrimaryKey(data, entityData))}, null, null, null);
+                new String[]{getPrimaryKey(data, entityData).toString()}, null, null, null);
         return CursorOperation.tryOnCursor(cursor, new CursorOperation<ContentValues>() {
             @Override
             public ContentValues execute(final Cursor cursor) {
@@ -193,7 +202,7 @@ class DatabaseSaver {
 
     }
 
-    private void saveToManyAssociatedObjects(final Object data, final int currentDepth, final EntityData entityData, final Integer id) {
+    private void saveToManyAssociatedObjects(final Object data, final int currentDepth, final EntityData entityData, final Number id) {
         if (currentDepth >= maxDepth) {
             return;
         }
@@ -203,7 +212,7 @@ class DatabaseSaver {
             Class<?> dataClass = data.getClass();
             Class<?> linkTableSchema = SchemaUtil.getToManyAsso(associationField, SchemaUtil.getAssociationsSchema(dataClass, context.getPackageName())).getLinkTableSchema();
 
-            Set<Integer> idsFromLinkTable = null;
+            Set<Number> idsFromLinkTable;
             if (newObjects.contains(data)) {
                 idsFromLinkTable = Collections.emptySet();
             } else {
@@ -213,7 +222,7 @@ class DatabaseSaver {
                 if (newUnsavedObjects.contains(associated)) {
                     toManyUpdates.add(new ToManyUpdate(database, id, associated, linkTableSchema, ToManyUpdate.Mode.INSERT));
                 } else {
-                    Integer associatedId = save(associated, currentDepth + 1);
+                    Number associatedId = save(associated, currentDepth + 1);
                     if (!idsFromLinkTable.remove(associatedId)) {
                         toManyUpdates.add(new ToManyUpdate(database, id, associatedId, linkTableSchema, ToManyUpdate.Mode.INSERT));
                     } else {
@@ -223,7 +232,7 @@ class DatabaseSaver {
 
             }
             if (!idsFromLinkTable.isEmpty()) {
-                for (Integer unlinkedForeignKey : idsFromLinkTable) {
+                for (Number unlinkedForeignKey : idsFromLinkTable) {
                     ToManyUpdate toManyUpdateDelete = new ToManyUpdate(database, id, unlinkedForeignKey, linkTableSchema, ToManyUpdate.Mode.DELETE);
                     if (!toManyUpdates.contains(toManyUpdateDelete)) {
                         toManyUpdates.add(toManyUpdateDelete);
@@ -252,15 +261,15 @@ class DatabaseSaver {
         return contentValuesEntity;
     }
 
-    private Set<Integer> loadIdsFromLinkTable(final int primaryKeyData, final Class<?> linkTableSchema) {
+    private Set<Number> loadIdsFromLinkTable(final Number primaryKeyData, final Class<?> linkTableSchema) {
         String tableName = getLinkTableName(linkTableSchema);
         String[] projection = getLinkTableProjection(linkTableSchema);
-        Cursor cursor = database.query(tableName, new String[]{projection[1]}, projection[0] + " = ?", new String[]{Integer.toString(primaryKeyData)},
+        Cursor cursor = database.query(tableName, new String[]{projection[1]}, projection[0] + " = ?", new String[]{primaryKeyData.toString()},
                 null, null, null);
-        return CursorOperation.tryOnCursor(cursor, new CursorOperation<Set<Integer>>() {
+        return CursorOperation.tryOnCursor(cursor, new CursorOperation<Set<Number>>() {
             @Override
-            public Set<Integer> execute(final Cursor cursor) {
-                Set<Integer> ids = new HashSet<Integer>();
+            public Set<Number> execute(final Cursor cursor) {
+                Set<Number> ids = new HashSet<Number>();
                 while (cursor.moveToNext()) {
                     ids.add(cursor.getInt(0));
                 }
@@ -305,16 +314,16 @@ class DatabaseSaver {
         update(getPrimaryKey(key, entityData), key.getClass(), entityData, values);
     }
 
-    private void update(final Integer id, final Class<? extends Object> entityClass, final EntityData entityData, final ContentValues contentValues) {
+    private void update(final Number id, final Class<?> entityClass, final EntityData entityData, final ContentValues contentValues) {
         if (entityData.autoIncrement) {
-            database.update(entityClass.getSimpleName(), contentValues, entityData.primaryKey.getName() + " = ?", new String[]{Integer.toString(id)});
+            database.update(entityClass.getSimpleName(), contentValues, entityData.primaryKey.getName() + " = ?", new String[]{id.toString()});
         } else {
             database.insertWithOnConflict(entityClass.getSimpleName(), null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
         }
     }
 
-    private int insert(final Class<? extends Object> entityClass, final ContentValues contentValues) {
-        return (int) database.insertOrThrow(entityClass.getSimpleName(), null, contentValues);
+    private long insert(final Class<?> entityClass, final ContentValues contentValues) {
+        return database.insertOrThrow(entityClass.getSimpleName(), null, contentValues);
     }
 
     private static final class ToOneUpdate {
@@ -342,13 +351,13 @@ class DatabaseSaver {
         private Object associated;
         private final SQLiteDatabase database;
         private final String firstColumn;
-        private Integer firstId;
+        private Number firstId;
         private final String linkTableName;
         private final Mode mode;
         private final String secondColumn;
-        private Integer secondId;
+        private Number secondId;
 
-        public ToManyUpdate(final SQLiteDatabase database, final Integer id, final Integer associatedId, final Class<?> linkTableSchema, final Mode mode) {
+        public ToManyUpdate(final SQLiteDatabase database, final Number id, final Integer associatedId, final Class<?> linkTableSchema, final Mode mode) {
             this.database = database;
             this.mode = mode;
             linkTableName = getLinkTableName(linkTableSchema);
@@ -359,17 +368,14 @@ class DatabaseSaver {
             secondId = associatedId;
         }
 
-        public ToManyUpdate(final SQLiteDatabase database, final Integer id, final Object associated, final Class<?> linkTableSchema, final Mode mode) {
+        public ToManyUpdate(final SQLiteDatabase database, final Number id, final Object associated, final Class<?> linkTableSchema, final Mode mode) {
             this(database, id, null, linkTableSchema, mode);
             this.associated = associated;
         }
 
         @Override
         public boolean equals(final Object o) {
-            if (o == null || !(o instanceof ToManyUpdate)) {
-                return false;
-            }
-            return hashCode() == o.hashCode();
+            return !(o == null || !(o instanceof ToManyUpdate)) && hashCode() == o.hashCode();
         }
 
         @Override
@@ -384,7 +390,7 @@ class DatabaseSaver {
 
         public void loadIdIfNecessary() {
             if (associated != null) {
-                Integer primaryKey = getPrimaryKey(associated, EntityData.getEntityData(associated));
+                Number primaryKey = getPrimaryKey(associated, EntityData.getEntityData(associated));
                 if (firstId == null) {
                     firstId = primaryKey;
                 } else {
@@ -397,14 +403,14 @@ class DatabaseSaver {
             switch (mode) {
                 case INSERT:
                     ContentValues contentValues = new ContentValues(2);
-                    contentValues.put(firstColumn, firstId);
-                    contentValues.put(secondColumn, secondId);
+                    contentValues.put(firstColumn, firstId.toString());
+                    contentValues.put(secondColumn, secondId.toString());
                     database.insertOrThrow(linkTableName, null, contentValues);
                     break;
 
                 case DELETE:
                     database.delete(linkTableName, firstColumn + "= ? AND " + secondColumn + "=?",
-                            new String[]{Integer.toString(firstId), Integer.toString(secondId)});
+                            new String[]{firstId.toString(), secondId.toString()});
                     break;
                 case UPDATE:
                     // Everything is fine, nothing to do.

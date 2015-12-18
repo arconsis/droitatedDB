@@ -76,7 +76,7 @@ public class EntityServiceTest {
         WithAssociation emptyAssociation = new WithAssociation(null, "Test", null);
 
         EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(emptyAssociation);
+        long id = entityService.save(emptyAssociation);
 
         assertThat(id).isEqualTo(1);
         assertThat(emptyAssociation.getId()).isEqualTo(1);
@@ -88,7 +88,7 @@ public class EntityServiceTest {
         WithAssociation withAssociation = new WithAssociation(null, "Test", testEntity);
 
         EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(withAssociation);
+        long id = entityService.save(withAssociation);
 
         assertThat(id).isEqualTo(1);
         assertThat(withAssociation.getId()).isEqualTo(1);
@@ -102,7 +102,7 @@ public class EntityServiceTest {
         WithAssociation withAssociation = new WithAssociation(5, "Test", testEntity);
 
         EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(withAssociation);
+        long id = entityService.save(withAssociation);
 
         assertThat(id).isEqualTo(5);
         assertThat(withAssociation.getId()).isEqualTo(5);
@@ -119,7 +119,7 @@ public class EntityServiceTest {
         entityTwo.setEntity(entityOne);
 
         EntityService<BidirectionalOne> entityService = new EntityService<BidirectionalOne>(context, BidirectionalOne.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(entityOne);
+        long id = entityService.save(entityOne);
 
 
         assertThat(id).isEqualTo(1);
@@ -134,7 +134,7 @@ public class EntityServiceTest {
         WithAssociation withAssociation = new WithAssociation(null, "Test", testEntity);
 
         EntityService<WithAssociation> entityService = new EntityService<WithAssociation>(context, WithAssociation.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(withAssociation, 0);
+        long id = entityService.save(withAssociation, 0);
 
         assertThat(id).isEqualTo(1);
         assertThat(withAssociation.getId()).isEqualTo(1);
@@ -151,7 +151,7 @@ public class EntityServiceTest {
         one.setEntity(two);
 
         EntityService<StageOne> entityService = new EntityService<StageOne>(context, StageOne.class, ValidationToggle.ON, dbCreator);
-        int id = entityService.save(one, 1);
+        long id = entityService.save(one, 1);
 
         assertThat(id).isEqualTo(1);
         assertThat(one.getId()).isEqualTo(1);

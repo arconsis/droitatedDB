@@ -77,7 +77,7 @@ public class Utilities {
         }
     }
 
-    static Integer getPrimaryKey(final Object data, EntityData entityData) {
-        return (Integer) getFieldValue(data, entityData.primaryKey);
+    static Number getPrimaryKey(final Object data, EntityData entityData) {
+        return (Number) getFieldValue(data, entityData.primaryKey);
     }
 }
