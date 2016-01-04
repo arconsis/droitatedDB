@@ -357,7 +357,7 @@ class DatabaseSaver {
         private final String secondColumn;
         private Number secondId;
 
-        public ToManyUpdate(final SQLiteDatabase database, final Number id, final Integer associatedId, final Class<?> linkTableSchema, final Mode mode) {
+        public ToManyUpdate(final SQLiteDatabase database, final Number id, final Number associatedId, final Class<?> linkTableSchema, final Mode mode) {
             this.database = database;
             this.mode = mode;
             linkTableName = getLinkTableName(linkTableSchema);
