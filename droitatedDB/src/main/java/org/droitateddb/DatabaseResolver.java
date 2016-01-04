@@ -89,14 +89,14 @@ class DatabaseResolver {
             @Override
             public Void execute(final Cursor cursor) throws Exception {
                 if (cursor.moveToFirst() && cursor.getType(0) != Cursor.FIELD_TYPE_NULL) {
-                    attachAssociation(cursor.getInt(0), associationField, requestingObject, toOneAssociation, currentDepth, maxDepth);
+                    attachAssociation(cursor.getLong(0), associationField, requestingObject, toOneAssociation, currentDepth, maxDepth);
                 }
                 return null;
             }
         });
     }
 
-    private void attachAssociation(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+    private void attachAssociation(final long id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
             currentDepth, final int maxDepth) {
         String mixedId = "class " + declaration.getAssociatedType().getCanonicalName() + "#" + id;
         if (loadedObjects.containsKey(mixedId)) {
@@ -106,10 +106,10 @@ class DatabaseResolver {
         }
     }
 
-    private void loadFromDatabase(final int id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
+    private void loadFromDatabase(final long id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
             currentDepth, final int maxDepth) {
         Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
-                EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Integer.toString(id)}, null, null, null);
+                EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Long.toString(id)}, null, null, null);
         tryOnCursor(associationCursor, new CursorOperation<Void>() {
             @Override
             public Void execute(final Cursor cursor) {
