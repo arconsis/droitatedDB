@@ -201,7 +201,7 @@ class DatabaseResolver {
 					public List<Number> execute(final Cursor cursor) throws Exception {
 						LinkedList<Number> ids = new LinkedList<Number>();
                 while (cursor.moveToNext()) {
-							ids.add((Number) foreignAttribute.getValueFromCursor(cursor));
+							ids.add(cursor.getLong(foreignAttribute.columnIndex()));
                 }
                 return ids;
             }
