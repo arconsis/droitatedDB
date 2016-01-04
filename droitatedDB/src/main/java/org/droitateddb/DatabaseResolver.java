@@ -142,8 +142,8 @@ class DatabaseResolver {
             Collection<Object> target = new ArrayList<Object>();
             setFieldValue(associationField, data, target);
 
-            List<Integer> ids = loadIdsFromLinkTable(primaryKeyData, data.getClass(), foreignAttribute, toMany);
-            for (final Integer id : ids) {
+			List<Number> ids = loadIdsFromLinkTable(primaryKeyData, data.getClass(), foreignAttribute, toMany);
+			for (final Number id : ids) {
                 final String mixedId = foreignAttribute.type() + "#" + id;
                 if (loadedObjects.containsKey(mixedId)) {
                     target.add(loadedObjects.get(mixedId));
@@ -151,7 +151,7 @@ class DatabaseResolver {
                     String primaryKeyName = entityData.primaryKey.getName();
 
                     Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null,
-                            primaryKeyName + "= ?", new String[]{Integer.toString(id)}, null, null, null);
+                            primaryKeyName + "= ?", new String[]{id.toString()}, null, null, null);
                     Object linkedObject = tryOnCursor(cursor, new CursorOperation<Object>() {
                         @Override
                         public Object execute(final Cursor cursor) {
@@ -189,18 +189,19 @@ class DatabaseResolver {
         return null;
     }
 
-    private List<Integer> loadIdsFromLinkTable(final Number primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final
-    ToManyAssociation toMany) {
+	private List<Number> loadIdsFromLinkTable(
+			final Number primaryKeyData, final Class<?> dataClass, final AbstractAttribute foreignAttribute, final ToManyAssociation toMany) {
         String tableName = getLinkTableName(toMany.getLinkTableSchema());
         String columnName = FOREIGN_KEY + dataClass.getSimpleName().toLowerCase(Locale.getDefault()) + FROM_SUFFIX;
 
         Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{primaryKeyData.toString()}, null, null, null);
-        return tryOnCursor(cursor, new CursorOperation<List<Integer>>() {
+		return tryOnCursor(
+				cursor, new CursorOperation<List<Number>>() {
             @Override
-            public List<Integer> execute(final Cursor cursor) throws Exception {
-                LinkedList<Integer> ids = new LinkedList<Integer>();
+					public List<Number> execute(final Cursor cursor) throws Exception {
+						LinkedList<Number> ids = new LinkedList<Number>();
                 while (cursor.moveToNext()) {
-                    ids.add((Integer) foreignAttribute.getValueFromCursor(cursor));
+							ids.add((Number) foreignAttribute.getValueFromCursor(cursor));
                 }
                 return ids;
             }
