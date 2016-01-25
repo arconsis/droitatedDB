@@ -51,7 +51,7 @@ class SchemaUtil {
 		}
 
 		try {
-			String className = String.format(SCHEMA_TEMPLATE, DbCreator.getBasePackage(), entityClass.getSimpleName());
+			String className = String.format(SCHEMA_TEMPLATE, DroitatedDB.getBasePackage(), entityClass.getSimpleName());
 			Class<?> schemaClass = Class.forName(className);
 			String tableName = (String) schemaClass.getField(TABLE_NAME).get(null);
 			TABLE_NAME_CACHE.putIfAbsent(entityClass, tableName);
@@ -66,7 +66,7 @@ class SchemaUtil {
 			ASSOCIATION_SCHEMA_CACHE.get(entityClass);
 		}
 		try {
-			Class<?> associationsSchema = Class.forName(String.format(ASSOCIATION_TEMPLATE, DbCreator.getBasePackage(), entityClass.getSimpleName()));
+			Class<?> associationsSchema = Class.forName(String.format(ASSOCIATION_TEMPLATE, DroitatedDB.getBasePackage(), entityClass.getSimpleName()));
 			ASSOCIATION_SCHEMA_CACHE.putIfAbsent(entityClass, associationsSchema);
 			return associationsSchema;
 		} catch (ClassNotFoundException e) {
@@ -79,7 +79,7 @@ class SchemaUtil {
 			return ENTITY_INFO_CACHE.get(entityClass);
 		}
 		try {
-			EntityInfo entityInfo = (EntityInfo) Class.forName(String.format(DB_TEMPLATE, DbCreator.getBasePackage())).getField(entityClass.getSimpleName() + INFO_SUFFIX)
+			EntityInfo entityInfo = (EntityInfo) Class.forName(String.format(DB_TEMPLATE, DroitatedDB.getBasePackage())).getField(entityClass.getSimpleName() + INFO_SUFFIX)
 					.get(null);
 			ENTITY_INFO_CACHE.putIfAbsent(entityClass, entityInfo);
 			return entityInfo;

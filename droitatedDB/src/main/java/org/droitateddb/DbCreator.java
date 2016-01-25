@@ -39,7 +39,6 @@ public class DbCreator extends SQLiteOpenHelper {
 	private static          PersistenceDefinition PERSISTENCE_DEFINITION;
 	private static          DbCreator             DB_CREATOR_INSTANCE;
 	protected static volatile SQLiteDatabase        dbConnection;
-	private static String basePackage;
 
 	private final PersistenceDefinition persistence;
 
@@ -51,8 +50,7 @@ public class DbCreator extends SQLiteOpenHelper {
 	public static DbCreator getInstance(final Context context) {
 		synchronized (LOCK) {
 			if (PERSISTENCE_DEFINITION == null) {
-				basePackage = context.getApplicationContext().getPackageName();
-				PERSISTENCE_DEFINITION = PersistenceDefinition.create(basePackage);
+				PERSISTENCE_DEFINITION = PersistenceDefinition.create(DroitatedDB.getBasePackage());
 			}
 			if (DB_CREATOR_INSTANCE == null) {
 				DB_CREATOR_INSTANCE = new DbCreator(context, PERSISTENCE_DEFINITION);
@@ -207,9 +205,5 @@ public class DbCreator extends SQLiteOpenHelper {
 				throw new IllegalStateException("Couldn't invoke the update hook", e);
 			}
 		}
-	}
-
-	public static String getBasePackage(){
-		return basePackage;
 	}
 }
