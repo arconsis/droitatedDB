@@ -51,43 +51,50 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class EntityAnnotationProcessor extends AbstractProcessor {
 
-    private Messager messager;
-    private AndroidManifestAccess androidManifestAccess;
+	private Messager              messager;
+	private AndroidManifestAccess androidManifestAccess;
 
-    @Override
-    public synchronized void init(final ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        messager = processingEnv.getMessager();
-        androidManifestAccess = new AndroidManifestAccess(processingEnv);
-    }
+	@Override
+	public synchronized void init(final ProcessingEnvironment processingEnv) {
+		super.init(processingEnv);
+		messager = processingEnv.getMessager();
+		androidManifestAccess = new AndroidManifestAccess(processingEnv);
+	}
 
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        if (!roundEnv.processingOver()) {
-            try {
-                Persistence persistence = checkPersistenceAnnotation(roundEnv);
-                if (persistence == null) {
-                    return true;
-                }
+	@Override
+	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+		if (!roundEnv.processingOver()) {
+			try {
+				Persistence persistence = checkPersistenceAnnotation(roundEnv);
+				if (persistence == null) {
+					return true;
+				}
 
-                AndroidManifest androidManifest = androidManifestAccess.load();
-                String updateHookName = getHookName(roundEnv, Update.class, DbUpdate.class);
-                String createHookName = getHookName(roundEnv, Create.class, DbCreate.class);
-                Set<? extends Element> entityAnnotated = roundEnv.getElementsAnnotatedWith(Entity.class);
+				AndroidManifest androidManifest = androidManifestAccess.load();
+				String basePackage = persistence.basePackage();
+				if (basePackage == null || "".equals(basePackage)) {
+					basePackage = androidManifest.getPackageName();
+				}
+				String generatedPackage = basePackage + "." + SchemaConstants.GENERATED_SUFFIX;
+				messager.printMessage(Kind.NOTE, "Use base package " + basePackage);
+				androidManifestAccess.initGeneratedPackage(generatedPackage);
 
-                String generatedPackage = androidManifest.getPackageName() + "." + SchemaConstants.GENERATED_SUFFIX;
-                generateDbSchema(generatedPackage, entityAnnotated, persistence, updateHookName, createHookName);
-                generateContentProviderIfRequested(generatedPackage, entityAnnotated);
-            } catch (RuntimeException e) {
-                messager.printMessage(Kind.ERROR, "Not able to generate DB schema from the annotated entity classes " + e.getMessage());
-                throw e;
-            } catch (Exception e) {
-                messager.printMessage(Kind.ERROR, "Not able to generate DB schema from the annotated entity classes " + e.getMessage());
-                throw new IllegalStateException(e);
-            }
-        }
-        return true;
-    }
+				String updateHookName = getHookName(roundEnv, Update.class, DbUpdate.class);
+				String createHookName = getHookName(roundEnv, Create.class, DbCreate.class);
+				Set<? extends Element> entityAnnotated = roundEnv.getElementsAnnotatedWith(Entity.class);
+
+				generateDbSchema(generatedPackage, entityAnnotated, persistence, updateHookName, createHookName);
+				generateContentProviderIfRequested(generatedPackage, entityAnnotated);
+			} catch (RuntimeException e) {
+				messager.printMessage(Kind.ERROR, "Not able to generate DB schema from the annotated entity classes " + e.getMessage());
+				throw e;
+			} catch (Exception e) {
+				messager.printMessage(Kind.ERROR, "Not able to generate DB schema from the annotated entity classes " + e.getMessage());
+				throw new IllegalStateException(e);
+			}
+		}
+		return true;
+	}
 
     @Override
     public java.util.Set<String> getSupportedOptions() {
@@ -96,70 +103,70 @@ public class EntityAnnotationProcessor extends AbstractProcessor {
         return validOptions;
     }
 
-    private Persistence checkPersistenceAnnotation(final RoundEnvironment roundEnv) {
-        Set<? extends Element> persistenceAnnotated = roundEnv.getElementsAnnotatedWith(Persistence.class);
+	private Persistence checkPersistenceAnnotation(final RoundEnvironment roundEnv) {
+		Set<? extends Element> persistenceAnnotated = roundEnv.getElementsAnnotatedWith(Persistence.class);
 
-        if (persistenceAnnotated.size() == 0) {
-            return null;
-        }
+		if (persistenceAnnotated.size() == 0) {
+			return null;
+		}
 
-        if (persistenceAnnotated.size() > 1) {
-            messager.printMessage(Kind.ERROR, "Only one @Persistence activator is allowed within the project", persistenceAnnotated.iterator().next());
-            return null;
-        }
-        Element persistenceClass = persistenceAnnotated.iterator().next();
-        return persistenceClass.getAnnotation(Persistence.class);
-    }
+		if (persistenceAnnotated.size() > 1) {
+			messager.printMessage(Kind.ERROR, "Only one @Persistence activator is allowed within the project", persistenceAnnotated.iterator().next());
+			return null;
+		}
+		Element persistenceClass = persistenceAnnotated.iterator().next();
+		return persistenceClass.getAnnotation(Persistence.class);
+	}
 
-    private String getHookName(final RoundEnvironment roundEnv, Class<? extends Annotation> hookAnnotation, Class<?> hookInterface) {
-        Set<? extends Element> annotated = roundEnv.getElementsAnnotatedWith(hookAnnotation);
-        if (annotated.size() == 0) {
-            return null;
-        }
-        if (annotated.size() > 1) {
+	private String getHookName(final RoundEnvironment roundEnv, Class<? extends Annotation> hookAnnotation, Class<?> hookInterface) {
+		Set<? extends Element> annotated = roundEnv.getElementsAnnotatedWith(hookAnnotation);
+		if (annotated.size() == 0) {
+			return null;
+		}
+		if (annotated.size() > 1) {
             messager.printMessage(Kind.ERROR,
                     "Only one " + hookAnnotation.getCanonicalName() + " hook is allowed with the project", annotated.iterator().next());
-            return null;
-        }
-        Element updateElement = annotated.iterator().next();
-        TypeElement typeElement = updateElement.accept(new TypeResolvingVisitor(), null);
-        boolean implementsDbUpdate = false;
-        for (TypeMirror typeMirror : typeElement.getInterfaces()) {
-            if (typeMirror.toString().equals(hookInterface.getCanonicalName())) {
-                implementsDbUpdate = true;
-            }
-        }
-        if (!implementsDbUpdate) {
+			return null;
+		}
+		Element updateElement = annotated.iterator().next();
+		TypeElement typeElement = updateElement.accept(new TypeResolvingVisitor(), null);
+		boolean implementsDbUpdate = false;
+		for (TypeMirror typeMirror : typeElement.getInterfaces()) {
+			if (typeMirror.toString().equals(hookInterface.getCanonicalName())) {
+				implementsDbUpdate = true;
+			}
+		}
+		if (!implementsDbUpdate) {
             messager.printMessage(Kind.ERROR,
                     "The " + hookAnnotation + " hook has to implement the " + hookInterface.getCanonicalName() + " interface", updateElement);
-            return null;
-        }
-        return typeElement.getQualifiedName().toString();
-    }
+			return null;
+		}
+		return typeElement.getQualifiedName().toString();
+	}
 
     private void generateDbSchema(final String packageName, final Set<? extends Element> entityAnnotated, final Persistence persistence, String
             updateHookName, final String createHookName) {
-        SchemaReader schemaReader = new SchemaReader(persistence, updateHookName, createHookName, entityAnnotated, processingEnv.getElementUtils(), messager);
-        SchemaWriter schemaWriter = new SchemaWriter(packageName, SchemaConstants.DB, schemaReader.read());
+		SchemaReader schemaReader = new SchemaReader(persistence, updateHookName, createHookName, entityAnnotated, processingEnv.getElementUtils(), messager);
+		SchemaWriter schemaWriter = new SchemaWriter(packageName, SchemaConstants.DB, schemaReader.read());
 
-        JavaFileWriter javaFileWriter = new JavaFileWriter(packageName, SchemaConstants.DB, processingEnv);
-        javaFileWriter.write(schemaWriter.write());
-    }
+		JavaFileWriter javaFileWriter = new JavaFileWriter(packageName, SchemaConstants.DB, processingEnv);
+		javaFileWriter.write(schemaWriter.write());
+	}
 
-    private void generateContentProviderIfRequested(final String packageName, final Set<? extends Element> entityAnnotated) throws Exception {
-        List<ContentProviderData> providers = new LinkedList<ContentProviderData>();
-        for (Element entity : entityAnnotated) {
-            Entity entityAnnotation = entity.getAnnotation(Entity.class);
-            if (entityAnnotation.contentProvider()) {
-                ContentProviderBuilder providerBuilder = new ContentProviderBuilder(packageName, entity, messager);
-                SourceContentProviderData providerData = providerBuilder.build();
-                JavaFileWriter javaFileWriter = new JavaFileWriter(packageName, providerData.getSimpleName(), processingEnv);
-                javaFileWriter.write(providerData.getSource());
-                providers.add(providerData);
-            }
-        }
-        androidManifestAccess.addProviders(providers);
-    }
+	private void generateContentProviderIfRequested(final String packageName, final Set<? extends Element> entityAnnotated) throws Exception {
+		List<ContentProviderData> providers = new LinkedList<ContentProviderData>();
+		for (Element entity : entityAnnotated) {
+			Entity entityAnnotation = entity.getAnnotation(Entity.class);
+			if (entityAnnotation.contentProvider()) {
+				ContentProviderBuilder providerBuilder = new ContentProviderBuilder(packageName, entity, messager);
+				SourceContentProviderData providerData = providerBuilder.build();
+				JavaFileWriter javaFileWriter = new JavaFileWriter(packageName, providerData.getSimpleName(), processingEnv);
+				javaFileWriter.write(providerData.getSource());
+				providers.add(providerData);
+			}
+		}
+		androidManifestAccess.addProviders(providers);
+	}
 
     public static void main(final String[] args) {
         // keep eclipse happy
