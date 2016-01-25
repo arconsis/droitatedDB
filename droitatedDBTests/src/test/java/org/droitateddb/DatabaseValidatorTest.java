@@ -20,6 +20,7 @@ public class DatabaseValidatorTest {
 
     @Before
     public void setup() {
+        DroitatedDB.init(UpdateHook.class);
         context = mock(Context.class);
         when(context.getPackageName()).thenReturn("org.droitateddb.test.data");
     }

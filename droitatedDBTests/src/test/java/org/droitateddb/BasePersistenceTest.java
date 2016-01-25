@@ -23,6 +23,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.droitateddb.test.data.UpdateHook;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -52,6 +53,7 @@ public class BasePersistenceTest {
 
     @Before
     public void setUp() throws Exception {
+        DroitatedDB.init(UpdateHook.class);
         context = Robolectric.getShadowApplication().getApplicationContext();
         dbCreator = spy(TestDBCreator.getInstance(context));
         database = spy(dbCreator.getTestDB());
