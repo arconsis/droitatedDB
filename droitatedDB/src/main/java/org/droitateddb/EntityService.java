@@ -86,8 +86,8 @@ public class EntityService<E> {
         }
         this.context = context;
         this.entityClass = entityClass;
-        this.entityInfo = SchemaUtil.getEntityInfo(entityClass, context.getPackageName());
-        this.tableName = SchemaUtil.getTableName(entityClass, context.getPackageName());
+        this.entityInfo = SchemaUtil.getEntityInfo(entityClass);
+        this.tableName = SchemaUtil.getTableName(entityClass);
         this.toggle = toggle;
         this.dbCreator = dbCreator;
         this.databaseValidator = new DatabaseValidator<E>(context);

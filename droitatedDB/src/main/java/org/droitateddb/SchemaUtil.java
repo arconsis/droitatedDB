@@ -45,13 +45,13 @@ class SchemaUtil {
 	private static final ConcurrentMap<Class<?>, Class<?>> ASSOCIATION_SCHEMA_CACHE = new ConcurrentHashMap<Class<?>, Class<?>>();
 	private static final ConcurrentMap<Class<?>, EntityInfo> ENTITY_INFO_CACHE = new ConcurrentHashMap<Class<?>, EntityInfo>();
 
-	static String getTableName(final Class<?> entityClass, final String packageName) {
+	static String getTableName(final Class<?> entityClass) {
 		if (TABLE_NAME_CACHE.containsKey(entityClass)) {
 			return TABLE_NAME_CACHE.get(entityClass);
 		}
 
 		try {
-			String className = String.format(SCHEMA_TEMPLATE, packageName, entityClass.getSimpleName());
+			String className = String.format(SCHEMA_TEMPLATE, DbCreator.getBasePackage(), entityClass.getSimpleName());
 			Class<?> schemaClass = Class.forName(className);
 			String tableName = (String) schemaClass.getField(TABLE_NAME).get(null);
 			TABLE_NAME_CACHE.putIfAbsent(entityClass, tableName);
@@ -61,12 +61,12 @@ class SchemaUtil {
 		}
 	}
 
-	static Class<?> getAssociationsSchema(final Class<?> entityClass, final String packageName) {
+	static Class<?> getAssociationsSchema(final Class<?> entityClass) {
 		if (ASSOCIATION_SCHEMA_CACHE.containsKey(entityClass)) {
 			ASSOCIATION_SCHEMA_CACHE.get(entityClass);
 		}
 		try {
-			Class<?> associationsSchema = Class.forName(String.format(ASSOCIATION_TEMPLATE, packageName, entityClass.getSimpleName()));
+			Class<?> associationsSchema = Class.forName(String.format(ASSOCIATION_TEMPLATE, DbCreator.getBasePackage(), entityClass.getSimpleName()));
 			ASSOCIATION_SCHEMA_CACHE.putIfAbsent(entityClass, associationsSchema);
 			return associationsSchema;
 		} catch (ClassNotFoundException e) {
@@ -74,12 +74,12 @@ class SchemaUtil {
 		}
 	}
 
-	static EntityInfo getEntityInfo(final Class<?> entityClass, final String packageName) {
+	static EntityInfo getEntityInfo(final Class<?> entityClass) {
 		if (ENTITY_INFO_CACHE.containsKey(entityClass)) {
 			return ENTITY_INFO_CACHE.get(entityClass);
 		}
 		try {
-			EntityInfo entityInfo = (EntityInfo) Class.forName(String.format(DB_TEMPLATE, packageName)).getField(entityClass.getSimpleName() + INFO_SUFFIX)
+			EntityInfo entityInfo = (EntityInfo) Class.forName(String.format(DB_TEMPLATE, DbCreator.getBasePackage())).getField(entityClass.getSimpleName() + INFO_SUFFIX)
 					.get(null);
 			ENTITY_INFO_CACHE.putIfAbsent(entityClass, entityInfo);
 			return entityInfo;

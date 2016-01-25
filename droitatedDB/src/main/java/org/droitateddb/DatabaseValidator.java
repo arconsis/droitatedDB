@@ -58,7 +58,7 @@ public class DatabaseValidator<T> {
 
     private void validate(Object validatingObject, AccumulatedValidationResult validationResult, Set<Object> alreadyValidated, int currentDepth, int maxDepth) {
         try {
-            EntityInfo entityInfo = SchemaUtil.getEntityInfo(validatingObject.getClass(), context.getPackageName());
+            EntityInfo entityInfo = SchemaUtil.getEntityInfo(validatingObject.getClass());
             Class<?> definition = entityInfo.definition();
             EntityData entityData = EntityData.getEntityData(validatingObject);
 

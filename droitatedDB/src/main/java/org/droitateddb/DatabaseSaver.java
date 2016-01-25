@@ -176,7 +176,7 @@ class DatabaseSaver {
 		if (entityData.toOneAssociations.isEmpty()) {
 			return new ContentValues();
 		}
-		String tableName = SchemaUtil.getTableName(entityData.type, context.getPackageName());
+		String tableName = SchemaUtil.getTableName(entityData.type);
 		final String[] projection = new String[entityData.toOneAssociations.size()];
 		int i = 0;
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
@@ -210,7 +210,7 @@ class DatabaseSaver {
 		for (Field associationField : entityData.toManyAssociations) {
 			Collection<?> associatedData = getAssociatedData(data, associationField);
 			Class<?> dataClass = data.getClass();
-            Class<?> linkTableSchema = SchemaUtil.getToManyAsso(associationField, SchemaUtil.getAssociationsSchema(dataClass, context.getPackageName())).getLinkTableSchema();
+            Class<?> linkTableSchema = SchemaUtil.getToManyAsso(associationField, SchemaUtil.getAssociationsSchema(dataClass)).getLinkTableSchema();
 
 			Set<Long> idsFromLinkTable;
 			if (newObjects.contains(data)) {

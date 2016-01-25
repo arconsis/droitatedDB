@@ -61,7 +61,7 @@ class DatabaseResolver {
         }
         EntityData entityData = EntityData.getEntityData(data);
         if (entityData.allAssociations.size() > 0) {
-            Class<?> associationsDeclaration = getAssociationsSchema(data.getClass(), context.getPackageName());
+            Class<?> associationsDeclaration = getAssociationsSchema(data.getClass());
             Number id = getPrimaryKey(data, entityData);
 
             if (id != null) {
@@ -82,7 +82,7 @@ class DatabaseResolver {
             toOneAssociation, final int currentDepth, final int maxDepth) {
         String keyName = EntityData.getEntityData(requestingObject).primaryKey.getName();
 
-        Cursor fkCursor = database.query(getTableName(requestingObject.getClass(), context.getPackageName()), new String[]{
+        Cursor fkCursor = database.query(getTableName(requestingObject.getClass()), new String[]{
                         toOneAssociation.getAssociationAttribute().columnName()},
                 keyName + " = ?", new String[]{idRequestingObject.toString()}, null, null, null);
         tryOnCursor(fkCursor, new CursorOperation<Void>() {
@@ -108,13 +108,13 @@ class DatabaseResolver {
 
     private void loadFromDatabase(final long id, final Field associationField, final Object requestingObject, final ToOneAssociation declaration, final int
             currentDepth, final int maxDepth) {
-        Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType(), context.getPackageName()), null,
+        Cursor associationCursor = database.query(getTableName(declaration.getAssociatedType()), null,
                 EntityData.getEntityData(declaration.getAssociatedType()).primaryKey.getName() + "=?", new String[]{Long.toString(id)}, null, null, null);
         tryOnCursor(associationCursor, new CursorOperation<Void>() {
             @Override
             public Void execute(final Cursor cursor) {
                 if (cursor.moveToFirst()) {
-                    Object association = CombinedCursorImpl.create(context, cursor, getEntityInfo(declaration.getAssociatedType(), context.getPackageName()),
+                    Object association = CombinedCursorImpl.create(context, cursor, getEntityInfo(declaration.getAssociatedType()),
                             declaration
                                     .getAssociatedType()).getCurrent();
                     setFieldValue(associationField, requestingObject, association);
@@ -150,13 +150,13 @@ class DatabaseResolver {
                 } else {
                     String primaryKeyName = entityData.primaryKey.getName();
 
-                    Cursor cursor = database.query(getTableName(foreignAttribute.type(), context.getPackageName()), null,
+                    Cursor cursor = database.query(getTableName(foreignAttribute.type()), null,
                             primaryKeyName + "= ?", new String[]{id.toString()}, null, null, null);
                     Object linkedObject = tryOnCursor(cursor, new CursorOperation<Object>() {
                         @Override
                         public Object execute(final Cursor cursor) {
                             if (cursor.getCount() > 0) {
-                                Object loaded = CombinedCursorImpl.create(context, cursor, getEntityInfo(foreignAttribute.type(), context.getPackageName()),
+                                Object loaded = CombinedCursorImpl.create(context, cursor, getEntityInfo(foreignAttribute.type()),
                                         foreignAttribute
                                                 .type()).getOne();
                                 loadedObjects.put(mixedId, loaded);
