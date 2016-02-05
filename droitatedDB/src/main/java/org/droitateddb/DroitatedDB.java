@@ -1,5 +1,7 @@
 package org.droitateddb;
 
+import android.content.Context;
+
 import org.droitateddb.config.Persistence;
 
 import java.lang.annotation.Annotation;
@@ -7,13 +9,13 @@ import java.lang.annotation.Annotation;
 /**
  * Utility for setup. Register the {@link org.droitateddb.config.Persistence} annotated class in a static block in your {@link  android.app.Application}
  *
- * 	{@code
-	public class MyApplication extends Application {
-		static {
-			DroitatedDB.init(MyDatabase.class);
-		}
-		...
-	}
+ *    {@code
+public class MyApplication extends Application {
+static {
+DroitatedDB.init(MyDatabase.class);
+}
+...
+}
  *
  * @author Falk Appel
  * @author Alexander Frank
@@ -45,8 +47,10 @@ public class DroitatedDB {
 		}
 	}
 
-	static String getBasePackage() {
-		throwExceptionWhenInitNotSuccesfull();
+	static String getBasePackage(Context context) {
+		if (basePackage == null || "".equals(basePackage)) {
+			basePackage = context.getPackageName();
+		}
 		return basePackage;
 	}
 

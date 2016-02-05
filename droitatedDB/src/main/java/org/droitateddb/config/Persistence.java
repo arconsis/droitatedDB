@@ -33,6 +33,6 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface Persistence {
 	int dbVersion();
-	String basePackage();
+	String basePackage() default "";
 	String dbName() default "storage.db";
 }
