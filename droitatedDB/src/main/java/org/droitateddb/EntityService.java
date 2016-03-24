@@ -86,11 +86,11 @@ public class EntityService<E> {
         }
         this.context = context;
         this.entityClass = entityClass;
-        this.entityInfo = SchemaUtil.getEntityInfo(entityClass, context.getPackageName());
-        this.tableName = SchemaUtil.getTableName(entityClass, context.getPackageName());
+        this.entityInfo = SchemaUtil.getEntityInfo(entityClass);
+        this.tableName = SchemaUtil.getTableName(entityClass);
         this.toggle = toggle;
         this.dbCreator = dbCreator;
-        this.databaseValidator = new DatabaseValidator<E>(context);
+        this.databaseValidator = new DatabaseValidator<E>();
         initColumns();
     }
 
@@ -236,7 +236,7 @@ public class EntityService<E> {
             return transactional(database, new DatabaseOperation<Number>() {
                 @Override
                 public Number execute() {
-                    return new DatabaseSaver(context, database, maxDepth).save(data);
+                    return new DatabaseSaver(database, maxDepth).save(data);
                 }
             }).longValue();
         } finally {
@@ -278,7 +278,7 @@ public class EntityService<E> {
 
         SQLiteDatabase database = openDB();
         try {
-            final DatabaseSaver databaseSaver = new DatabaseSaver(context, database, maxDepth);
+            final DatabaseSaver databaseSaver = new DatabaseSaver(database, maxDepth);
             transactional(database, new DatabaseOperation<Void>() {
                 @Override
                 public Void execute() {

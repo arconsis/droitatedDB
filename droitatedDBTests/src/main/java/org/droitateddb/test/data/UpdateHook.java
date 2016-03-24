@@ -29,7 +29,7 @@ import org.droitateddb.hooks.Update;
  */
 @Create
 @Update
-@Persistence(dbName = "test.db", dbVersion = 1)
+@Persistence(dbName = "test.db",basePackage = "org.droitateddb.test.data", dbVersion = 1)
 public class UpdateHook implements DbUpdate, DbCreate {
 
 	@Override

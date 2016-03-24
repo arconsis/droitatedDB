@@ -15,7 +15,6 @@
  */
 package org.droitateddb;
 
-import android.content.Context;
 import org.droitateddb.schema.SchemaConstants;
 
 import java.lang.reflect.Field;
@@ -70,13 +69,13 @@ final class PersistenceDefinition {
         return Collections.unmodifiableList(indexStatements);
     }
 
-    public static PersistenceDefinition create(final Context context) {
-        return loadPersistenceData(context);
+	public static PersistenceDefinition create(final String basePackage) {
+		return loadPersistenceData(basePackage);
     }
 
-    private static PersistenceDefinition loadPersistenceData(final Context context) {
+	private static PersistenceDefinition loadPersistenceData(final String basePackage) {
         try {
-            Class<?> schemaClass = Class.forName(context.getPackageName() + "." + SchemaConstants.GENERATED_SUFFIX + "." + SchemaConstants.DB);
+			Class<?> schemaClass = Class.forName(basePackage + "." + SchemaConstants.GENERATED_SUFFIX + "." + SchemaConstants.DB);
             String dbName = (String) schemaClass.getDeclaredField(SchemaConstants.DB_NAME).get(null);
             int dbVersion = (Integer) schemaClass.getDeclaredField(SchemaConstants.DB_VERSION).get(null);
 

@@ -32,17 +32,18 @@ import java.util.List;
 public class AndroidManifestAccess {
 
     private final ProcessingEnvironment env;
+    private String generatedPackage;
 
     public AndroidManifestAccess(final ProcessingEnvironment env) {
         this.env = env;
     }
 
     public final AndroidManifest load() throws Exception {
-        return new AndroidManifestProcessor(openManifest()).parse();
+        return new AndroidManifestProcessor(openManifest(),generatedPackage).parse();
     }
 
     public void addProviders(final List<ContentProviderData> data) throws Exception {
-        AndroidManifestProcessor manifestParser = new AndroidManifestProcessor(openManifest());
+        AndroidManifestProcessor manifestParser = new AndroidManifestProcessor(openManifest(), generatedPackage);
         ManifestBuilder builder = manifestParser.change();
         for (ContentProviderData provider : data) {
             builder.addProviderIfNotExists(provider);
@@ -62,5 +63,9 @@ public class AndroidManifestAccess {
             throw new IllegalStateException("Manifest file " + manifest.getAbsolutePath() + " does not exist!");
         }
         return manifest;
+    }
+
+    public void initGeneratedPackage(final String generatedPackage) {
+        this.generatedPackage = generatedPackage;
     }
 }

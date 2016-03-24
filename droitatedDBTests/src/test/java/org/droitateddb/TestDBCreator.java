@@ -34,7 +34,7 @@ public class TestDBCreator extends DbCreator {
 
 	public static TestDBCreator getInstance(final Context context) {
 		if (PERSISTENCE_DEFINITION == null) {
-			PERSISTENCE_DEFINITION = PersistenceDefinition.create(context.getApplicationContext());
+			PERSISTENCE_DEFINITION = PersistenceDefinition.create(DroitatedDB.getBasePackage());
 		}
 		return new TestDBCreator(context, PERSISTENCE_DEFINITION);
 	}
