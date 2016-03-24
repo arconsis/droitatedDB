@@ -19,6 +19,7 @@ import org.droitateddb.builder.provider.ContentProviderBuilder;
 import org.droitateddb.builder.provider.SourceContentProviderData;
 import org.droitateddb.builder.schema.reader.SchemaReader;
 import org.droitateddb.builder.schema.visitor.TypeResolvingVisitor;
+import org.droitateddb.builder.schema.writer.BasePackageConstantsWriter;
 import org.droitateddb.builder.schema.writer.SchemaWriter;
 import org.droitateddb.config.Persistence;
 import org.droitateddb.entity.Entity;
@@ -30,17 +31,23 @@ import org.droitateddb.manifest.AndroidManifest;
 import org.droitateddb.manifest.AndroidManifestAccess;
 import org.droitateddb.schema.SchemaConstants;
 
-import javax.annotation.processing.*;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic.Kind;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
+import javax.tools.Diagnostic.Kind;
 
 /**
  * @author Alexander Frank
@@ -85,6 +92,7 @@ public class EntityAnnotationProcessor extends AbstractProcessor {
 
 				generateDbSchema(generatedPackage, entityAnnotated, persistence, updateHookName, createHookName);
 				generateContentProviderIfRequested(generatedPackage, entityAnnotated);
+				generateBasePackageReference(basePackage);
 			} catch (RuntimeException e) {
 				messager.printMessage(Kind.ERROR, "Not able to generate DB schema from the annotated entity classes " + e.getMessage());
 				throw e;
@@ -96,7 +104,13 @@ public class EntityAnnotationProcessor extends AbstractProcessor {
 		return true;
 	}
 
-    @Override
+	private void generateBasePackageReference(String basePackage) {
+		JavaFileWriter javaFileWriter = new JavaFileWriter(SchemaConstants.BASE_PACKAGE_FILE_PACKAGE, SchemaConstants.BASE_PACKAGE_FILE_NAME, processingEnv);
+		BasePackageConstantsWriter basePackageConstantsWriter = new BasePackageConstantsWriter(basePackage);
+		javaFileWriter.write(basePackageConstantsWriter.write());
+	}
+
+	@Override
     public java.util.Set<String> getSupportedOptions() {
         HashSet<String> validOptions = new HashSet<String>();
         validOptions.add("manifest");

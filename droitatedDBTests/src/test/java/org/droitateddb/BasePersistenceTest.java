@@ -18,12 +18,13 @@ package org.droitateddb;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import org.droitateddb.test.data.generated.DB;
+
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.droitateddb.test.data.UpdateHook;
+import org.droitateddb.test.data.generated.DB;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +36,11 @@ import java.util.Collection;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Falk Appel
@@ -53,7 +58,6 @@ public class BasePersistenceTest {
 
     @Before
     public void setUp() throws Exception {
-        DroitatedDB.init(UpdateHook.class);
         context = Robolectric.getShadowApplication().getApplicationContext();
         dbCreator = spy(TestDBCreator.getInstance(context));
         database = spy(dbCreator.getTestDB());

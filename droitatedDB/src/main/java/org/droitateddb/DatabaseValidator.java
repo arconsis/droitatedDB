@@ -1,6 +1,5 @@
 package org.droitateddb;
 
-import android.content.Context;
 import org.droitateddb.schema.AbstractAttribute;
 import org.droitateddb.schema.ColumnValidator;
 import org.droitateddb.schema.EntityInfo;
@@ -25,12 +24,6 @@ import java.util.Set;
  * @author Alexander Frank
  */
 public class DatabaseValidator<T> {
-
-    private Context context;
-
-    public DatabaseValidator(Context context) {
-        this.context = context;
-    }
 
     public AccumulatedValidationResult validate(Collection<T> toBeValidated) {
         return validate(toBeValidated, Integer.MAX_VALUE);
@@ -58,7 +51,7 @@ public class DatabaseValidator<T> {
 
     private void validate(Object validatingObject, AccumulatedValidationResult validationResult, Set<Object> alreadyValidated, int currentDepth, int maxDepth) {
         try {
-            EntityInfo entityInfo = SchemaUtil.getEntityInfo(validatingObject.getClass(),context);
+            EntityInfo entityInfo = SchemaUtil.getEntityInfo(validatingObject.getClass());
             Class<?> definition = entityInfo.definition();
             EntityData entityData = EntityData.getEntityData(validatingObject);
 

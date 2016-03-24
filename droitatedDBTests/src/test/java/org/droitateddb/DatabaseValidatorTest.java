@@ -1,14 +1,18 @@
 package org.droitateddb;
 
-import android.content.Context;
-import org.droitateddb.test.data.*;
+import org.droitateddb.test.data.CollectionRelatedValidatorEntity;
+import org.droitateddb.test.data.LengthValidatorEntity;
+import org.droitateddb.test.data.MultiValidatorEntity;
+import org.droitateddb.test.data.OneCircularValidationEntity;
+import org.droitateddb.test.data.PatternValidatorEntity;
+import org.droitateddb.test.data.PrimitiveValidatorEntity;
+import org.droitateddb.test.data.RelatedToValidatingEntity;
+import org.droitateddb.test.data.Simple;
+import org.droitateddb.test.data.TwoCircularValidationEntity;
 import org.droitateddb.validation.AccumulatedValidationResult;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Falk Appel
@@ -16,18 +20,10 @@ import static org.mockito.Mockito.when;
  */
 public class DatabaseValidatorTest {
 
-    private Context context;
-
-    @Before
-    public void setup() {
-        DroitatedDB.init(UpdateHook.class);
-        context = mock(Context.class);
-        when(context.getPackageName()).thenReturn("org.droitateddb.test.data");
-    }
 
     @Test
     public void entityWithoutValidators() {
-        DatabaseValidator<Simple> validator = new DatabaseValidator<Simple>(context);
+        DatabaseValidator<Simple> validator = new DatabaseValidator<Simple>();
         AccumulatedValidationResult result = validator.validate(new Simple());
         assertThat(result.isValid()).isTrue();
     }
@@ -37,7 +33,7 @@ public class DatabaseValidatorTest {
         LengthValidatorEntity lengthValidator = new LengthValidatorEntity();
         lengthValidator.setData("12345678901");
 
-        DatabaseValidator<LengthValidatorEntity> validator = new DatabaseValidator<LengthValidatorEntity>(context);
+        DatabaseValidator<LengthValidatorEntity> validator = new DatabaseValidator<LengthValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(lengthValidator);
         assertThat(result.isValid()).isFalse();
     }
@@ -47,7 +43,7 @@ public class DatabaseValidatorTest {
         LengthValidatorEntity lengthValidator = new LengthValidatorEntity();
         lengthValidator.setData("1234567");
 
-        DatabaseValidator<LengthValidatorEntity> validator = new DatabaseValidator<LengthValidatorEntity>(context);
+        DatabaseValidator<LengthValidatorEntity> validator = new DatabaseValidator<LengthValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(lengthValidator);
         assertThat(result.isValid()).isTrue();
     }
@@ -57,14 +53,14 @@ public class DatabaseValidatorTest {
         MultiValidatorEntity multiValidatorEntity = new MultiValidatorEntity();
         multiValidatorEntity.setFoo(15);
 
-        DatabaseValidator<MultiValidatorEntity> validator = new DatabaseValidator<MultiValidatorEntity>(context);
+        DatabaseValidator<MultiValidatorEntity> validator = new DatabaseValidator<MultiValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(multiValidatorEntity);
         assertThat(result.isValid()).isTrue();
     }
 
     @Test
     public void failingOnMultipleValidation() {
-        DatabaseValidator<MultiValidatorEntity> validator = new DatabaseValidator<MultiValidatorEntity>(context);
+        DatabaseValidator<MultiValidatorEntity> validator = new DatabaseValidator<MultiValidatorEntity>();
 
         MultiValidatorEntity multiValidatorEntity = new MultiValidatorEntity();
         assertThat(validator.validate(multiValidatorEntity).isValid()).isFalse();
@@ -81,7 +77,7 @@ public class DatabaseValidatorTest {
         PatternValidatorEntity entity = new PatternValidatorEntity();
         entity.setData("1234");
 
-        DatabaseValidator<PatternValidatorEntity> validator = new DatabaseValidator<PatternValidatorEntity>(context);
+        DatabaseValidator<PatternValidatorEntity> validator = new DatabaseValidator<PatternValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(entity);
         assertThat(result.isValid()).isTrue();
     }
@@ -91,7 +87,7 @@ public class DatabaseValidatorTest {
         PatternValidatorEntity entity = new PatternValidatorEntity();
         entity.setData("123asd4");
 
-        DatabaseValidator<PatternValidatorEntity> validator = new DatabaseValidator<PatternValidatorEntity>(context);
+        DatabaseValidator<PatternValidatorEntity> validator = new DatabaseValidator<PatternValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(entity);
         assertThat(result.isValid()).isFalse();
     }
@@ -101,7 +97,7 @@ public class DatabaseValidatorTest {
         PrimitiveValidatorEntity entity = new PrimitiveValidatorEntity();
         entity.setFoo(10);
 
-        DatabaseValidator<PrimitiveValidatorEntity> validator = new DatabaseValidator<PrimitiveValidatorEntity>(context);
+        DatabaseValidator<PrimitiveValidatorEntity> validator = new DatabaseValidator<PrimitiveValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(entity);
         assertThat(result.isValid()).isTrue();
     }
@@ -110,7 +106,7 @@ public class DatabaseValidatorTest {
     public void failingPrimitiveValidation() {
         PrimitiveValidatorEntity entity = new PrimitiveValidatorEntity();
 
-        DatabaseValidator<PrimitiveValidatorEntity> validator = new DatabaseValidator<PrimitiveValidatorEntity>(context);
+        DatabaseValidator<PrimitiveValidatorEntity> validator = new DatabaseValidator<PrimitiveValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(entity);
         assertThat(result.isValid()).isFalse();
     }
@@ -123,7 +119,7 @@ public class DatabaseValidatorTest {
         relatedTo.setData("12345");
         relatedTo.setRelated(invalid);
 
-        DatabaseValidator<RelatedToValidatingEntity> validator = new DatabaseValidator<RelatedToValidatingEntity>(context);
+        DatabaseValidator<RelatedToValidatingEntity> validator = new DatabaseValidator<RelatedToValidatingEntity>();
         AccumulatedValidationResult result = validator.validate(relatedTo);
         assertThat(result.isValid()).isFalse();
     }
@@ -138,7 +134,7 @@ public class DatabaseValidatorTest {
         one.setCircle(two);
         two.setCircle(one);
 
-        DatabaseValidator<OneCircularValidationEntity> validator = new DatabaseValidator<OneCircularValidationEntity>(context);
+        DatabaseValidator<OneCircularValidationEntity> validator = new DatabaseValidator<OneCircularValidationEntity>();
         AccumulatedValidationResult result = validator.validate(one);
         assertThat(result.isValid()).isTrue();
     }
@@ -151,7 +147,7 @@ public class DatabaseValidatorTest {
         relatedTo.setData("12345");
         relatedTo.setRelated(invalid);
 
-        DatabaseValidator<RelatedToValidatingEntity> validator = new DatabaseValidator<RelatedToValidatingEntity>(context);
+        DatabaseValidator<RelatedToValidatingEntity> validator = new DatabaseValidator<RelatedToValidatingEntity>();
         AccumulatedValidationResult result = validator.validate(relatedTo, 0);
         assertThat(result.isValid()).isTrue();
     }
@@ -173,7 +169,7 @@ public class DatabaseValidatorTest {
         collection.addRelated(entity3);
         collection.addRelated(entity4);
 
-        DatabaseValidator<CollectionRelatedValidatorEntity> validator = new DatabaseValidator<CollectionRelatedValidatorEntity>(context);
+        DatabaseValidator<CollectionRelatedValidatorEntity> validator = new DatabaseValidator<CollectionRelatedValidatorEntity>();
         AccumulatedValidationResult result = validator.validate(collection);
         assertThat(result.isValid()).isFalse();
     }

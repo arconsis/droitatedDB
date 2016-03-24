@@ -1,57 +1,49 @@
+/*
+ * Copyright (C) 2016 The droitated DB Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.droitateddb;
 
-import android.content.Context;
-
-import org.droitateddb.config.Persistence;
-
-import java.lang.annotation.Annotation;
+import org.droitateddb.schema.SchemaConstants;
 
 /**
- * Utility for setup. Register the {@link org.droitateddb.config.Persistence} annotated class in a static block in your {@link  android.app.Application}
- *
- *    {@code
-public class MyApplication extends Application {
-static {
-DroitatedDB.init(MyDatabase.class);
-}
-...
-}
- *
  * @author Falk Appel
  * @author Alexander Frank
  */
 public class DroitatedDB {
-	private static String basePackage;
+    private static final Object MUTEX = new Object();
+    private static String basePackage;
 
-	private DroitatedDB() {
-		//static only
-	}
+    private DroitatedDB() {
+        //static only
+    }
 
-	/**
-	 * Register #classWithPersistenceAnnotation
-	 * @param classWithPersistenceAnnotation - {@link org.droitateddb.config.Persistence} annotated class
-	 */
-	public static void init(final Class<?> classWithPersistenceAnnotation) {
-		Annotation[] annotations = classWithPersistenceAnnotation.getAnnotations();
-		for (Annotation annotation : annotations) {
-			if (annotation.annotationType().equals(Persistence.class)) {
-				basePackage = ((Persistence) annotation).basePackage();
-			}
-		}
-		throwExceptionWhenInitNotSuccesfull();
-	}
+    static String getBasePackage() {
+        synchronized (MUTEX) {
+            if (basePackage == null || "".equals(basePackage)) {
+                basePackage = readBasePackageFromFile();
+            }
+        }
+        return basePackage;
+    }
 
-	private static void throwExceptionWhenInitNotSuccesfull() {
-		if (basePackage == null) {
-			throw new IllegalStateException("DroitatedDB init failed");
-		}
-	}
-
-	static String getBasePackage(Context context) {
-		if (basePackage == null || "".equals(basePackage)) {
-			basePackage = context.getPackageName();
-		}
-		return basePackage;
-	}
-
+    private static String readBasePackageFromFile() {
+        try {
+            Class<?> basePackageDefinition = Class.forName(SchemaConstants.BASE_PACKAGE_FILE_PACKAGE+"."+SchemaConstants.BASE_PACKAGE_FILE_NAME);
+            return  (String) basePackageDefinition.getDeclaredField(SchemaConstants.BASE_PACKAGE_CONSTANT_NAME).get(null);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

@@ -18,8 +18,6 @@ package org.droitateddb;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.droitateddb.test.data.UpdateHook;
-
 /**
  * Allows DBAccess for tests
  *
@@ -32,12 +30,11 @@ public class TestDBCreator extends DbCreator {
 
 	protected TestDBCreator(final Context context, final PersistenceDefinition persistence) {
 		super(context, persistence);
-		DroitatedDB.init(UpdateHook.class);
 	}
 
 	public static TestDBCreator getInstance(final Context context) {
 		if (PERSISTENCE_DEFINITION == null) {
-			PERSISTENCE_DEFINITION = PersistenceDefinition.create(DroitatedDB.getBasePackage(context));
+			PERSISTENCE_DEFINITION = PersistenceDefinition.create(DroitatedDB.getBasePackage());
 		}
 		return new TestDBCreator(context, PERSISTENCE_DEFINITION);
 	}
