@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.droitatedDB</groupId>
     <artifactId>tests</artifactId>
-    <version>0.1.7-SNAPSHOT</version>
+    <version>0.1.7</version>
     <packaging>jar</packaging>
     <name>droitatedDB - Tests</name>
     <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with
@@ -49,12 +49,12 @@
         <dependency>
             <groupId>org.droitateddb</groupId>
             <artifactId>api</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.1.7</version>
         </dependency>
         <dependency>
             <groupId>org.droitateddb</groupId>
             <artifactId>processor</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.google.android</groupId>
