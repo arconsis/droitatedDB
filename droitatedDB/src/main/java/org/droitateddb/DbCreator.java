@@ -50,7 +50,7 @@ public class DbCreator extends SQLiteOpenHelper {
 	public static DbCreator getInstance(final Context context) {
 		synchronized (LOCK) {
 			if (PERSISTENCE_DEFINITION == null) {
-				PERSISTENCE_DEFINITION = PersistenceDefinition.create(context.getApplicationContext());
+				PERSISTENCE_DEFINITION = PersistenceDefinition.create(DroitatedDB.getBasePackage());
 			}
 			if (DB_CREATOR_INSTANCE == null) {
 				DB_CREATOR_INSTANCE = new DbCreator(context, PERSISTENCE_DEFINITION);

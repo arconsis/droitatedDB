@@ -45,4 +45,8 @@ public class SchemaConstants {
 	public static final String INDEX_SUFFIX           = "_idx";
 	public static final String FROM_SUFFIX            = "_from";
 	public static final String TO_SUFFIX              = "_to";
+
+	public static final String BASE_PACKAGE_FILE_PACKAGE = "org.droitateddb";
+	public static final String BASE_PACKAGE_FILE_NAME = "BasePackageReference";
+	public static final String BASE_PACKAGE_CONSTANT_NAME = "BASE_PACKAGE";
 }

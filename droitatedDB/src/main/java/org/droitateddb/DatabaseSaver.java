@@ -16,7 +16,6 @@
 package org.droitateddb;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import org.droitateddb.schema.SchemaConstants;
@@ -34,7 +33,6 @@ import static org.droitateddb.Utilities.*;
  */
 class DatabaseSaver {
 
-	private final Context                              context;
 	private final SQLiteDatabase                       database;
 	private final Map<Object, Number>                  idsInGraph;
 	private final int                                  maxDepth;
@@ -43,8 +41,7 @@ class DatabaseSaver {
 	private final Collection<ToManyUpdate>             toManyUpdates;
 	private final Map<Object, Collection<ToOneUpdate>> toOneUpdaters;
 
-	public DatabaseSaver(final Context context, final SQLiteDatabase database, final int maxDepth) {
-		this.context = context;
+	public DatabaseSaver(final SQLiteDatabase database, final int maxDepth) {
 		this.database = database;
 		this.maxDepth = maxDepth;
 		idsInGraph = new HashMap<Object, Number>();
@@ -176,7 +173,7 @@ class DatabaseSaver {
 		if (entityData.toOneAssociations.isEmpty()) {
 			return new ContentValues();
 		}
-		String tableName = SchemaUtil.getTableName(entityData.type, context.getPackageName());
+		String tableName = SchemaUtil.getTableName(entityData.type);
 		final String[] projection = new String[entityData.toOneAssociations.size()];
 		int i = 0;
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
@@ -210,7 +207,7 @@ class DatabaseSaver {
 		for (Field associationField : entityData.toManyAssociations) {
 			Collection<?> associatedData = getAssociatedData(data, associationField);
 			Class<?> dataClass = data.getClass();
-            Class<?> linkTableSchema = SchemaUtil.getToManyAsso(associationField, SchemaUtil.getAssociationsSchema(dataClass, context.getPackageName())).getLinkTableSchema();
+            Class<?> linkTableSchema = SchemaUtil.getToManyAsso(associationField, SchemaUtil.getAssociationsSchema(dataClass)).getLinkTableSchema();
 
 			Set<Long> idsFromLinkTable;
 			if (newObjects.contains(data)) {
