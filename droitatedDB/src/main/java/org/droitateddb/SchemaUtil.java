@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static org.droitateddb.Utilities.getStaticFieldValue;
 import static org.droitateddb.schema.SchemaConstants.ASSOCIATIONS_INTERFACE;
 import static org.droitateddb.schema.SchemaConstants.DB;
 import static org.droitateddb.schema.SchemaConstants.GENERATED_SUFFIX;
@@ -53,7 +54,7 @@ class SchemaUtil {
 		try {
 			String className = String.format(SCHEMA_TEMPLATE, DroitatedDB.getBasePackage(), entityClass.getSimpleName());
 			Class<?> schemaClass = Class.forName(className);
-			String tableName = (String) schemaClass.getField(TABLE_NAME).get(null);
+			String tableName = getStaticFieldValue(schemaClass,TABLE_NAME);
 			TABLE_NAME_CACHE.putIfAbsent(entityClass, tableName);
 			return tableName;
 		} catch (Exception e) {
@@ -79,8 +80,8 @@ class SchemaUtil {
 			return ENTITY_INFO_CACHE.get(entityClass);
 		}
 		try {
-			EntityInfo entityInfo = (EntityInfo) Class.forName(String.format(DB_TEMPLATE, DroitatedDB.getBasePackage()))
-													  .getField(entityClass.getSimpleName() + INFO_SUFFIX).get(null);
+			Class<?> aClass = Class.forName(String.format(DB_TEMPLATE, DroitatedDB.getBasePackage()));
+			EntityInfo entityInfo = getStaticFieldValue(aClass,entityClass.getSimpleName() + INFO_SUFFIX);
 			ENTITY_INFO_CACHE.putIfAbsent(entityClass, entityInfo);
 			return entityInfo;
 		} catch (Exception e) {
@@ -89,11 +90,6 @@ class SchemaUtil {
 	}
 
 	static ToManyAssociation getToManyAsso(final Field associationField, final Class<?> associationsSchema) {
-		try {
-			Field toManyAssociationInfo = associationsSchema.getDeclaredField(associationField.getName().toUpperCase(Locale.getDefault()));
-			return (ToManyAssociation) toManyAssociationInfo.get(null);
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		return getStaticFieldValue(associationsSchema, associationField.getName().toUpperCase(Locale.getDefault()));
 	}
 }

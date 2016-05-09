@@ -34,6 +34,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import static org.droitateddb.Utilities.getDeclaredField;
+import static org.droitateddb.Utilities.getStaticFieldValue;
 import static org.droitateddb.Utilities.handle;
 
 /**
@@ -47,9 +49,7 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 	public static final <C> CombinedCursor<C> create(Context context, final Cursor originalCursor, final EntityInfo entityInfo, final Class<C> entityClass) {
 		try {
 			Class<?> definition = entityInfo.definition();
-			Field dbAttributes = definition.getDeclaredField(SchemaConstants.ATTRIBUTES);
-			dbAttributes.setAccessible(true);
-			AbstractAttribute[] attributes = (AbstractAttribute[]) dbAttributes.get(null);
+			AbstractAttribute[] attributes =  getStaticFieldValue(definition,SchemaConstants.ATTRIBUTES);
 			final Context appContext = context.getApplicationContext();
 
 			final CombinedCursorImpl<C> magicCursor = new CombinedCursorImpl<C>(originalCursor, entityClass, attributes);
@@ -110,7 +110,7 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 			Constructor<T> constructor = entityClass.getConstructor();
 			T instance = constructor.newInstance();
 			for (AbstractAttribute attribute : attributes) {
-				Field field = entityClass.getDeclaredField(attribute.fieldName());
+				Field field = getDeclaredField(entityClass,attribute.fieldName());
 				field.setAccessible(true);
 
 				field.set(instance, attribute.getValueFromCursor(originalCursor));

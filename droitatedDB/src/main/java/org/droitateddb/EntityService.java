@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static org.droitateddb.Utilities.getStaticFieldValue;
+
 /**
  * Provides support for executing CRUD operations on {@link org.droitateddb.entity.Entity} classes, such getting them from the database or
  * saving them to the database.<br>
@@ -302,7 +304,7 @@ public class EntityService<E> {
      * @throws IllegalArgumentException When the value of the {@link PrimaryKey} field is null
      */
     public boolean delete(final E data) {
-        Number id = (Number) Utilities.getFieldValue(data, primaryKey);
+        Number id = getStaticFieldValue(data, primaryKey);
         if (id == null) {
             throw new IllegalArgumentException("The @PrimaryKey of the given @Entity can not be null");
         }

@@ -148,8 +148,7 @@ class DatabaseSaver {
 			}
 		}
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
-			toOneAssociatedField.setAccessible(true);
-			Object associatedObject = getFieldValue(data, toOneAssociatedField);
+			Object associatedObject = getStaticFieldValue(data, toOneAssociatedField);
 			if (associatedObject != null) {
 				if (newUnsavedObjects.contains(associatedObject)) {
 					Collection<ToOneUpdate> collection = toOneUpdaters.get(data);
@@ -245,9 +244,9 @@ class DatabaseSaver {
 
 	private Collection<?> getAssociatedData(final Object data, final Field associationField) {
 		associationField.setAccessible(true);
-		Object association = getFieldValue(data, associationField);
+		Object association = getStaticFieldValue(data, associationField);
 		if (association != null) {
-			return (Collection<?>) getFieldValue(data, associationField);
+			return (Collection<?>) getStaticFieldValue(data, associationField);
 		} else {
 			return Collections.emptyList();
 		}
@@ -283,7 +282,7 @@ class DatabaseSaver {
 		column.setAccessible(true);
 		Class<?> columnType = column.getType();
 		String columnName = column.getName();
-		Object columnValue = getFieldValue(data, column);
+		Object columnValue = getStaticFieldValue(data, column);
 
 		if (columnValue == null) {
 			contentValues.putNull(columnName);

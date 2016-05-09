@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.droitateddb.Utilities.getDeclaredField;
+import static org.droitateddb.Utilities.getStaticFieldValue;
+
 /**
  * @author Falk Appel
  * @author Alexander Frank
@@ -76,8 +79,8 @@ final class PersistenceDefinition {
 	private static PersistenceDefinition loadPersistenceData(final String basePackage) {
         try {
 			Class<?> schemaClass = Class.forName(basePackage + "." + SchemaConstants.GENERATED_SUFFIX + "." + SchemaConstants.DB);
-            String dbName = (String) schemaClass.getDeclaredField(SchemaConstants.DB_NAME).get(null);
-            int dbVersion = (Integer) schemaClass.getDeclaredField(SchemaConstants.DB_VERSION).get(null);
+            String dbName = getStaticFieldValue(schemaClass, SchemaConstants.DB_NAME);
+            int dbVersion = getStaticFieldValue(schemaClass, SchemaConstants.DB_VERSION);
 
             Class<?> updateHook = getHook(schemaClass, SchemaConstants.UPDATE_HOOK);
             Class<?> createHook = getHook(schemaClass, SchemaConstants.CREATE_HOOK);
@@ -88,13 +91,13 @@ final class PersistenceDefinition {
 
             for (Class<?> def : tableDefinitions) {
                 if (def.isInterface() && (def.getSimpleName().endsWith(SchemaConstants.TABLE) || def.getSimpleName().endsWith(SchemaConstants.LINK))) {
-                    String statement = (String) def.getDeclaredField(SchemaConstants.SQL_CREATION).get(null);
+                    String statement = getStaticFieldValue(def,SchemaConstants.SQL_CREATION);
                     creationStatements.add(statement);
 
                     Field[] allFields = def.getDeclaredFields();
                     for (Field field : allFields) {
                         if (field.getName().startsWith(SchemaConstants.SQL_INDEX)) {
-                            indexStatements.add((String) field.get(null));
+                            indexStatements.add((String) getStaticFieldValue(field));
                         }
                     }
                 }
@@ -109,9 +112,10 @@ final class PersistenceDefinition {
     private static Class<?> getHook(Class<?> schemaClass, String hookName) {
         Class<?> hook = null;
         try {
-            Field hookField = schemaClass.getDeclaredField(hookName);
+            Field hookField = getDeclaredField(schemaClass,hookName);
             if (hookField != null) {
-                hook = Class.forName((String) hookField.get(null));
+                String className = getStaticFieldValue(hookField);
+                hook = Class.forName(className);
             }
         } catch (Exception e) {
             // ignore
