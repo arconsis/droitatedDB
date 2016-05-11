@@ -133,7 +133,7 @@ public class DatabaseValidator<T> {
         for (ColumnValidator columnValidator : columnValidators) {
             Class<? extends Annotation> validatorAnnotation = columnValidator.getValidatorAnnotation();
 
-            Class<?> proxyClass = Proxy.getProxyClass(Thread.currentThread().getContextClassLoader(), validatorAnnotation);
+            Class<?> proxyClass = Proxy.getProxyClass(this.getClass().getClassLoader(), validatorAnnotation);
             Annotation annotationInstance = (Annotation) proxyClass.getConstructor(new Class[]{InvocationHandler.class}).newInstance(new Object[]{new DatabaseValidatorAnnotationHandler(columnValidator.getParams())});
 
             Class<? extends CustomValidator<?, ?>> validatorClass = columnValidator.getValidatorClass();
