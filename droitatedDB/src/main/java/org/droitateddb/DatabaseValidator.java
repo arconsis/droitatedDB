@@ -133,8 +133,12 @@ public class DatabaseValidator<T> {
         Object entityValue = getFieldValue(toBeValidated.getClass(),attribute.fieldName(),toBeValidated);
         for (ColumnValidator columnValidator : columnValidators) {
             Class<? extends Annotation> validatorAnnotation = columnValidator.getValidatorAnnotation();
-
-            Class<?> proxyClass = Proxy.getProxyClass(this.getClass().getClassLoader(), validatorAnnotation);
+            Class<?> proxyClass=null;
+            try {
+                proxyClass = Proxy.getProxyClass(DatabaseValidator.class.getClassLoader(), validatorAnnotation);
+            } catch (IllegalArgumentException iae) {
+                proxyClass = Proxy.getProxyClass(Thread.currentThread().getContextClassLoader(), validatorAnnotation);
+            }
             Annotation annotationInstance = (Annotation) proxyClass.getConstructor(new Class[]{InvocationHandler.class}).newInstance(new Object[]{new DatabaseValidatorAnnotationHandler(columnValidator.getParams())});
 
             Class<? extends CustomValidator<?, ?>> validatorClass = columnValidator.getValidatorClass();
