@@ -58,15 +58,15 @@ public class Utilities {
     }
 
     static Number getPrimaryKey(final Object data, EntityData entityData) {
-        return getStaticFieldValue(data, entityData.primaryKey);
+        return getFieldValue(data, entityData.primaryKey);
     }
 
     public static <T> T getStaticFieldValue(Class<?> aClass, String fieldName) {
         return getStaticFieldValue(getDeclaredField(aClass, fieldName));
     }
 
-    static <T> T getStaticFieldValue(Class<?> aClass, String fieldName, Object data) {
-        return getStaticFieldValue(data, getDeclaredField(aClass, fieldName));
+    static <T> T getFieldValue(Class<?> aClass, String fieldName, Object data) {
+        return getFieldValue(data, getDeclaredField(aClass, fieldName));
     }
 
     public static Field getDeclaredField(Class<?> aClass, String fieldName) {
@@ -85,11 +85,11 @@ public class Utilities {
     }
 
     static <T> T getStaticFieldValue(Field field) {
-        return getStaticFieldValue(null, field);
+        return getFieldValue(null, field);
     }
 
     @SuppressWarnings("unchecked")
-    static <T> T getStaticFieldValue(final Object data, Field field) {
+    static <T> T getFieldValue(final Object data, Field field) {
         try {
             field.setAccessible(true);
             return (T) field.get(data);

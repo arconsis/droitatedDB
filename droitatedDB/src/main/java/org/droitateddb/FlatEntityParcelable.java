@@ -23,7 +23,7 @@ import org.droitateddb.entity.Relationship;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-import static org.droitateddb.Utilities.getStaticFieldValue;
+import static org.droitateddb.Utilities.getFieldValue;
 
 /**
  * Provides the possibility to wrap a data object into a {@link Parcel}.<br>
@@ -112,7 +112,7 @@ public class FlatEntityParcelable<E> implements Parcelable {
 			field.setAccessible(true);
 			try {
 				if (field.getAnnotation(Relationship.class) == null && isPrimitive(field)) {
-					dest.writeValue(getStaticFieldValue(data,field));
+					dest.writeValue(getFieldValue(data,field));
 				} else {
 					dest.writeValue(SKIPPED);
 				}

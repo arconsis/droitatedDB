@@ -37,6 +37,7 @@ import static org.droitateddb.CursorOperation.tryOnCursor;
 import static org.droitateddb.SchemaUtil.getAssociationsSchema;
 import static org.droitateddb.SchemaUtil.getEntityInfo;
 import static org.droitateddb.SchemaUtil.getTableName;
+import static org.droitateddb.Utilities.getFieldValue;
 import static org.droitateddb.Utilities.getLinkTableColumns;
 import static org.droitateddb.Utilities.getLinkTableName;
 import static org.droitateddb.Utilities.getPrimaryKey;
@@ -148,7 +149,7 @@ class DatabaseResolver {
         if (foreignAttribute != null) {
             EntityData entityData = EntityData.getEntityData(foreignAttribute.type());
 
-            if (getStaticFieldValue(data, associationField) != null) {
+            if (getFieldValue(data, associationField) != null) {
                 for (Object object : getCollection(data, associationField)) {
                     resolve(object, currentDepth + 1, maxDepth);
                     loadedObjects.put(foreignAttribute.type() + "#" + getPrimaryKey(object, entityData), object);
@@ -192,7 +193,7 @@ class DatabaseResolver {
 
     @SuppressWarnings("unchecked")
     private Collection<Object> getCollection(final Object data, final Field associationField) {
-        return new ArrayList<Object>((Collection<Object>) getStaticFieldValue(data, associationField));
+        return new ArrayList<Object>((Collection<Object>) getFieldValue(data, associationField));
     }
 
     private AbstractAttribute getForeignAttribute(final ToManyAssociation toMany) {

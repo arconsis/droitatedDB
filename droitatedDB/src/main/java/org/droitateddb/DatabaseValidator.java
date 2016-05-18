@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.droitateddb.Utilities.getFieldValue;
 import static org.droitateddb.Utilities.getStaticFieldValue;
 
 /**
@@ -89,7 +90,7 @@ public class DatabaseValidator<T> {
     }
 
     private void getRelatedEntityAndValidate(Object validatingObject, Field relationship, AccumulatedValidationResult validationResult, int currentDepth, int maxDepth, Set<Object> alreadyValidated) throws IllegalAccessException {
-        Object relatedEntity = getStaticFieldValue(validatingObject,relationship);
+        Object relatedEntity = getFieldValue(validatingObject,relationship);
         if (relatedEntity != null) {
             handleRelatedEntity(relatedEntity, validationResult, currentDepth, maxDepth, alreadyValidated);
 
@@ -129,7 +130,7 @@ public class DatabaseValidator<T> {
 
     @SuppressWarnings("unchecked")
     private ValidationResult validateColumn(Object toBeValidated, AbstractAttribute attribute, ColumnValidator[] columnValidators) throws NoSuchFieldException, IllegalAccessException, InstantiationException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
-        Object entityValue = getStaticFieldValue(toBeValidated.getClass(),attribute.fieldName(),toBeValidated);
+        Object entityValue = getFieldValue(toBeValidated.getClass(),attribute.fieldName(),toBeValidated);
         for (ColumnValidator columnValidator : columnValidators) {
             Class<? extends Annotation> validatorAnnotation = columnValidator.getValidatorAnnotation();
 

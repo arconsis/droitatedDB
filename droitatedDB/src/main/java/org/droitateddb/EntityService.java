@@ -18,6 +18,7 @@ package org.droitateddb;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import org.droitateddb.cursor.CombinedCursorImpl;
 import org.droitateddb.entity.Column;
 import org.droitateddb.entity.Entity;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.droitateddb.Utilities.getStaticFieldValue;
+import static org.droitateddb.Utilities.getFieldValue;
 
 /**
  * Provides support for executing CRUD operations on {@link org.droitateddb.entity.Entity} classes, such getting them from the database or
@@ -304,7 +305,7 @@ public class EntityService<E> {
      * @throws IllegalArgumentException When the value of the {@link PrimaryKey} field is null
      */
     public boolean delete(final E data) {
-        Number id = getStaticFieldValue(data, primaryKey);
+        Number id = getFieldValue(data, primaryKey);
         if (id == null) {
             throw new IllegalArgumentException("The @PrimaryKey of the given @Entity can not be null");
         }

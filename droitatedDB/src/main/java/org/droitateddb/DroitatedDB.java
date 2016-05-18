@@ -42,8 +42,8 @@ public class DroitatedDB {
 
     private static String readBasePackageFromFile() {
         try {
-            Class<?> basePackageDefinition = Class.forName(SchemaConstants.BASE_PACKAGE_FILE_PACKAGE+"."+SchemaConstants.BASE_PACKAGE_FILE_NAME);
-            return getStaticFieldValue(basePackageDefinition,SchemaConstants.BASE_PACKAGE_CONSTANT_NAME);
+            Class<?> basePackageDefinition = Class.forName(SchemaConstants.BASE_PACKAGE_FILE_PACKAGE + "." + SchemaConstants.BASE_PACKAGE_FILE_NAME);
+            return getStaticFieldValue(basePackageDefinition, SchemaConstants.BASE_PACKAGE_CONSTANT_NAME);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
