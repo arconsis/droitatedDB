@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.droitateddb.Utilities.getDeclaredField;
 import static org.droitateddb.Utilities.getStaticFieldValue;
@@ -45,11 +46,21 @@ import static org.droitateddb.Utilities.handle;
  */
 public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCursor<T> {
 
+	private final AbstractAttribute[] attributes;
+	private final Class<T>            entityClass;
+	private final Cursor originalCursor;
+	private AtomicBoolean closed = new AtomicBoolean(false);
+	private CombinedCursorImpl(final Cursor originalCursor, final Class<T> entityClass, final AbstractAttribute[] attributes) {
+		this.originalCursor = originalCursor;
+		this.entityClass = entityClass;
+		this.attributes = attributes;
+	}
+
 	@SuppressWarnings("unchecked")
 	public static final <C> CombinedCursor<C> create(Context context, final Cursor originalCursor, final EntityInfo entityInfo, final Class<C> entityClass) {
 		try {
 			Class<?> definition = entityInfo.definition();
-			AbstractAttribute[] attributes =  getStaticFieldValue(definition,SchemaConstants.ATTRIBUTES);
+			AbstractAttribute[] attributes = getStaticFieldValue(definition, SchemaConstants.ATTRIBUTES);
 			final Context appContext = context.getApplicationContext();
 
 			final CombinedCursorImpl<C> magicCursor = new CombinedCursorImpl<C>(originalCursor, entityClass, attributes);
@@ -67,7 +78,9 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 					try {
 						if (ReflectionUtil.isCloseMethod(method)) {
 							method.invoke(originalCursor, args);
-							DbCreator.getInstance(appContext).reduceDatabaseConnection();
+							if (magicCursor.closed.compareAndSet(false, true)) {
+								DbCreator.getInstance(appContext).reduceDatabaseConnection();
+							}
 							return null;
 						} else if (ReflectionUtil.isMethodOfType(method, argTypes, Cursor.class)) {
 							return method.invoke(originalCursor, args);
@@ -88,17 +101,6 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 		}
 	}
 
-	private final AbstractAttribute[] attributes;
-	private final Class<T>            entityClass;
-
-	private final Cursor originalCursor;
-
-	private CombinedCursorImpl(final Cursor originalCursor, final Class<T> entityClass, final AbstractAttribute[] attributes) {
-		this.originalCursor = originalCursor;
-		this.entityClass = entityClass;
-		this.attributes = attributes;
-	}
-
 	private void assertEmptyCursor() {
 		if (originalCursor.getCount() == 0) {
 			throw new NoSuchElementException();
@@ -110,7 +112,7 @@ public class CombinedCursorImpl<T> extends ProxyableCursor implements CombinedCu
 			Constructor<T> constructor = entityClass.getConstructor();
 			T instance = constructor.newInstance();
 			for (AbstractAttribute attribute : attributes) {
-				Field field = getDeclaredField(entityClass,attribute.fieldName());
+				Field field = getDeclaredField(entityClass, attribute.fieldName());
 				field.setAccessible(true);
 
 				field.set(instance, attribute.getValueFromCursor(originalCursor));
