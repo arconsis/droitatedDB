@@ -41,7 +41,7 @@ apply plugin: 'android-apt'
 
 apt {
   arguments {
-    manifest variant.outputs[0].processResources.manifestFile
+    manifest variant.outputs[0]?.processResources?.manifestFile
   }
 }
 
