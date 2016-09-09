@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.droitateddb</groupId>
     <artifactId>processor</artifactId>
-    <version>0.1.9-SNAPSHOT</version>
+    <version>0.1.10-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>droitatedDB - Annotation Processor</name>
     <description>droitatedDB is a lightweight framework, which frees you from the burden of dealing with Androids SQLite
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.droitateddb</groupId>
             <artifactId>api</artifactId>
-            <version>0.1.8</version>
+            <version>0.1.10-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <build>
