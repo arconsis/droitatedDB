@@ -46,8 +46,8 @@ apt {
 }
 
 dependencies {
-  compile 'org.droitateddb:processor:0.1.9'
-  apt 'org.droitateddb:api:0.1.9'
+  apt 'org.droitateddb:processor:0.1.9'
+  compile 'org.droitateddb:api:0.1.9'
 }
 ```
 ## How do I use DroitatedDb? ##
