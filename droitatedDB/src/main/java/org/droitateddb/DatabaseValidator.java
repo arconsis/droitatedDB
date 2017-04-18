@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Locale;
 
 import static org.droitateddb.Utilities.getFieldValue;
 import static org.droitateddb.Utilities.getStaticFieldValue;
@@ -120,7 +121,7 @@ public class DatabaseValidator<T> {
     }
 
     private ValidationResult checkForValidatorsAndValidate(Object toBeValidated, Field column, Class<?> definition) throws NoSuchFieldException, IllegalAccessException, InstantiationException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
-        AbstractAttribute attribute = getStaticFieldValue(definition,column.getName().toUpperCase());
+        AbstractAttribute attribute = getStaticFieldValue(definition,column.getName().toUpperCase(Locale.US));
         ColumnValidator[] columnValidators = attribute.getColumnValidators();
         if (columnValidators.length > 0) {
             return validateColumn(toBeValidated, attribute, columnValidators);
