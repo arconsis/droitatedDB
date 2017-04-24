@@ -33,18 +33,18 @@ import static org.droitateddb.schema.SchemaConstants.TABLE_NAME;
 
 /**
  * Utility for different schema access.
- * 
+ *
  * @author Falk Appel
  * @author Alexander Frank
  */
 class SchemaUtil {
 	private static final String ASSOCIATION_TEMPLATE = "%s." + GENERATED_SUFFIX + "." + DB + "$%s" + TABLE + "$" + ASSOCIATIONS_INTERFACE;
-	private static final String SCHEMA_TEMPLATE = "%s." + GENERATED_SUFFIX + "." + DB + "$%s" + TABLE;
-	private static final String DB_TEMPLATE = "%s." + GENERATED_SUFFIX + "." + DB;
+	private static final String SCHEMA_TEMPLATE      = "%s." + GENERATED_SUFFIX + "." + DB + "$%s" + TABLE;
+	private static final String DB_TEMPLATE          = "%s." + GENERATED_SUFFIX + "." + DB;
 
-	private static final ConcurrentMap<Class<?>, String> TABLE_NAME_CACHE = new ConcurrentHashMap<Class<?>, String>();
-	private static final ConcurrentMap<Class<?>, Class<?>> ASSOCIATION_SCHEMA_CACHE = new ConcurrentHashMap<Class<?>, Class<?>>();
-	private static final ConcurrentMap<Class<?>, EntityInfo> ENTITY_INFO_CACHE = new ConcurrentHashMap<Class<?>, EntityInfo>();
+	private static final ConcurrentMap<Class<?>, String>     TABLE_NAME_CACHE         = new ConcurrentHashMap<Class<?>, String>();
+	private static final ConcurrentMap<Class<?>, Class<?>>   ASSOCIATION_SCHEMA_CACHE = new ConcurrentHashMap<Class<?>, Class<?>>();
+	private static final ConcurrentMap<Class<?>, EntityInfo> ENTITY_INFO_CACHE        = new ConcurrentHashMap<Class<?>, EntityInfo>();
 
 	static String getTableName(final Class<?> entityClass) {
 		if (TABLE_NAME_CACHE.containsKey(entityClass)) {
@@ -54,7 +54,7 @@ class SchemaUtil {
 		try {
 			String className = String.format(SCHEMA_TEMPLATE, DroitatedDB.getBasePackage(), entityClass.getSimpleName());
 			Class<?> schemaClass = Class.forName(className);
-			String tableName = getStaticFieldValue(schemaClass,TABLE_NAME);
+			String tableName = getStaticFieldValue(schemaClass, TABLE_NAME);
 			TABLE_NAME_CACHE.putIfAbsent(entityClass, tableName);
 			return tableName;
 		} catch (Exception e) {
@@ -81,7 +81,7 @@ class SchemaUtil {
 		}
 		try {
 			Class<?> aClass = Class.forName(String.format(DB_TEMPLATE, DroitatedDB.getBasePackage()));
-			EntityInfo entityInfo = getStaticFieldValue(aClass,entityClass.getSimpleName() + INFO_SUFFIX);
+			EntityInfo entityInfo = getStaticFieldValue(aClass, entityClass.getSimpleName() + INFO_SUFFIX);
 			ENTITY_INFO_CACHE.putIfAbsent(entityClass, entityInfo);
 			return entityInfo;
 		} catch (Exception e) {
@@ -90,6 +90,6 @@ class SchemaUtil {
 	}
 
 	static ToManyAssociation getToManyAsso(final Field associationField, final Class<?> associationsSchema) {
-		return getStaticFieldValue(associationsSchema, associationField.getName().toUpperCase(Locale.getDefault()));
+		return getStaticFieldValue(associationsSchema, associationField.getName().toUpperCase(Locale.US));
 	}
 }
