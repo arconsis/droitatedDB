@@ -18,18 +18,34 @@ package org.droitateddb;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import org.droitateddb.cursor.CombinedCursorImpl;
 import org.droitateddb.schema.AbstractAttribute;
 import org.droitateddb.schema.ToManyAssociation;
 import org.droitateddb.schema.ToOneAssociation;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.droitateddb.CursorOperation.tryOnCursor;
-import static org.droitateddb.SchemaUtil.*;
-import static org.droitateddb.Utilities.*;
-import static org.droitateddb.schema.SchemaConstants.*;
+import static org.droitateddb.SchemaUtil.getAssociationsSchema;
+import static org.droitateddb.SchemaUtil.getEntityInfo;
+import static org.droitateddb.SchemaUtil.getTableName;
+import static org.droitateddb.Utilities.getFieldValue;
+import static org.droitateddb.Utilities.getLinkTableColumns;
+import static org.droitateddb.Utilities.getLinkTableName;
+import static org.droitateddb.Utilities.getPrimaryKey;
+import static org.droitateddb.Utilities.getStaticFieldValue;
+import static org.droitateddb.Utilities.setFieldValue;
+import static org.droitateddb.schema.SchemaConstants.FOREIGN_KEY;
+import static org.droitateddb.schema.SchemaConstants.FROM_SUFFIX;
+import static org.droitateddb.schema.SchemaConstants.TO_SUFFIX;
 
 /**
  * Resolves entity object graphs from the db.
@@ -209,10 +225,6 @@ class DatabaseResolver {
     }
 
     private static Object getDeclaration(final Class<?> associationsDeclaration, final Field associationField) {
-        try {
-            return associationsDeclaration.getField(associationField.getName().toUpperCase(Locale.getDefault())).get(null);
-        } catch (Exception e) {
-            throw handle(e);
-        }
+        return getStaticFieldValue(associationsDeclaration, associationField.getName().toUpperCase(Locale.US));
     }
 }

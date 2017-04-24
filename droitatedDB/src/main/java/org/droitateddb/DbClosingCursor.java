@@ -3,6 +3,8 @@ package org.droitateddb;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * A cursor also handling the reduction of open database connections when closed. It should be used e.g. in combination with CursorAdapter.
  *
@@ -12,6 +14,7 @@ import android.database.CursorWrapper;
 class DbClosingCursor extends CursorWrapper {
 
 	private final DbCreator dbCreator;
+	private AtomicBoolean closed = new AtomicBoolean(false);
 
 	public DbClosingCursor(Cursor cursor, DbCreator dbCreator) {
 		super(cursor);
@@ -21,6 +24,8 @@ class DbClosingCursor extends CursorWrapper {
 	@Override
 	public void close() {
 		super.close();
-		dbCreator.reduceDatabaseConnection();
+		if (closed.compareAndSet(false, true)) {
+			dbCreator.reduceDatabaseConnection();
+		}
 	}
 }

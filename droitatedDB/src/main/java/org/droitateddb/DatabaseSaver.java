@@ -148,7 +148,6 @@ class DatabaseSaver {
 			}
 		}
 		for (Field toOneAssociatedField : entityData.toOneAssociations) {
-			toOneAssociatedField.setAccessible(true);
 			Object associatedObject = getFieldValue(data, toOneAssociatedField);
 			if (associatedObject != null) {
 				if (newUnsavedObjects.contains(associatedObject)) {

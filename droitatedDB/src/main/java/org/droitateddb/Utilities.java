@@ -44,40 +44,58 @@ public class Utilities {
         }
     }
 
-    static Object getFieldValue(final Object data, Field field) {
+
+    static String getLinkTableName(Class<?> linkTableSchema) {
+        return getStaticFieldValue(linkTableSchema, SchemaConstants.TABLE_NAME);
+    }
+
+    static AbstractAttribute[] getLinkTableColumns(Class<?> linkTableSchema) {
+        return getStaticFieldValue(linkTableSchema, SchemaConstants.ATTRIBUTES);
+    }
+
+    static String[] getLinkTableProjection(Class<?> linkTableSchema) {
+        return getStaticFieldValue(linkTableSchema, SchemaConstants.PROJECTION);
+    }
+
+    static Number getPrimaryKey(final Object data, EntityData entityData) {
+        return getFieldValue(data, entityData.primaryKey);
+    }
+
+    public static <T> T getStaticFieldValue(Class<?> aClass, String fieldName) {
+        return getStaticFieldValue(getDeclaredField(aClass, fieldName));
+    }
+
+    static <T> T getFieldValue(Class<?> aClass, String fieldName, Object data) {
+        return getFieldValue(data, getDeclaredField(aClass, fieldName));
+    }
+
+    public static Field getDeclaredField(Class<?> aClass, String fieldName) {
+        try {
+            // this call may fail sometimes on some devices, such as Samsung Galaxy S4 with Android 5.0.1
+            return aClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsfe) {
+            Field[] declaredFields = aClass.getDeclaredFields();
+            for (Field field : declaredFields) {
+                if (field.getName().equals(fieldName)) {
+                    return field;
+                }
+            }
+            throw handle(nsfe);
+        }
+    }
+
+    static <T> T getStaticFieldValue(Field field) {
+        return getFieldValue(null, field);
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> T getFieldValue(final Object data, Field field) {
         try {
             field.setAccessible(true);
-            return field.get(data);
+            return (T) field.get(data);
         } catch (IllegalAccessException e) {
             throw handle(e);
         }
     }
 
-    static String getLinkTableName(Class<?> linkTableSchema) {
-        try {
-            return (String) linkTableSchema.getDeclaredField(SchemaConstants.TABLE_NAME).get(null);
-        } catch (Exception e) {
-            throw handle(e);
-        }
-    }
-
-    static AbstractAttribute[] getLinkTableColumns(Class<?> linkTableSchema) {
-        try {
-            return (AbstractAttribute[]) linkTableSchema.getDeclaredField(SchemaConstants.ATTRIBUTES).get(null);
-        } catch (Exception e) {
-            throw handle(e);
-        }
-    }
-
-    static String[] getLinkTableProjection(Class<?> linkTableSchema) {
-        try {
-            return (String[]) linkTableSchema.getDeclaredField(SchemaConstants.PROJECTION).get(null);
-        } catch (Exception e) {
-            throw handle(e);
-        }
-    }
-
-    static Number getPrimaryKey(final Object data, EntityData entityData) {
-        return (Number) getFieldValue(data, entityData.primaryKey);
-    }
 }

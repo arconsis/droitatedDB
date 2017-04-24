@@ -16,6 +16,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Locale;
+
+import static org.droitateddb.Utilities.getFieldValue;
+import static org.droitateddb.Utilities.getStaticFieldValue;
 
 /**
  * Validates entities by their schema definition
@@ -87,8 +91,7 @@ public class DatabaseValidator<T> {
     }
 
     private void getRelatedEntityAndValidate(Object validatingObject, Field relationship, AccumulatedValidationResult validationResult, int currentDepth, int maxDepth, Set<Object> alreadyValidated) throws IllegalAccessException {
-        relationship.setAccessible(true);
-        Object relatedEntity = relationship.get(validatingObject);
+        Object relatedEntity = getFieldValue(validatingObject,relationship);
         if (relatedEntity != null) {
             handleRelatedEntity(relatedEntity, validationResult, currentDepth, maxDepth, alreadyValidated);
 
@@ -118,8 +121,7 @@ public class DatabaseValidator<T> {
     }
 
     private ValidationResult checkForValidatorsAndValidate(Object toBeValidated, Field column, Class<?> definition) throws NoSuchFieldException, IllegalAccessException, InstantiationException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
-        Field columnDefinition = definition.getDeclaredField(column.getName().toUpperCase());
-        AbstractAttribute attribute = (AbstractAttribute) columnDefinition.get(null);
+        AbstractAttribute attribute = getStaticFieldValue(definition,column.getName().toUpperCase(Locale.US));
         ColumnValidator[] columnValidators = attribute.getColumnValidators();
         if (columnValidators.length > 0) {
             return validateColumn(toBeValidated, attribute, columnValidators);
@@ -129,13 +131,15 @@ public class DatabaseValidator<T> {
 
     @SuppressWarnings("unchecked")
     private ValidationResult validateColumn(Object toBeValidated, AbstractAttribute attribute, ColumnValidator[] columnValidators) throws NoSuchFieldException, IllegalAccessException, InstantiationException, java.lang.reflect.InvocationTargetException, NoSuchMethodException {
-        Field entityField = toBeValidated.getClass().getDeclaredField(attribute.fieldName());
-        entityField.setAccessible(true);
-        Object entityValue = entityField.get(toBeValidated);
+        Object entityValue = getFieldValue(toBeValidated.getClass(),attribute.fieldName(),toBeValidated);
         for (ColumnValidator columnValidator : columnValidators) {
             Class<? extends Annotation> validatorAnnotation = columnValidator.getValidatorAnnotation();
-
-            Class<?> proxyClass = Proxy.getProxyClass(Thread.currentThread().getContextClassLoader(), validatorAnnotation);
+            Class<?> proxyClass=null;
+            try {
+                proxyClass = Proxy.getProxyClass(DatabaseValidator.class.getClassLoader(), validatorAnnotation);
+            } catch (IllegalArgumentException iae) {
+                proxyClass = Proxy.getProxyClass(Thread.currentThread().getContextClassLoader(), validatorAnnotation);
+            }
             Annotation annotationInstance = (Annotation) proxyClass.getConstructor(new Class[]{InvocationHandler.class}).newInstance(new Object[]{new DatabaseValidatorAnnotationHandler(columnValidator.getParams())});
 
             Class<? extends CustomValidator<?, ?>> validatorClass = columnValidator.getValidatorClass();
