@@ -225,6 +225,6 @@ class DatabaseResolver {
     }
 
     private static Object getDeclaration(final Class<?> associationsDeclaration, final Field associationField) {
-        return getStaticFieldValue(associationsDeclaration, associationField.getName().toUpperCase(Locale.getDefault()));
+        return getStaticFieldValue(associationsDeclaration, associationField.getName().toUpperCase(Locale.US));
     }
 }
